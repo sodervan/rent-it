@@ -2,8 +2,8 @@
 
 const WhoWeAre = () => {
   return (
-    <div className="my-20 px-32">
-      <div className="flex gap-6">
+    <div className="my-5 px-16 sm:my-20 sm:px-32">
+      <div className="flex flex-col gap-6 md:flex-row justify-center items-center gap-2">
         <div className="flex flex-col justify-center gap-3 items-center">
           <div>
             <img
@@ -12,7 +12,7 @@ const WhoWeAre = () => {
             />
           </div>
           <div>
-            <p className="text-xl">Find your next home</p>
+            <p className="text-xl text-center">Find your next home</p>
           </div>
           <div>
             <p className="text-sm text-center">
@@ -34,7 +34,7 @@ const WhoWeAre = () => {
             />
           </div>
           <div>
-            <p className="text-xl">List Your property</p>
+            <p className="text-xl text-center">List Your property</p>
           </div>
           <div>
             <p className="text-sm text-center">
@@ -56,7 +56,7 @@ const WhoWeAre = () => {
             />
           </div>
           <div>
-            <p className="text-xl">Explore Neighbourhoods</p>
+            <p className="text-xl text-center">Explore Neighbourhoods</p>
           </div>
           <div>
             <p className="text-sm text-center">

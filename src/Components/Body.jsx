@@ -3,37 +3,38 @@ import { Carousel } from "flowbite-react";
 const Body = () => {
   return (
     <div>
-      <div className="h-[550px] mt-[75px] relative">
+      <div className="h-[550px] sm:mt-[40px] md:mt-[75px] relative">
         <div className="absolute inset-0 z-10 flex flex-col gap-7 justify-center items-center">
-          <div>
-            <p className="text-white text-[45px] font-bold">
+          <div className="text-center px-4 md:px-20">
+            <p className="text-white text-[30px] sm:text-[40px] md:text-[45px] lg:text-[50px] font-bold">
               Find Your Perfect Home, Hassle Free
             </p>
           </div>
-          <div>
-            <p className="text-white text-[18px]">
+          <div className="px-4 sm:px-10 md:px-20">
+            <p className="text-white text-[14px] sm:text-sm md:text-base text-center">
               Simplifying apartment hunting for students and renters with
               transparency, reliability, and ease.
             </p>
           </div>
-          <div className="flex gap-5">
-            <div className=" bg-[#F4EBFF] py-2 px-4 rounded-lg">
-              <p className="text-primaryPurple font-normal text-sm">
+          <div className="flex gap-5 flex-wrap justify-center whitespace-nowrap sm:gap-2">
+            <div className="bg-[#F4EBFF] rounded-lg px-2 py-1 md:py-2 px-4">
+              <p className="text-[11px] text-primaryPurple sm:text-primaryPurple font-normal text-sm">
                 No unnecessary fees
               </p>
             </div>
-            <div className=" bg-[#F4EBFF] py-2 px-4 rounded-lg">
-              <p className="text-primaryPurple font-normal text-sm">
+            <div className="bg-[#F4EBFF] rounded-lg px-2 py-1 md:py-2 px-4">
+              <p className="text-[11px] text-primaryPurple sm:text-primaryPurple font-normal text-sm">
                 Renter protection
               </p>
             </div>
-            <div className=" bg-[#F4EBFF] py-2 px-4 rounded-lg ">
-              <p className="text-primaryPurple font-normal text-sm">
+            <div className="bg-[#F4EBFF] rounded-lg px-2 py-1 md:py-2 px-4">
+              <p className="text-[11px] text-primaryPurple sm:text-primaryPurple font-normal text-sm">
                 Student Accommodation
               </p>
             </div>
           </div>
-          <div className="flex items-center w-3/5">
+
+          <div className="hidden sm:flex items-center w-3/5">
             <div className=" w-[88%] bg-white py-3 px-4 rounded-l-[11px]">
               <input
                 className=" p-0 w-full border-none focus:outline-none bg-none bg-white rounded-lg "

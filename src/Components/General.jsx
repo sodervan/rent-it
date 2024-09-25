@@ -15,8 +15,8 @@ const General = () => {
     <>
       <RecentSearches />
       <div className="w-full px-16 mb-20">
-        <p className="text-xl">Scout Generally</p>
-        <p className="text-md text-[#888888] mb-5">
+        <p className="text-[20px] sm:text-xl">Scout Generally</p>
+        <p className=" text-sm text-[#888888] mb-5 sm:text-[1.1rem]">
           Hundreds of Accommodations to choose from
         </p>
         <div className="flex gap-3 overflow-x-auto whitespace-nowrap no-scrollbar">
@@ -31,10 +31,10 @@ const General = () => {
               onClick={() => handlePopularLocation(location)}
             >
               <div>
-                <i className="fi fi-rr-marker text-primaryPurple text-md"></i>
+                <i className="fi fi-rr-marker text-primaryPurple text-[13px] sm:text-[15px]"></i>
               </div>
               <div>
-                <p className="font-light">{location.name}</p>
+                <p className="font-normal text-[13px] sm:text-[15px]">{location.name}</p>
               </div>
             </div>
           ))}
@@ -45,8 +45,8 @@ const General = () => {
         )}
       </div>
 
-      <div className="grid grid-cols-2 w-full bg-[#F4EBFF] px-20 items-center justify-between mb-9">
-        <div className="flex flex-col gap-6 items-start">
+      <div className="flex items-center justify-center md:grid grid-cols-2 w-full bg-[#F4EBFF] px-20 md:items-center md:justify-between mb-9 gap-8">
+        <div className="flex flex-col gap-6 items-start my-10">
           <p className="text-2xl font-semibold">
             Are You a Renter ot a Student
           </p>
@@ -62,7 +62,7 @@ const General = () => {
             </button>
           </div>
         </div>
-        <div className="flex justify-end">
+        <div className="hidden md:flex justify-end">
           <img
             src="https://res.cloudinary.com/dmlgns85e/image/upload/v1725089764/Pngtree_a_business_man_wearing_purple_15424326_1_uzoou5.png"
             alt="Business Man"
@@ -71,8 +71,8 @@ const General = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 w-full bg-[#F4EBFF] px-20 items-center justify-between mb-9">
-        <div className="flex flex-col gap-6 items-start">
+      <div className="flex items-center justify-center md:grid grid-cols-2 w-full bg-[#F4EBFF] px-20 md:items-center md:justify-between mb-9 gap-8">
+        <div className="flex flex-col gap-6 items-start my-10">
           <p className="text-2xl font-semibold">Are You an Agent or Landlord</p>
           <p className="text-sm text-gray-700">
             Spread the good news! Earn more by helping your friends, clients
@@ -83,7 +83,7 @@ const General = () => {
             <button className="text-white font-medium">Expand Your reach</button>
           </div>
         </div>
-        <div className="flex justify-end">
+        <div className="hidden md:flex justify-end">
           <img
             src="https://res.cloudinary.com/dmlgns85e/image/upload/v1725090751/Pexels_Photo_by_Ketut_Subiyanto_h5pma8.png"
             alt="Business Man"

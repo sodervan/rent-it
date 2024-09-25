@@ -3,7 +3,7 @@ import { Carousel } from "flowbite-react";
 const Body = () => {
   return (
     <div>
-      <div className="h-[550px] sm:mt-[40px] md:mt-[75px] relative">
+      <div className="mt-20 sm:mt-[40px] sm:h-[550px] md:mt-[75px] md:h-[550px] relative">
         <div className="absolute inset-0 z-10 flex flex-col gap-7 justify-center items-center">
           <div className="text-center px-4 md:px-20">
             <p className="text-white text-[30px] sm:text-[40px] md:text-[45px] lg:text-[50px] font-bold">

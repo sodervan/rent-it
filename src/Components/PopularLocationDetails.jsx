@@ -3,12 +3,12 @@ const PopularLocationDetails = ({ popularLocations }) => {
   const accommodations = popularLocations?.accommodations || [];
 
   return (
-    <div className="grid grid-cols-4 gap-4 mt-6">
+    <div className="flex gap-4 mt-6 w-full overflow-x-auto whitespace-nowrap">
       {accommodations.length > 0 ? (
         accommodations.map((item, index) => (
           <div
             key={index}
-            className="flex flex-col h-[350px] rounded-lg shadow-lg"
+            className="flex flex-col h-[350px] rounded-lg shadow-lg w-[280px] min-w-[280px]" // Added min-w-[280px]
           >
             <div className="h-[60%] rounded-t-[15px] rounded-b-[20px] overflow-hidden relative">
               <div className="flex items-center justify-between absolute top-2 left-3 w-full">
@@ -67,7 +67,7 @@ const PopularLocationDetails = ({ popularLocations }) => {
           </div>
         ))
       ) : (
-        <p>No accommodations available</p>
+        <p>No accommodations available.</p>
       )}
     </div>
   );

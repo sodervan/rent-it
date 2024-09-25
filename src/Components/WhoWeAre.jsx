@@ -3,7 +3,7 @@
 const WhoWeAre = () => {
   return (
     <div className="my-5 px-16 sm:my-20 sm:px-32">
-      <div className="flex flex-col gap-6 md:flex-row justify-center items-center gap-2">
+      <div className="flex flex-col gap-8 md:flex-row justify-center items-center gap-2">
         <div className="flex flex-col justify-center gap-3 items-center">
           <div>
             <img
@@ -22,7 +22,7 @@ const WhoWeAre = () => {
             </p>
           </div>
           <NavLink to="/" className="py-2 px-4 bg-primaryPurple rounded-lg">
-            <p className="text-white">Find an apartment near you</p>
+            <p className="text-white text-center">Find an apartment near you</p>
           </NavLink>
         </div>
 

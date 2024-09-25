@@ -18,17 +18,17 @@ const Body = () => {
           </div>
           <div className="flex gap-5 flex-wrap justify-center whitespace-nowrap sm:gap-2">
             <div className="bg-[#F4EBFF] rounded-lg px-2 py-1 md:py-2 px-4">
-              <p className="text-[11px] text-primaryPurple sm:text-primaryPurple font-normal text-sm">
+              <p className="text-[11px] text-primaryPurple sm:text-primaryPurple font-normal sm:text-[14px]">
                 No unnecessary fees
               </p>
             </div>
             <div className="bg-[#F4EBFF] rounded-lg px-2 py-1 md:py-2 px-4">
-              <p className="text-[11px] text-primaryPurple sm:text-primaryPurple font-normal text-sm">
+              <p className="text-[11px] text-primaryPurple sm:text-primaryPurple font-normal text-sm sm:text-[14px]">
                 Renter protection
               </p>
             </div>
             <div className="bg-[#F4EBFF] rounded-lg px-2 py-1 md:py-2 px-4">
-              <p className="text-[11px] text-primaryPurple sm:text-primaryPurple font-normal text-sm">
+              <p className="text-[11px] text-primaryPurple sm:text-primaryPurple font-normal text-sm sm:text-[14px]">
                 Student Accommodation
               </p>
             </div>

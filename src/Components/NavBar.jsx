@@ -105,11 +105,12 @@ const NavBar = () => {
               <p className="text-white font-medium">Sign up</p>
             </NavLink>
 
-            <div className="border border-primaryPurple py-2 px-4 rounded-lg hover:bg-primaryPurple hover:text-white transition-all duration-300">
-              <NavLink to="/login">
-                <p className="text-primaryPurple font-medium">Login</p>
-              </NavLink>
-            </div>
+            <NavLink
+              to="/login"
+              className="border border-primaryPurple py-2 px-4 rounded-lg hover:bg-opacity-90 transition duration-300 shadow-lg transform hover:-translate-y-1"
+            >
+              <p className="text-primaryPurple font-medium">Login</p>
+            </NavLink>
           </div>
         </div>
 

@@ -3,10 +3,10 @@ import { Carousel } from "@material-tailwind/react";
 const Body = () => {
   return (
     <div>
-      <div className="mt-20 sm:mt-[40px] sm:h-[550px] md:mt-[75px] md:h-[550px] relative">
+      <div className="h-[400px] mt-20 sm:mt-[40px] sm:h-[550px] md:mt-[75px] md:h-[550px] relative">
         <div className="absolute inset-0 z-10 flex flex-col gap-7 justify-center items-center">
           <div className="text-center px-4 md:px-20">
-            <p className="text-white text-[30px] sm:text-[40px] md:text-[45px] lg:text-[50px] font-bold">
+            <p className="text-white text-[25px] sm:text-[40px] md:text-[45px] lg:text-[50px] font-bold">
               Find Your Perfect Home, Hassle Free
             </p>
           </div>
@@ -63,7 +63,7 @@ const Body = () => {
           loop={true}
           className="h-[100%]"
         >
-          <div className="relative rounded-none">
+          <div className="relative rounded-none h-[100%]">
             <img
               src="https://res.cloudinary.com/dmlgns85e/image/upload/v1724857270/pexels-binyaminmellish-106399_ana2ff.jpg"
               alt="..."
@@ -71,7 +71,7 @@ const Body = () => {
             />
             <div className="absolute inset-0 bg-black opacity-50"></div>
           </div>
-          <div className="relative">
+          <div className="relative h-[100%]">
             <img
               src="https://res.cloudinary.com/dmlgns85e/image/upload/v1724858745/ultimate-guide-to-home-exterior-design_leq7ty.jpg"
               alt="..."
@@ -79,7 +79,7 @@ const Body = () => {
             />
             <div className="absolute inset-0 bg-black opacity-50"></div>
           </div>
-          <div className="relative">
+          <div className="relative h-[100%]">
             <img
               src="https://res.cloudinary.com/dmlgns85e/image/upload/v1724858656/white-house-a-frame-section-c0a4a3b3-e722202f114e4aeea4370af6dbb4312b_rzafww.jpg"
               alt="..."

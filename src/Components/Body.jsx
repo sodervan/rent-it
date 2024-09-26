@@ -1,4 +1,4 @@
-import { Carousel } from "flowbite-react";
+import { Carousel } from "@material-tailwind/react";
 
 const Body = () => {
   return (
@@ -17,18 +17,18 @@ const Body = () => {
             </p>
           </div>
           <div className="flex gap-5 flex-wrap justify-center whitespace-nowrap sm:gap-2">
-            <div className="bg-[#F4EBFF] rounded-lg px-2 py-1 md:py-2 px-4">
-              <p className="text-[11px] text-primaryPurple sm:text-primaryPurple font-normal sm:text-[14px]">
+            <div className="bg-[#F4EBFF] rounded-lg px-2 py-1 md:py-2 md:px-4">
+              <p className="text-[12px] text-primaryPurple sm:text-primaryPurple font-normal sm:text-[14px]">
                 No unnecessary fees
               </p>
             </div>
-            <div className="bg-[#F4EBFF] rounded-lg px-2 py-1 md:py-2 px-4">
-              <p className="text-[11px] text-primaryPurple sm:text-primaryPurple font-normal text-sm sm:text-[14px]">
+            <div className="bg-[#F4EBFF] rounded-lg px-2 py-1 md:py-2 md:px-4">
+              <p className="text-[12px] text-primaryPurple sm:text-primaryPurple font-normal sm:text-[14px]">
                 Renter protection
               </p>
             </div>
-            <div className="bg-[#F4EBFF] rounded-lg px-2 py-1 md:py-2 px-4">
-              <p className="text-[11px] text-primaryPurple sm:text-primaryPurple font-normal text-sm sm:text-[14px]">
+            <div className="bg-[#F4EBFF] rounded-lg px-2 py-1 md:py-2 md:px-4">
+              <p className="text-[12px] text-primaryPurple sm:text-primaryPurple font-normal sm:text-[14px]">
                 Student Accommodation
               </p>
             </div>
@@ -53,7 +53,13 @@ const Body = () => {
           </div>
         </div>
 
-        <Carousel pauseOnHover className="h-[100%]">
+        <Carousel
+          transition={{ duration: 1, type: "tween" }}
+          autoplay={true}
+          autoplayDelay={5000}
+          loop={true}
+          className="h-[100%]"
+        >
           <div className="relative rounded-none">
             <img
               src="https://res.cloudinary.com/dmlgns85e/image/upload/v1724857270/pexels-binyaminmellish-106399_ana2ff.jpg"

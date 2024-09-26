@@ -14,7 +14,7 @@ const General = () => {
   return (
     <>
       <RecentSearches />
-      <div className="w-full px-16 mb-20">
+      <div className="w-full px-6 sm:px-20 mb-20">
         <p className="text-[20px] sm:text-xl">Scout Generally</p>
         <p className=" text-sm text-[#888888] mb-5 sm:text-[1.1rem]">
           Hundreds of Accommodations to choose from
@@ -45,7 +45,7 @@ const General = () => {
         )}
       </div>
 
-      <div className="flex items-center justify-center md:grid grid-cols-2 w-full bg-[#F4EBFF] px-20 md:items-center md:justify-between mb-9 gap-8">
+      <div className="flex items-center justify-center md:grid grid-cols-2 w-full bg-[#F4EBFF] px-6 sm:px-20 md:items-center md:justify-between mb-9 gap-8">
         <div className="flex flex-col gap-6 items-start my-10">
           <p className="text-2xl font-semibold">
             Are You a Renter ot a Student
@@ -71,7 +71,7 @@ const General = () => {
         </div>
       </div>
 
-      <div className="flex items-center justify-center md:grid grid-cols-2 w-full bg-[#F4EBFF] px-20 md:items-center md:justify-between mb-9 gap-8">
+      <div className="flex items-center justify-center md:grid grid-cols-2 w-full bg-[#F4EBFF] px-6 sm:px-20 md:items-center md:justify-between mb-9 gap-8">
         <div className="flex flex-col gap-6 items-start my-10">
           <p className="text-2xl font-semibold">Are You an Agent or Landlord</p>
           <p className="text-sm text-gray-700">

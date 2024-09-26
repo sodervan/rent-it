@@ -34,15 +34,15 @@ const Body = () => {
             </div>
           </div>
 
-          <div className="hidden sm:flex items-center w-3/5">
-            <div className=" w-[88%] bg-white py-3 px-4 rounded-l-[11px]">
+          <div className="hidden md:flex items-center w-3/5">
+            <div className=" w-[80%] bg-white py-3 px-4 rounded-l-[11px]">
               <input
                 className=" p-0 w-full border-none focus:outline-none bg-none bg-white rounded-lg "
                 type="text"
                 placeholder="Search by University, Location, Property"
               />
             </div>
-            <div className="flex bg-primaryPurple w-[12%] py-3 px-4 rounded-r-[11px] items-center justify-center gap-1">
+            <div className="flex bg-primaryPurple w-[20%] py-3 px-4 rounded-r-[11px] items-center justify-center gap-1">
               <div>
                 <i className="fi fi-rr-search text-white"></i>
               </div>

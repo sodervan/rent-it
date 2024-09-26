@@ -55,6 +55,9 @@ const Body = () => {
 
         <Carousel
           transition={{ duration: 1, type: "tween" }}
+          navigation={false}
+          prevArrow={false}
+          nextArrow={false}
           autoplay={true}
           autoplayDelay={5000}
           loop={true}

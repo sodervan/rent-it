@@ -10,6 +10,7 @@ import RenterLogin from "./Components/Forms/RenterLogin";
 import RenterSignup from "./Components/Forms/RenterSignup";
 import SignupChoice from "./Components/Forms/SignupChoice";
 import SearchResultsPage from "./Pages/SearchResultsPage.jsx";
+import ListingDetailsPage from "./Pages/ListingDetailsPage.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -19,6 +20,10 @@ const router = createBrowserRouter(
       <Route path="/renter-signup" element={<RenterSignup />} />
       <Route path="/signup" element={<SignupChoice />} />
       <Route path="/search-results" element={<SearchResultsPage />} />
+      <Route
+        path="/listing-details-page/:id/:index"
+        element={<ListingDetailsPage />}
+      />
     </Route>,
   ),
 );

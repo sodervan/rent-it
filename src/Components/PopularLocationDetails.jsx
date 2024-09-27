@@ -1,17 +1,25 @@
+import { useState } from "react";
+import { NavLink } from "react-router-dom";
+
 const PopularLocationDetails = ({ popularLocations }) => {
   // Check if popularLocations exists and has accommodations
   const accommodations = popularLocations?.accommodations || [];
+  const id = popularLocations?.id;
+  const [hoveredIndex, setHoveredIndex] = useState(null);
 
   return (
-    <div className="flex gap-4 mt-6 w-full overflow-x-auto whitespace-nowrap">
+    <div className="flex gap-4 mt-6 w-full overflow-x-auto whitespace-nowrap py-10">
       {accommodations.length > 0 ? (
         accommodations.map((item, index) => (
-          <div
+          <NavLink
+            to={`/listing-details-page/${id}/${index}`}
             key={index}
-            className="flex flex-col h-[350px] rounded-lg shadow-lg w-[280px] min-w-[280px]" // Added min-w-[280px]
+            className="flex flex-col h-[350px] rounded-lg shadow-lg w-[280px] min-w-[280px] cursor-pointer"
+            onMouseEnter={() => setHoveredIndex(index)}
+            onMouseLeave={() => setHoveredIndex(null)}
           >
             <div className="h-[60%] rounded-t-[15px] rounded-b-[20px] overflow-hidden relative">
-              <div className="flex items-center justify-between absolute top-2 left-3 w-full">
+              <div className="flex items-center justify-between absolute top-2 left-3 w-full z-[100]">
                 <div className="bg-[#F4EBFF] p-2 rounded-xl">
                   <p className="text-[12px] font-[600] text-[#1D2939]">
                     {item.type}
@@ -26,7 +34,7 @@ const PopularLocationDetails = ({ popularLocations }) => {
                   </div>
                 </div>
               </div>
-              <div className="bg-[#F4EBFF] px-2 py-1 rounded-full mx-auto absolute bottom-2 left-1/2 transform -translate-x-1/2 flex items-center justify-center">
+              <div className="bg-[#F4EBFF] px-2 py-1 rounded-full mx-auto absolute z-[100] bottom-2 left-1/2 transform -translate-x-1/2 flex items-center justify-center">
                 <div>
                   <p className="text-[12px] text-primaryPurple whitespace-nowrap">
                     <span className="text-sm font-semibold">
@@ -39,7 +47,9 @@ const PopularLocationDetails = ({ popularLocations }) => {
               <img
                 src={item.poster}
                 alt="#"
-                className="w-full h-full object-cover"
+                className={`w-full h-full object-cover transition-transform duration-500 ${
+                  hoveredIndex === index ? "transform scale-110" : ""
+                }`}
               />
             </div>
 
@@ -64,7 +74,7 @@ const PopularLocationDetails = ({ popularLocations }) => {
                 <p className="text-xs">{item.address}</p>
               </div>
             </div>
-          </div>
+          </NavLink>
         ))
       ) : (
         <p>No accommodations available.</p>

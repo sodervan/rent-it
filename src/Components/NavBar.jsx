@@ -8,7 +8,7 @@ const NavBar = () => {
 
   return (
     <>
-      <div className="fixed z-20 top-0 left-0 w-full bg-white shadow-md border-b-2 border-primaryPurple py-3 px-5">
+      <div className="fixed z-[200] top-0 left-0 w-full bg-white shadow-md border-b-2 border-primaryPurple py-3 px-5">
         <div className="flex justify-between items-center">
           {/* Logo */}
           <div>

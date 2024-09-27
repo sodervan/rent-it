@@ -12,7 +12,9 @@ const WhoWeAre = () => {
             />
           </div>
           <div>
-            <p className="text-xl text-center font-semibold">Find your next home</p>
+            <p className="text-xl text-center font-semibold">
+              Find your next home
+            </p>
           </div>
           <div>
             <p className="text-sm text-center">
@@ -21,7 +23,10 @@ const WhoWeAre = () => {
               perfectly suits your needs.
             </p>
           </div>
-          <NavLink to="/" className="py-2 px-4 bg-primaryPurple rounded-lg whitespace-nowrap">
+          <NavLink
+            to="/"
+            className="py-2 px-4 bg-primaryPurple rounded-lg whitespace-nowrap"
+          >
             <p className="text-white text-center">Find an apartment near you</p>
           </NavLink>
         </div>
@@ -34,7 +39,9 @@ const WhoWeAre = () => {
             />
           </div>
           <div>
-            <p className="text-xl text-center font-semibold">List Your property</p>
+            <p className="text-xl text-center font-semibold">
+              List Your property
+            </p>
           </div>
           <div>
             <p className="text-sm text-center">
@@ -43,7 +50,10 @@ const WhoWeAre = () => {
               audience of potential renters.
             </p>
           </div>
-          <NavLink to="/" className="py-2 px-4 bg-primaryPurple rounded-lg whitespace-nowrap">
+          <NavLink
+            to="/"
+            className="py-2 px-4 bg-primaryPurple rounded-lg whitespace-nowrap"
+          >
             <p className="text-white">List a property</p>
           </NavLink>
         </div>
@@ -56,7 +66,9 @@ const WhoWeAre = () => {
             />
           </div>
           <div>
-            <p className="text-xl text-center font-semibold">Explore Neighbourhoods</p>
+            <p className="text-xl text-center font-semibold">
+              Explore Neighbourhoods
+            </p>
           </div>
           <div>
             <p className="text-sm text-center">
@@ -65,7 +77,10 @@ const WhoWeAre = () => {
               neighborhood unique.
             </p>
           </div>
-          <NavLink to="/" className="py-2 px-4 bg-primaryPurple rounded-lg whitespace-nowrap">
+          <NavLink
+            to="/"
+            className="py-2 px-4 bg-primaryPurple rounded-lg whitespace-nowrap"
+          >
             <p className="text-white">Start your search</p>
           </NavLink>
         </div>

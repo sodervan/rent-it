@@ -1,16 +1,85 @@
-import popularLocations from "../Data/popular_locations.json";
+import { useState, useEffect } from "react";
 import PopularLocationDetails from "../Components/PopularLocationDetails";
-import { useState } from "react";
 import RecentSearches from "./RecentSearches";
+import { Spinner } from "@material-tailwind/react";
+import { useLocation } from "react-router-dom";
+import popularLocation from "../Data/popular_locations.json";
 
 const General = () => {
-  const [selectedLocation, setSelectedLocation] = useState({ name: "Holla" });
+  const [popularLocations, setPopularLocations] = useState([]);
 
-  // Function to handle click and set selected location without navigation
+  const [selectedLocation, setSelectedLocation] = useState(null);
+
+  const firebaseUrl =
+    "https://rentit-c3304-default-rtdb.firebaseio.com/locations.json";
+
+  const getDataFromFirebase = async () => {
+    try {
+      const response = await fetch(firebaseUrl, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to receive data from Firebase");
+      }
+
+      const result = await response.json();
+
+      console.log("Data received successfully:", result);
+
+      setPopularLocations(result);
+
+      if (result.length > 0) {
+        setSelectedLocation(result[0]);
+      }
+    } catch (error) {
+      console.error("Error receiving data:", error);
+    }
+  };
+
+  const location = useLocation();
+  useEffect(() => {
+    if (location.pathname === "/") {
+      getDataFromFirebase();
+    }
+  }, []);
+
+  // const firebaseUrll =
+  //   "https://rentit-c3304-default-rtdb.firebaseio.com/locations.json";
+  // const data = popularLocation;
+  // // Function to send data to Firebase
+  // const sendDataToFirebase = async (data) => {
+  //   try {
+  //     const response = await fetch(firebaseUrll, {
+  //       method: "PUT", // 'PUT' will replace the entire data, use 'POST' to add new data
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(data),
+  //     });
+  //
+  //     if (!response.ok) {
+  //       throw new Error("Failed to send data to Firebase");
+  //     }
+  //
+  //     const result = await response.json();
+  //     console.log("Data sent successfully:", result);
+  //   } catch (error) {
+  //     console.error("Error sending data:", error);
+  //   }
+  // };
+  //
+  // // Call the function to send data
+  // useEffect(() => {
+  //   sendDataToFirebase(data);
+  // }, []);
+
   const handlePopularLocation = (location) => {
     setSelectedLocation(location);
   };
-
   return (
     <>
       <RecentSearches />
@@ -19,27 +88,38 @@ const General = () => {
         <p className=" text-sm text-[#888888] mb-5 sm:text-[1.1rem]">
           Hundreds of Accommodations to choose from
         </p>
+
+        {/* Render popular locations after the data is fetched */}
         <div className="flex gap-3 overflow-x-auto whitespace-nowrap no-scrollbar">
-          {popularLocations.map((location) => (
-            <div
-              key={location.id}
-              className={`cursor-pointer px-5 py-2 rounded-full flex items-center gap-1 ${
-                selectedLocation?.id === location.id
-                  ? "border-[2px] border-primaryPurple shadow-inner"
-                  : "border-[1px] shadow-inner"
-              }`}
-              onClick={() => handlePopularLocation(location)}
-            >
-              <div>
-                <i className="fi fi-rr-marker text-primaryPurple text-[13px] sm:text-[15px]"></i>
+          {popularLocations.length > 0 ? (
+            popularLocations.map((location) => (
+              <div
+                key={location.id}
+                className={`cursor-pointer px-5 py-2 rounded-full flex items-center gap-1 ${
+                  selectedLocation?.id === location.id
+                    ? "border-[2px] border-primaryPurple shadow-inner"
+                    : "border-[1px] shadow-inner"
+                }`}
+                onClick={() => handlePopularLocation(location)}
+              >
+                <div>
+                  <i className="fi fi-rr-marker text-primaryPurple text-[13px] sm:text-[15px]"></i>
+                </div>
+                <div>
+                  <p className="font-normal text-[13px] sm:text-[15px]">
+                    {location.name}
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="font-normal text-[13px] sm:text-[15px]">{location.name}</p>
-              </div>
+            ))
+          ) : (
+            <div className="flex items-center justify-center w-full mt-4">
+              <Spinner className="h-10 w-10" />
             </div>
-          ))}
+          )}
         </div>
 
+        {/* Render details of the selected location if available */}
         {selectedLocation && (
           <PopularLocationDetails popularLocations={selectedLocation} />
         )}
@@ -48,7 +128,7 @@ const General = () => {
       <div className="flex items-center justify-center md:grid grid-cols-2 w-full bg-[#F4EBFF] px-6 sm:px-20 md:items-center md:justify-between mb-9 gap-8">
         <div className="flex flex-col gap-6 items-start my-10">
           <p className="text-2xl font-semibold">
-            Are You a Renter ot a Student
+            Are You a Renter or a Student
           </p>
           <p className="text-sm text-gray-700">
             Find your perfect home with ease. Our platform offers you a seamless
@@ -80,7 +160,9 @@ const General = () => {
             successful booking made on the platform.
           </p>
           <div className="bg-[#7F56D9] px-5 py-3 rounded-lg">
-            <button className="text-white font-medium">Expand Your reach</button>
+            <button className="text-white font-medium">
+              Expand Your Reach
+            </button>
           </div>
         </div>
         <div className="hidden md:flex justify-end">

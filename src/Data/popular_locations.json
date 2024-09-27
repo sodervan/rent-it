@@ -18,7 +18,27 @@
         "address": "12 Lekki-Epe Expressway, Lagos",
         "poster": "https://res.cloudinary.com/dmlgns85e/image/upload/v1725052734/an_accommodation_interior_2_pf2qmg.jpg",
         "type": "Single man",
-        "rentersBooked": 2
+        "rentersBooked": 2,
+        "agentName": "Greenview Realtors",
+        "rating": 4.5,
+        "description": "Modern one-bedroom apartments with great proximity to nature and local attractions.",
+        "features": {
+          "type": "Single man",
+          "dateListed": "2024-08-01",
+          "electricityStatus": "24/7 power"
+        },
+        "billsIncluded": [
+          "Water",
+          "Security"
+        ],
+        "propertyRules": [
+          "No pets",
+          "Quiet hours after 10 PM"
+        ],
+        "landmarks": [
+          "Lekki Mall",
+          "Lekki Beach"
+        ]
       },
       {
         "name": "Coastal Breeze Homes",
@@ -28,7 +48,28 @@
         "address": "5B Admiralty Road, Lekki Phase 1, Lagos",
         "poster": "https://res.cloudinary.com/dmlgns85e/image/upload/v1725052732/an_accommodation_interior_3_u9snxd.jpg",
         "type": "Communal",
-        "rentersBooked": 7
+        "rentersBooked": 7,
+        "agentName": "Lekki Realtors",
+        "rating": 4.2,
+        "description": "Affordable and comfortable communal living spaces near the coast.",
+        "features": {
+          "type": "Communal",
+          "dateListed": "2024-07-25",
+          "electricityStatus": "Prepaid meters"
+        },
+        "billsIncluded": [
+          "Water",
+          "Electricity",
+          "Wi-Fi"
+        ],
+        "propertyRules": [
+          "No smoking",
+          "Pets allowed"
+        ],
+        "landmarks": [
+          "Lekki Phase 1 Market",
+          "The Palms Shopping Mall"
+        ]
       }
     ]
   },
@@ -50,7 +91,27 @@
         "unitsAvailable": 3,
         "address": "Obudu Mountain Resort, Cross River",
         "type": "Three man",
-        "rentersBooked": 1
+        "rentersBooked": 1,
+        "agentName": "Mountainview Realty",
+        "rating": 4.7,
+        "description": "Spacious and comfortable lodges in a serene mountain environment.",
+        "features": {
+          "type": "Three man",
+          "dateListed": "2024-09-10",
+          "electricityStatus": "24/7 power with backup"
+        },
+        "billsIncluded": [
+          "Water",
+          "Security"
+        ],
+        "propertyRules": [
+          "No smoking",
+          "No loud music"
+        ],
+        "landmarks": [
+          "Obudu Cable Cars",
+          "Obudu Water Park"
+        ]
       },
       {
         "name": "Highland Cottages",
@@ -59,7 +120,27 @@
         "unitsAvailable": 7,
         "address": "20 Hilltop Road, Obudu, Cross River",
         "type": "Single man",
-        "rentersBooked": 5
+        "rentersBooked": 5,
+        "agentName": "Obudu Estates",
+        "rating": 4.4,
+        "description": "Cozy cottages ideal for individuals seeking a peaceful retreat.",
+        "features": {
+          "type": "Single man",
+          "dateListed": "2024-08-15",
+          "electricityStatus": "Prepaid meters"
+        },
+        "billsIncluded": [
+          "Water",
+          "Wi-Fi"
+        ],
+        "propertyRules": [
+          "No pets",
+          "Quiet hours after 9 PM"
+        ],
+        "landmarks": [
+          "Mountain Peaks",
+          "Cable Car Station"
+        ]
       }
     ]
   },
@@ -81,7 +162,27 @@
         "unitsAvailable": 8,
         "address": "Yankari National Park, Bauchi",
         "type": "Communal",
-        "rentersBooked": 4
+        "rentersBooked": 4,
+        "agentName": "Safari Homes",
+        "rating": 4.1,
+        "description": "Communal lodges within the heart of nature, perfect for adventure seekers.",
+        "features": {
+          "type": "Communal",
+          "dateListed": "2024-07-05",
+          "electricityStatus": "24/7 power"
+        },
+        "billsIncluded": [
+          "Water",
+          "Security"
+        ],
+        "propertyRules": [
+          "No feeding animals",
+          "No loud music"
+        ],
+        "landmarks": [
+          "Wikki Warm Springs",
+          "Yankari Safari Tours"
+        ]
       },
       {
         "name": "Savannah Suites",
@@ -90,7 +191,27 @@
         "unitsAvailable": 15,
         "address": "10 Safari Avenue, Bauchi",
         "type": "Single man",
-        "rentersBooked": 10
+        "rentersBooked": 10,
+        "agentName": "Savannah Estates",
+        "rating": 4.3,
+        "description": "Affordable suites offering a comfortable stay amidst wildlife.",
+        "features": {
+          "type": "Single man",
+          "dateListed": "2024-07-25",
+          "electricityStatus": "Prepaid meters"
+        },
+        "billsIncluded": [
+          "Water",
+          "Wi-Fi"
+        ],
+        "propertyRules": [
+          "No smoking",
+          "Quiet hours after 8 PM"
+        ],
+        "landmarks": [
+          "Yankari Game Reserve",
+          "Wildlife Observation Posts"
+        ]
       }
     ]
   },
@@ -112,7 +233,28 @@
         "unitsAvailable": 4,
         "address": "Rock Road, Abeokuta, Ogun",
         "type": "Single man",
-        "rentersBooked": 3
+        "rentersBooked": 3,
+        "agentName": "Rockview Realty",
+        "rating": 4.6,
+        "description": "Elegant apartments with stunning views of Olumo Rock.",
+        "features": {
+          "type": "Single man",
+          "dateListed": "2024-06-15",
+          "electricityStatus": "24/7 power with backup generator"
+        },
+        "billsIncluded": [
+          "Water",
+          "Security",
+          "Wi-Fi"
+        ],
+        "propertyRules": [
+          "No pets",
+          "No loud music"
+        ],
+        "landmarks": [
+          "Olumo Rock",
+          "Abeokuta Cultural Centre"
+        ]
       },
       {
         "name": "Rock View Suites",
@@ -121,7 +263,27 @@
         "unitsAvailable": 6,
         "address": "15 Cliffside Street, Abeokuta, Ogun",
         "type": "Communal",
-        "rentersBooked": 4
+        "rentersBooked": 4,
+        "agentName": "Cliffside Properties",
+        "rating": 4.2,
+        "description": "Comfortable suites close to historic Olumo Rock.",
+        "features": {
+          "type": "Communal",
+          "dateListed": "2024-07-01",
+          "electricityStatus": "Prepaid meters"
+        },
+        "billsIncluded": [
+          "Water",
+          "Wi-Fi"
+        ],
+        "propertyRules": [
+          "No pets",
+          "No parties"
+        ],
+        "landmarks": [
+          "Rockview Park",
+          "Abeokuta Central Market"
+        ]
       }
     ]
   },

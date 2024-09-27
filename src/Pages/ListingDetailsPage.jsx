@@ -118,11 +118,15 @@ const ListingDetailsPage = () => {
             <div>
               <p className="font-semibold">Listing Agent</p>
             </div>
-            <div className="my-4 flex gap-2 start">
-              <Avatar src="https://docs.material-tailwind.com/img/face-2.jpg" />
+            <div className="my-4 flex gap-2 items-center">
+              <div className="border-2 border-white shadow-xl rounded-full">
+                <Avatar src="https://docs.material-tailwind.com/img/face-2.jpg" />
+              </div>
               <div>
-                <div>
-                  <p>{selected.agentName}</p>
+                <div className="mb-2">
+                  <p className="underline underline-offset-2">
+                    {selected.agentName}
+                  </p>
                 </div>
                 <div className="flex gap-1 rounded-sm border border-gray-200 items-center my-1">
                   <div className="bg-gray-200 px-2">
@@ -142,8 +146,8 @@ const ListingDetailsPage = () => {
               <div className="flex gap-2 bg-secondaryPurple px-3 py-2 rounded-lg items-center mb-4">
                 <div>
                   <img
-                      src="https://res.cloudinary.com/dmlgns85e/image/upload/v1727450644/message-circle_idlcwx.png"
-                      alt="#"
+                    src="https://res.cloudinary.com/dmlgns85e/image/upload/v1727450644/message-circle_idlcwx.png"
+                    alt="#"
                   />
                 </div>
                 <div>
@@ -156,8 +160,8 @@ const ListingDetailsPage = () => {
               <div className="flex gap-2 bg-secondaryPurple px-3 py-2 rounded-lg items-center mb-4">
                 <div>
                   <img
-                      src="https://res.cloudinary.com/dmlgns85e/image/upload/v1727450643/Icon_qtwzhu.png"
-                      alt="#"
+                    src="https://res.cloudinary.com/dmlgns85e/image/upload/v1727450643/Icon_qtwzhu.png"
+                    alt="#"
                   />
                 </div>
                 <div>
@@ -170,8 +174,8 @@ const ListingDetailsPage = () => {
               <div className="flex gap-2 bg-primaryPurple px-3 py-2 rounded-lg items-center">
                 <div>
                   <img
-                      src="https://res.cloudinary.com/dmlgns85e/image/upload/v1727450643/Iconn_wh7ixj.png"
-                      alt="#"
+                    src="https://res.cloudinary.com/dmlgns85e/image/upload/v1727450643/Iconn_wh7ixj.png"
+                    alt="#"
                   />
                 </div>
                 <div>
@@ -182,11 +186,82 @@ const ListingDetailsPage = () => {
               </div>
             </div>
           </div>
+          <div className="px-6">
+            <div>
+              <p className="font-semibold mb-4">Cost Breakdown</p>
+            </div>
+            <div className="flex flex-col w-full rounded-[20px] border-2 border-[#E9D7FE] mb-7">
+              <div className="px-4 py-5 flex items-center rounded-t-[20px] justify-between bg-[#E9D7FE]">
+                <div>
+                  <p className="font-semibold text-[14px]">Base Cost</p>
+                </div>
+                <div>
+                  <p className="text-[14px]">N {selected.price}</p>
+                </div>
+              </div>
+
+              <div className="px-4 py-5 flex items-center justify-between">
+                <div>
+                  <p className="font-semibold text-[14px]">Agent's Fee</p>
+                </div>
+                <div>
+                  <p className="text-[14px]">N 10,000</p>
+                </div>
+              </div>
+
+              <div className="px-4 py-5 flex items-center justify-between bg-[#E9D7FE]">
+                <div>
+                  <p className="font-semibold text-[14px]">Agreement Fee</p>
+                </div>
+                <div>
+                  <p className="text-[14px]">N 25,000</p>
+                </div>
+              </div>
+
+              <div className="px-4 py-5 flex items-center justify-between">
+                <div>
+                  <p className="font-semibold text-[14px]">Caution Fee</p>
+                </div>
+                <div>
+                  <p className="text-[14px]">N 75,000</p>
+                </div>
+              </div>
+
+              <div className="px-4 py-5 flex items-center justify-between rounded-b-[20px] bg-[#E9D7FE]">
+                <div>
+                  <p className="font-semibold">TOTAL</p>
+                </div>
+                <div>
+                  <p className="font-semibold">
+                    N {Number(selected.price) + 10000 + 25000 + 75000}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="px-6">
+            <p className="font-semibold mt-6 mb-3">Description</p>
+            <div>
+              <p>{selected.description}</p>
+            </div>
+          </div>
+
+          <div className="my-8 bg-[#E9D7FE] px-3 py-4">
+            <div className="px-6">
+              <div>
+                <p className="font-semibold">Features</p>
+              </div>
+              <div className="flex flex-col">
+
+              </div>
+            </div>
+          </div>
         </div>
       ) : (
-          <div className="w-full h-screen flex items-center justify-center">
-            <Spinner className="w-10 h-10"/>
-          </div>
+        <div className="w-full h-screen flex items-center justify-center">
+          <Spinner className="w-10 h-10" />
+        </div>
       )}
     </>
   );

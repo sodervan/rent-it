@@ -1,11 +1,32 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
+import {
+  Tabs,
+  TabsHeader,
+  TabsBody,
+  Tab,
+  TabPanel,
+} from "@material-tailwind/react";
 
 const NavBar = () => {
   // State to control the visibility of the menu on small screens
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("apartments");
 
+  const data = [
+    {
+      label: "Apartments",
+      value: "apartments",
+      desc: ["University of Lagos", "Ui", "Lekki", "Single room", "Self-contain"],
+    },
+    {
+      label: "Agent",
+      value: "agent",
+      desc: `Because it's about motivating the doers. Because I'm here
+      to follow my dreams and inspire other people to follow their dreams, too.`,
+    },
+  ];
   return (
     <>
       <div className="fixed z-[200] top-0 left-0 w-full bg-white shadow-md border-b-2 border-primaryPurple py-3 px-5">
@@ -122,117 +143,152 @@ const NavBar = () => {
 
         {/* Small screen menu with animation search */}
         <div
-          className={`md:hidden fixed top-0 left-0 w-full h-[30%] rounded-b-xl shadow-lg bg-white transform ${
+          className={`md:hidden fixed top-0 left-0 w-full h-[50%] rounded-b-xl shadow-lg bg-white transform ${
             searchOpen ? "translate-y-0" : "-translate-y-full"
-          } transition-transform duration-500 ease-in-out flex flex-col pt-10 items-center gap-6 px-4`}
+          } transition-transform duration-500 ease-in-out flex flex-col pt-3 items-start gap-2 px-4`}
         >
-          <div
-            onClick={() => setSearchOpen(!searchOpen)}
-            className="text-primaryPurple focus:outline-none hover:text-secondaryPurple cursor-pointer h-10 w-10 bg-[#F9F5FF] rounded-full flex items-center justify-center transition-colors duration-300"
-          >
-            <svg
-              className="w-7 h-7"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </div>
-          <div className="flex items-center w-full">
-            <div className=" w-[80%] border border-gray-100 bg-white py-3 px-4 rounded-l-[11px] shadow-lg">
-              <input
-                className="text-sm p-0 w-full border-none focus:ring-0 bg-none bg-white rounded-lg "
-                type="text"
-                placeholder="Search by University, Location, Property"
-              />
-            </div >
+          <div className="flex gap-2 items-center w-full">
             <div
               onClick={() => setSearchOpen(!searchOpen)}
-              className="flex bg-primaryPurple cursor-pointer w-[20%] py-3 px-4 rounded-r-[11px] items-center justify-center gap-1"
+              className="text-primaryPurple cursor-pointer focus:outline-none hover:text-secondaryPurple h-10 w-10 bg-[#F9F5FF] rounded-full flex items-center justify-center transition-colors duration-300"
             >
-              <div>
-                <i className="fi fi-rr-search text-sm text-white"></i>
+              <i className="fi fi-rr-caret-left cursor-pointer"></i>
+            </div>
+            <div className="flex items-center w-full border border-gray-400 rounded-full justify-between px-5">
+              <div className=" w-[80%] py-3 rounded-l-[11px]">
+                <input
+                  className="text-sm p-0 w-full border-none focus:ring-0 bg-none bg-white rounded-lg "
+                  type="text"
+                  placeholder="Search by University, Location, Property"
+                />
               </div>
-              <div>
-                <p className="text-white text-sm">Search</p>
+              <div onClick={() => setSearchOpen(!searchOpen)}>
+                <div>
+                  <i className="fi fi-rr-search"></i>
+                </div>
               </div>
             </div>
           </div>
+          <Tabs value={activeTab} className="px-2 mt-2">
+            <TabsHeader
+              className="rounded-none border-b border-blue-gray-50 bg-transparent p-0"
+              indicatorProps={{
+                className:
+                  "bg-transparent border-b-2 border-primaryPurple shadow-none rounded-none",
+              }}
+            >
+              {data.map(({ label, value }) => (
+                <Tab
+                  key={value}
+                  value={value}
+                  onClick={() => setActiveTab(value)}
+                  className={
+                    activeTab === value
+                      ? "text-primaryPurple font-semibold"
+                      : ""
+                  }
+                >
+                  {label}
+                </Tab>
+              ))}
+            </TabsHeader>
+            <TabsBody>
+              {data.map(({ value, desc }) => (
+                <TabPanel key={value} value={value}>
+                  <div className="overflow-y-auto">
+                    {Array.isArray(desc) ? (
+                      desc.map((item, index) => (
+                        <div
+                          onClick={() => {
+                            setSearchOpen();
+                          }}
+                          className="flex items-center gap-2 py-1 w-full px-2 cursor-pointer rounded-lg hover:bg-gray-100 transition-all duration-200"
+                          key={index}
+                        >
+                          <i className="fi fi-rr-time-past"></i>
+                          <p>{item}</p>
+                        </div>
+                      ))
+                    ) : (
+                      <p>No description available</p> // Fallback in case desc is not an array
+                    )}
+                  </div>
+                </TabPanel>
+              ))}
+            </TabsBody>
+          </Tabs>
         </div>
 
         <div
           className={`md:hidden fixed top-0 left-0 w-full h-screen bg-white transform ${
             menuOpen ? "translate-y-0" : "-translate-y-full"
-          } transition-transform duration-500 ease-in-out flex flex-col justify-center items-center gap-4 px-4`}
+          } transition-transform duration-500 ease-in-out flex flex-col gap-4 px-4`}
         >
-          <div
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="text-primaryPurple focus:outline-none hover:text-secondaryPurple cursor-pointer transition-colors duration-300"
-          >
-            <svg
-              className="w-7 h-7"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
+          <div className="flex justify-end my-4">
+            <div
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="text-primaryPurple focus:outline-none hover:text-secondaryPurple cursor-pointer transition-colors duration-300"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+              <svg
+                className="w-7 h-7"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </div>
           </div>
-          <NavLink
-            to="/"
-            onClick={() => setMenuOpen(false)}
-            className="text-center py-2 w-full border-b text-gray-600 hover:text-primaryPurple transition-colors duration-300"
-          >
-            Home
-          </NavLink>
-          <NavLink
-            to="/blog"
-            onClick={() => setMenuOpen(false)}
-            className="text-center py-2 w-full border-b text-gray-600 hover:text-primaryPurple transition-colors duration-300"
-          >
-            Blog
-          </NavLink>
-          <NavLink
-            to="/about"
-            onClick={() => setMenuOpen(false)}
-            className="text-center py-2 w-full border-b text-gray-600 hover:text-primaryPurple transition-colors duration-300"
-          >
-            About us
-          </NavLink>
-          <NavLink
-            to="/landlords"
-            onClick={() => setMenuOpen(false)}
-            className="text-center py-2 w-full border-b text-gray-600 hover:text-primaryPurple transition-colors duration-300"
-          >
-            For Landlords/Agents
-          </NavLink>
-          <NavLink
-            to="/signup"
-            onClick={() => setMenuOpen(false)}
-            className="text-center bg-primaryPurple py-2 w-full rounded-lg text-white hover:bg-opacity-90 transition duration-300 shadow-lg"
-          >
-            Sign up
-          </NavLink>
-          <NavLink
-            to="/login"
-            onClick={() => setMenuOpen(false)}
-            className="text-center border border-primaryPurple py-2 w-full rounded-lg text-primaryPurple hover:bg-primaryPurple hover:text-white transition-all duration-300"
-          >
-            Login
-          </NavLink>
+          <div className="flex flex-col items-center justify-center gap-5 h-full">
+            <NavLink
+                to="/"
+                onClick={() => setMenuOpen(false)}
+                className="text-center py-2 w-full border-b text-gray-600 hover:text-primaryPurple transition-colors duration-300"
+            >
+              Home
+            </NavLink>
+            <NavLink
+                to="/blog"
+                onClick={() => setMenuOpen(false)}
+                className="text-center py-2 w-full border-b text-gray-600 hover:text-primaryPurple transition-colors duration-300"
+            >
+              Blog
+            </NavLink>
+            <NavLink
+                to="/about"
+                onClick={() => setMenuOpen(false)}
+                className="text-center py-2 w-full border-b text-gray-600 hover:text-primaryPurple transition-colors duration-300"
+            >
+              About us
+            </NavLink>
+            <NavLink
+                to="/landlords"
+                onClick={() => setMenuOpen(false)}
+                className="text-center py-2 w-full border-b text-gray-600 hover:text-primaryPurple transition-colors duration-300"
+            >
+              For Landlords/Agents
+            </NavLink>
+            <NavLink
+                to="/signup"
+                onClick={() => setMenuOpen(false)}
+                className="text-center bg-primaryPurple py-2 w-full rounded-lg text-white hover:bg-opacity-90 transition duration-300 shadow-lg"
+            >
+              Sign up
+            </NavLink>
+            <NavLink
+                to="/login"
+                onClick={() => setMenuOpen(false)}
+                className="text-center border border-primaryPurple py-2 w-full rounded-lg text-primaryPurple hover:bg-primaryPurple hover:text-white transition-all duration-300"
+            >
+              Login
+            </NavLink>
+          </div>
         </div>
       </div>
     </>

@@ -1,6 +1,7 @@
 import { Footer } from "flowbite-react";
-import {BsDribbble, BsFacebook, BsGithub, BsInstagram, BsTwitter, BsYoutube} from "react-icons/bs";
-import {useNavigate} from "react-router-dom";
+import { BsFacebook, BsInstagram, BsTwitter, BsYoutube } from "react-icons/bs";
+import { useNavigate } from "react-router-dom";
+
 const TheFooter = () => {
   return (
     <Footer container className="bg-black">
@@ -43,7 +44,11 @@ const TheFooter = () => {
         </div>
         <Footer.Divider />
         <div className="w-full sm:flex sm:items-center sm:justify-between">
-          <Footer.Copyright href="#" by="RentIT. All Rights Reserved" year={2024} />
+          <Footer.Copyright
+            href="#"
+            by="RentIT. All Rights Reserved"
+            year={2024}
+          />
           <div className="mt-4 flex space-x-6 sm:mt-0 sm:justify-center">
             <Footer.Icon href="#" icon={BsFacebook} />
             <Footer.Icon href="#" icon={BsInstagram} />

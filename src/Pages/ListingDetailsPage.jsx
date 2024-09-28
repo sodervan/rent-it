@@ -3,12 +3,21 @@ import { useEffect, useState } from "react";
 import { Avatar, Rating, Spinner } from "@material-tailwind/react";
 import TheFooter from "../Components/TheFooter.jsx";
 import BookMarkListingModal from "../Components/Modals/BookMarkListingModal.jsx";
+import ChatAgentModal from "../Components/Modals/ChatAgentModal.jsx";
 
 const ListingDetailsPage = () => {
   const { id, index } = useParams();
   const [selected, setSelected] = useState(null);
   const [toggleBookListingModal, setToggleListingModal] = useState(false);
+  const [toggleChat, setToggleChat] = useState(false);
 
+  const updateChatAgentModal = () => {
+    setToggleChat(true);
+  };
+
+  const closeChatModal = () => {
+    setToggleChat(false);
+  };
   const updateBookListingModal = () => {
     setToggleListingModal(true);
   };
@@ -133,14 +142,14 @@ const ListingDetailsPage = () => {
             </div>
           </div>
           <div className="px-6 my-4 flex items-center gap-3">
-            <button className="flex gap-2 bg-secondaryPurple font-semibold items-center px-3 py-2 mb-4 text-primaryPurple text-[14px] rounded-lg button hover:bg-primaryPurple hover:text-white hover:shadow-lg transition-all duration-300">
+            <button className="flex gap-2 bg-secondaryPurple font-semibold items-center px-4 py-3 mb-4 text-primaryPurple text-[14px] rounded-lg button hover:bg-primaryPurple hover:text-white hover:shadow-lg transition-all duration-300">
               <img
                 src="https://res.cloudinary.com/dmlgns85e/image/upload/v1727450643/Icon_qtwzhu.png"
                 alt="#"
               />
               Virtual Tour
             </button>
-            <button className="flex gap-2 bg-secondaryPurple items-center font-semibold px-3 py-2 mb-4 text-primaryPurple text-[14px] rounded-lg button hover:bg-primaryPurple hover:text-white hover:shadow-lg transition-all duration-300">
+            <button className="flex gap-2 bg-secondaryPurple items-center font-semibold px-4 py-3 mb-4 text-primaryPurple text-[14px] rounded-lg button hover:bg-primaryPurple hover:text-white hover:shadow-lg transition-all duration-300">
               <i className="fi fi-rr-images"></i>
               View Images
             </button>
@@ -174,7 +183,10 @@ const ListingDetailsPage = () => {
               </div>
             </div>
             <div className="flex flex-col items-start">
-              <button className="flex gap-2 bg-secondaryPurple px-3 py-2 rounded-lg items-center mb-4 hover:shadow-lg transition-all duration-300">
+              <button
+                onClick={updateChatAgentModal}
+                className="flex gap-2 bg-secondaryPurple px-3 py-2 rounded-lg items-center mb-4 hover:shadow-lg transition-all duration-300"
+              >
                 <div>
                   <img
                     src="https://res.cloudinary.com/dmlgns85e/image/upload/v1727450644/message-circle_idlcwx.png"
@@ -592,7 +604,13 @@ const ListingDetailsPage = () => {
           </div>
           <TheFooter />
           {toggleBookListingModal && (
-              <BookMarkListingModal closeModal={closeModal} />
+            <BookMarkListingModal closeModal={closeModal} />
+          )}
+          {toggleChat && (
+            <ChatAgentModal
+              closeModal={closeChatModal}
+              agentName={selected.agentName}
+            />
           )}
         </div>
       ) : (

@@ -1,11 +1,20 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Avatar, Rating, Spinner } from "@material-tailwind/react";
-import theFooter from "../Components/TheFooter.jsx";
+import TheFooter from "../Components/TheFooter.jsx";
+import BookMarkListingModal from "../Components/Modals/BookMarkListingModal.jsx";
 
 const ListingDetailsPage = () => {
   const { id, index } = useParams();
   const [selected, setSelected] = useState(null);
+  const [toggleBookListingModal, setToggleListingModal] = useState(false);
+
+  const updateBookListingModal = () => {
+    setToggleListingModal(true);
+  };
+  const closeModal = () => {
+    setToggleListingModal(false);
+  };
 
   const dateFormatter = (prop) => {
     const dateStr = prop;
@@ -179,7 +188,10 @@ const ListingDetailsPage = () => {
                 </div>
               </button>
 
-              <button className="flex gap-2 bg-primaryPurple px-3 py-2 rounded-lg items-center hover:shadow-lg transition-all duration-300">
+              <button
+                onClick={updateBookListingModal}
+                className="flex gap-2 bg-primaryPurple px-3 py-2 rounded-lg items-center hover:shadow-lg transition-all duration-300"
+              >
                 <div>
                   <img
                     src="https://res.cloudinary.com/dmlgns85e/image/upload/v1727450643/Iconn_wh7ixj.png"
@@ -346,10 +358,8 @@ const ListingDetailsPage = () => {
             Report Listing
           </button>
 
+          <p className="px-6 font-semibold mb-5 text-center">Listings Nearby</p>
           <div className="w-full overflow-x-auto mb-10">
-            <p className="px-6 font-semibold mb-5 text-center">
-              Listings Nearby
-            </p>
             <div className="px-6 flex items-center gap-4">
               <div className="flex flex-col h-[350px] rounded-lg shadow-lg w-[280px] min-w-[280px]">
                 <div className="h-[60%] rounded-t-[15px] rounded-b-[20px] overflow-hidden relative">
@@ -580,6 +590,10 @@ const ListingDetailsPage = () => {
               </div>
             </div>
           </div>
+          <TheFooter />
+          {toggleBookListingModal && (
+              <BookMarkListingModal closeModal={closeModal} />
+          )}
         </div>
       ) : (
         <div className="w-full h-screen flex items-center justify-center">

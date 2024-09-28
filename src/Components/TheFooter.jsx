@@ -1,7 +1,7 @@
 import { Footer } from "flowbite-react";
 import {BsDribbble, BsFacebook, BsGithub, BsInstagram, BsTwitter, BsYoutube} from "react-icons/bs";
 import {useNavigate} from "react-router-dom";
-const theFooter = () => {
+const TheFooter = () => {
   return (
     <Footer container className="bg-black">
       <div className="w-full">
@@ -56,4 +56,4 @@ const theFooter = () => {
   );
 };
 
-export default theFooter;
+export default TheFooter;

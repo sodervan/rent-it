@@ -6,17 +6,14 @@
   *{
     font-family: "Poppins", sans-serif;
   }
+  .button{
+    font-family: "Poppins", sans-serif;
+  }
   h1 {
     font-family: "Poppins", sans-serif;
   }
   a,
   p {
-    font-family: "Poppins", sans-serif;
-  }
-}
-
-@layer components{
-  .button{
     font-family: "Poppins", sans-serif;
   }
 }

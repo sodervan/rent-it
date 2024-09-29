@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const BookMarkListingModal = ({ closeModal }) => {
+const BookMarkListingModal = ({ closeModal, unitsAvailable }) => {
   const [units, setUnits] = useState(1);
   const [isVisible, setIsVisible] = useState(false); // Controls modal visibility
   const [animateOut, setAnimateOut] = useState(false); // Controls exit animation
@@ -21,10 +21,10 @@ const BookMarkListingModal = ({ closeModal }) => {
   };
 
   const updateUnits = () => {
-    setUnits(units + 1);
+    if (units < unitsAvailable) setUnits(units + 1);
   };
   const deductUnits = () => {
-    if (units > 0) {
+    if (units > 1) {
       setUnits(units - 1);
     }
   };
@@ -54,8 +54,9 @@ const BookMarkListingModal = ({ closeModal }) => {
             <p>Are you sure you want to book this listing?</p>
           </div>
           <div>
-            <div className="text-gray-500 mb-2">
+            <div className="flex items-center justify-between text text-gray-500 mb-2">
               <p>Units to Book</p>
+              <p>Max - {unitsAvailable}</p>
             </div>
             <div className="flex justify-between items-center border border-gray-200 px-3 py-2 rounded-lg mb-4">
               <div>

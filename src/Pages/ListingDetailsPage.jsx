@@ -604,7 +604,10 @@ const ListingDetailsPage = () => {
           </div>
           <TheFooter />
           {toggleBookListingModal && (
-            <BookMarkListingModal closeModal={closeModal} />
+            <BookMarkListingModal
+              closeModal={closeModal}
+              unitsAvailable={selected.unitsAvailable}
+            />
           )}
           {toggleChat && (
             <ChatAgentModal

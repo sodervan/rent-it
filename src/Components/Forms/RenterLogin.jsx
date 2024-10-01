@@ -1,93 +1,134 @@
 import { NavLink } from "react-router-dom";
+import Typewriter from "typewriter-effect";
+import { Input, Checkbox } from "@material-tailwind/react";
+import { useState } from "react";
 
-const RenterLogin = () => {
+const RenterSignup = () => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [password, setPassword] = useState("");
+
+  const updateShowPasswordState = (e) => {
+    e.preventDefault();
+    setShowPassword(!showPassword);
+  };
+  const updateSetPassword = (e) => {
+    setPassword(e.target.value);
+  };
+
   return (
-    <div className="mt-20 flex flex-col lg:flex-row w-[90%] mx-auto border border-[#aaa] rounded-[20px] gap-3">
-      <div className="w-full lg:w-[50%] bg-[#F3F2FF] rounded-[20px] flex items-center justify-center py-5 px-4">
-        <img
-          src="https://res.cloudinary.com/dmlgns85e/image/upload/v1725266163/Group_106_ltr5gs.png"
-          alt="#"
-        />
-      </div>
-      <div className="w-full lg:w-[50%] flex items-center">
-        <div className="px-5 lg:px-20 w-full">
-          <p className="font-semibold">
-            LOGIN TO <span className="text-primaryPurple">RentIT</span>
-          </p>
-          <div className="w-full my-4">
-            <div className="flex items-center gap-3 border border-[#939393] px-3 w-full rounded-[10px]">
-              <div>
-                <i className="fi fi-rr-envelope text-primaryPurple"></i>
-              </div>
-              <div>
-                <input
-                  type="text"
-                  placeholder="Enter your e-mail address"
-                  className="border-none w-full focus:ring-0"
-                />
-              </div>
+    <>
+      <div className="mt-20 flex flex-col lg:flex-row px-6 gap-3">
+        <div className="w-full lg:w-[50%] flex items-center">
+          <div className="lg:px-20 w-full">
+            <div className="flex items-center justify-center mb-6">
+              <Typewriter
+                onInit={(typewriter) => {
+                  typewriter
+                    .typeString(
+                      '<strong style="font-size: 16px; font-weight: bold">WELCOME BACK!</strong>',
+                    )
+                    .pauseFor(2500)
+                    .start();
+                }}
+              />
             </div>
-          </div>
-
-          <div className="w-full my-4">
-            <div className="flex items-center justify-between gap-3 border border-[#939393] px-3 w-full rounded-[10px]">
-              <div className="flex items-center gap-3">
-                <div>
-                  <i className="fi fi-rr-lock text-primaryPurple"></i>
-                </div>
-                <div>
-                  <input
-                    type="password"
-                    placeholder="Password"
-                    className="border-none w-full focus:ring-0"
-                  />
-                </div>
-              </div>
-              <div>
-                <i className="fi fi-rr-eye"></i>
-              </div>
-            </div>
-
-            <div className="my-4 w-full">
-              <div className="flex flex-col md:flex-row items-center justify-between gap-2 w-full">
-                <div className="flex items-center bg-primaryPurple py-3 px-6 rounded-[20px] justify-between flex-1 w-full md:w-auto">
-                  <button className="text-white">Login</button>
-                  <i className="fi fi-rr-sign-in-alt text-white"></i>
-                </div>
-                <div className="flex items-center justify-center w-full md:w-auto">
-                  <p>OR</p>
-                </div>
-                <div className="flex items-center gap-2 whitespace-nowrap bg-[#F9F5FF] border border-primaryPurple py-3 px-8 rounded-[20px] flex-1 w-full md:w-auto">
-                  <div className="w-4">
-                    <img
-                      src="https://res.cloudinary.com/dmlgns85e/image/upload/v1725270652/4520ddfc56208707045c56232e946f7f_ckvowu.jpg"
-                      alt="#"
+            <p className="font-normal text-center">Login to your Account</p>
+            <form className="flex flex-col gap-5 my-5">
+              <div className="w-full">
+                <div className="flex items-center gap-3 px-3 w-full rounded-[10px]">
+                  <div>
+                    <i className="fi fi-rr-envelope text-primaryPurple"></i>
+                  </div>
+                  <div className="w-full">
+                    <Input
+                      label="Email"
+                      required
+                      type="email"
+                      className="focus:ring-0"
                     />
                   </div>
+                </div>
+              </div>
+
+              <div className="w-full">
+                <div className="flex items-center gap-3 px-3 w-full rounded-[10px]">
                   <div>
-                    <p className="text-primaryPurple">Sign in with Google</p>
+                    <i className="fi fi-rr-lock text-primaryPurple text-lock"></i>
+                  </div>
+                  <div className="w-full">
+                    <Input
+                      label="Password"
+                      required
+                      type={showPassword ? "text" : "password"}
+                      onChange={updateSetPassword}
+                      className="focus:ring-0"
+                    />
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-          <div>
-            <p className="text-sm text-gray-700">
-              Don't have an account?{" "}
-              <span>
-                <NavLink
-                  to="/renter-signup"
-                  className="underline text-primaryPurple"
+              <NavLink
+                to=""
+                className={`text-[14px] flex items-center ${password.length > 0 ? "justify-between" : "justify-end"}`}
+              >
+                {password.length > 0 && (
+                  <button
+                    className={`flex items-center px-3 py-2 rounded-lg transition-all duration-300 ${
+                      showPassword ? "bg-secondaryPurple" : "bg-secondaryPurple"
+                    } hover:bg-opacity-80`}
+                    onClick={updateShowPasswordState}
+                  >
+                    <p
+                      className={`text-[14px] transition-all duration-300 ${showPassword ? "text-gray-500" : "text-gray-500"}`}
+                    >
+                      {showPassword ? "Hide" : "Show"} Password
+                    </p>
+                    <i
+                      className={`ml-2 fi fi-rr-eye${
+                        showPassword ? "-slash" : ""
+                      } transition-transform duration-300 transform ${
+                        showPassword ? "rotate-180" : "rotate-0"
+                      } text-gray-500`}
+                    ></i>
+                  </button>
+                )}
+                <p className="underline text-primaryPurple">Forgot Password</p>
+              </NavLink>
+              <div className="flex flex-col gap-2">
+                <button
+                  type="submit"
+                  className="transition-all duration-300 px-4 py-3 bg-primaryPurple rounded-lg text-white"
                 >
-                  Signup
-                </NavLink>
-              </span>
-            </p>
+                  Login
+                </button>
+                <p className="text-center">or</p>
+                <button className="px-4 py-3 border border-gray-400 rounded-lg flex items-center justify-center gap-2">
+                  <img
+                    src="https://res.cloudinary.com/dmlgns85e/image/upload/v1727705596/Social_icon_pixq6z.png"
+                    alt="#"
+                  />
+                  <p className="text-gray-600">Sign in with Google</p>
+                </button>
+              </div>
+
+              <div>
+                <p className="text-sm text-gray-700">
+                  Don't have an account with Us?{" "}
+                  <span>
+                    <NavLink
+                      to="/renter-signup"
+                      className="underline text-primaryPurple"
+                    >
+                      Signup
+                    </NavLink>
+                  </span>
+                </p>
+              </div>
+            </form>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
-export default RenterLogin;
+export default RenterSignup;

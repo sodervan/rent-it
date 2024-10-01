@@ -32,11 +32,11 @@ const NavBar = () => {
       <div className="fixed z-[200] top-0 left-0 w-full bg-white shadow-md border-b-2 border-primaryPurple py-3 px-5">
         <div className="flex justify-between items-center">
           {/* Logo */}
-          <div>
+          <NavLink to="/">
             <h1 className="text-2xl font-semibold text-primaryPurple hover:text-secondaryPurple transition-colors duration-300 cursor-pointer">
               RentIT
             </h1>
-          </div>
+          </NavLink>
 
           {/* Hamburger Menu (Visible on small screens) */}
           <div className="md:hidden">

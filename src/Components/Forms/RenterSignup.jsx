@@ -59,7 +59,7 @@ const RenterSignup = () => {
               <div className="w-full">
                 <div className="flex items-center gap-3 px-3 w-full rounded-[10px]">
                   <div>
-                    <i className="fi fi-rr-mailbox text-primaryPurple"></i>
+                    <i className="fi fi-rr-envelope text-primaryPurple"></i>
                   </div>
                   <div className="w-full">
                     <Input label="Email Address" required />

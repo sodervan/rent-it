@@ -187,7 +187,7 @@ const RenterSignup = () => {
                   Don't have an account with Us?{" "}
                   <span>
                     <NavLink
-                      to="/agents/signup"
+                      to="/agent/signup"
                       className="underline text-primaryPurple"
                     >
                       Signup

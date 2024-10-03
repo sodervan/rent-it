@@ -24,6 +24,11 @@ const RenterSignup = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
+  const timeOut = () => {
+    setTimeout(() => {
+      setShowToast(false);
+    }, 5000);
+  };
   const updateIsStudentState = () => {
     setIsStudent(!isStudent);
   };
@@ -94,6 +99,7 @@ const RenterSignup = () => {
     } finally {
       setIsLoading(false);
       setShowToast(true);
+      timeOut()
     }
   };
 
@@ -115,6 +121,7 @@ const RenterSignup = () => {
             <div className="ml-3 text-sm font-normal">{message}</div>
             <Toast.Toggle />
           </Toast>
+
         </div>
       )}
       <div className="mt-20 flex flex-col lg:flex-row px-6 gap-3">
@@ -324,7 +331,10 @@ const RenterSignup = () => {
 
                 <p className="font-medium text-center">
                   Already Have An Account?{" "}
-                  <NavLink to="/renter/login" className="text-primaryPurple underline">
+                  <NavLink
+                    to="/renter/login"
+                    className="text-primaryPurple underline"
+                  >
                     Login
                   </NavLink>
                 </p>

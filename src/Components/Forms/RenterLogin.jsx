@@ -15,6 +15,11 @@ const RenterSignup = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showToast, setShowToast] = useState(false);
 
+  const timeOut = () => {
+    setTimeout(() => {
+      setShowToast(false);
+    }, 5000);
+  };
   const updateShowPasswordState = (e) => {
     e.preventDefault();
     setShowPassword(!showPassword);
@@ -29,7 +34,7 @@ const RenterSignup = () => {
     event.preventDefault();
     try {
       setIsLoading(true);
-      console.log(email, password)
+      console.log(email, password);
       const response = await fetch(
         "https://rent-it-api.onrender.com/api/v1/users/login",
         {
@@ -57,6 +62,7 @@ const RenterSignup = () => {
     } finally {
       setIsLoading(false);
       setShowToast(true);
+      timeOut()
     }
   };
 

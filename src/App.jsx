@@ -13,6 +13,7 @@ import SearchResultsPage from "./Pages/SearchResultsPage.jsx";
 import ListingDetailsPage from "./Pages/ListingDetailsPage.jsx";
 import AgentSignup from "./Components/Forms/AgentSignup.jsx";
 import VerifyEmail from "./Components/VerifyEmail.jsx";
+import AgentsLogin from "./Components/Forms/AgentsLogin.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -23,7 +24,9 @@ const router = createBrowserRouter(
       <Route path="/signup" element={<SignupChoice />} />
       <Route path="/search-results" element={<SearchResultsPage />} />
       <Route path="/agent/signup" element={<AgentSignup />} />
+      <Route path="/agent/login" element={<AgentsLogin />} />
       <Route path="/renter/signup/verifyemail" element={<VerifyEmail />} />
+      <Route path="/agent/signup/verifyemail" element={<VerifyEmail />} />
       <Route
         path="/listing-details-page/:id/:index"
         element={<ListingDetailsPage />}

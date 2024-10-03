@@ -132,7 +132,7 @@ const RenterSignup = () => {
                 onInit={(typewriter) => {
                   typewriter
                     .typeString(
-                      '<strong style="font-size: 16px; font-weight: bold">WELCOME! TO <span style="color: #6941C6;">RentIT</span></strong>',
+                      '<strong style="font-size: 16px; font-weight: bold">WELCOME TO <span style="color: #6941C6;">RentIT!</span></strong>',
                     )
                     .pauseFor(2500)
                     .start();

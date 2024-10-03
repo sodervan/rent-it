@@ -116,7 +116,7 @@ const NavBar = () => {
             </NavLink>
 
             <NavLink
-              to="/agent-signup"
+              to="/agent/signup"
               className="relative group font-light transition-all duration-300"
             >
               <p className="text-gray-600 hover:text-primaryPurple transition-colors duration-300">
@@ -127,13 +127,13 @@ const NavBar = () => {
 
             <NavLink
               className="bg-primaryPurple py-2 px-4 rounded-lg hover:bg-opacity-90 transition duration-300 shadow-lg transform hover:-translate-y-1"
-              to="/renter-signup"
+              to="/renter/signup"
             >
               <p className="text-white font-medium">Sign up</p>
             </NavLink>
 
             <NavLink
-              to="/renter-login"
+              to="/renter/login"
               className="border border-primaryPurple py-2 px-4 rounded-lg hover:bg-opacity-90 transition duration-300 shadow-lg transform hover:-translate-y-1"
             >
               <p className="text-primaryPurple font-medium">Login</p>
@@ -268,21 +268,21 @@ const NavBar = () => {
               About us
             </NavLink>
             <NavLink
-                to="/agent-signup"
+                to="/agent/signup"
                 onClick={() => setMenuOpen(false)}
                 className="text-center py-2 w-full border-b text-gray-600 hover:text-primaryPurple transition-colors duration-300"
             >
               For Landlords/Agents
             </NavLink>
             <NavLink
-                to="/renter-signup"
+                to="/renter/signup"
                 onClick={() => setMenuOpen(false)}
                 className="text-center bg-primaryPurple py-2 w-full rounded-lg text-white hover:bg-opacity-90 transition duration-300 shadow-lg"
             >
               Sign up
             </NavLink>
             <NavLink
-                to="/renter-login"
+                to="/renter/login"
                 onClick={() => setMenuOpen(false)}
                 className="text-center border border-primaryPurple py-2 w-full rounded-lg text-primaryPurple hover:bg-primaryPurple hover:text-white transition-all duration-300"
             >

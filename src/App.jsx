@@ -11,15 +11,19 @@ import RenterSignup from "./Components/Forms/RenterSignup";
 import SignupChoice from "./Components/Forms/SignupChoice";
 import SearchResultsPage from "./Pages/SearchResultsPage.jsx";
 import ListingDetailsPage from "./Pages/ListingDetailsPage.jsx";
+import AgentSignup from "./Components/Forms/AgentSignup.jsx";
+import VerifyEmail from "./Components/VerifyEmail.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<MainLayout />}>
       <Route path="/" element={<HomePage />} />
-      <Route path="/renter-login" element={<RenterLogin />} />
-      <Route path="/renter-signup" element={<RenterSignup />} />
+      <Route path="/renter/login" element={<RenterLogin />} />
+      <Route path="/renter/signup" element={<RenterSignup />} />
       <Route path="/signup" element={<SignupChoice />} />
       <Route path="/search-results" element={<SearchResultsPage />} />
+      <Route path="/agent/signup" element={<AgentSignup />} />
+      <Route path="/renter/signup/verifyemail" element={<VerifyEmail />} />
       <Route
         path="/listing-details-page/:id/:index"
         element={<ListingDetailsPage />}

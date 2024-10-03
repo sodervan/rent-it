@@ -1,11 +1,19 @@
 import { NavLink } from "react-router-dom";
 import Typewriter from "typewriter-effect";
-import { Input, Checkbox } from "@material-tailwind/react";
+import { Input, Button } from "@material-tailwind/react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Toast } from "flowbite-react";
+import { HiCheck, HiExclamation } from "react-icons/hi";
 
 const RenterSignup = () => {
+  const navigate = useNavigate();
+  const [message, setMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [showToast, setShowToast] = useState(false);
 
   const updateShowPasswordState = (e) => {
     e.preventDefault();
@@ -14,9 +22,64 @@ const RenterSignup = () => {
   const updateSetPassword = (e) => {
     setPassword(e.target.value);
   };
+  const updateSetEmail = (e) => {
+    setEmail(e.target.value);
+  };
+  const handleLogin = async (event) => {
+    event.preventDefault();
+    try {
+      setIsLoading(true);
+      console.log(email, password)
+      const response = await fetch(
+        "https://rent-it-api.onrender.com/api/v1/users/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: email,
+            password: password,
+          }),
+        },
+      );
+      const result = await response.json();
+      if (response.ok) {
+        setMessage("Login Successful");
+        // navigate("/renter/signup/verifyemail");
+      } else {
+        console.log("Registration Failed");
+        setMessage(result.message || "Registration failed");
+      }
+    } catch (error) {
+      console.error("Error during registration:", error);
+      setMessage("Something went wrong, please try again later.");
+    } finally {
+      setIsLoading(false);
+      setShowToast(true);
+    }
+  };
 
   return (
     <>
+      {showToast && (
+        <div className="fixed top-2 right-2 z-[3000]">
+          <Toast>
+            <div
+              className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${message === "Registration Successful" ? "bg-green-100" : "bg-red-100"} ${message === "Registration Successful" ? "text-green-500" : "text-red-500"} dark:bg-green-800 dark:text-green-200`}
+            >
+              {message === "Registration Successful" && (
+                <HiCheck className="h-5 w-5" />
+              )}
+              {message !== "Registration Successful" && (
+                <HiExclamation className="h-5 w-5" />
+              )}
+            </div>
+            <div className="ml-3 text-sm font-normal">{message}</div>
+            <Toast.Toggle />
+          </Toast>
+        </div>
+      )}
       <div className="mt-20 flex flex-col lg:flex-row px-6 gap-3">
         <div className="w-full lg:w-[50%] flex items-center">
           <div className="lg:px-20 w-full">
@@ -33,7 +96,7 @@ const RenterSignup = () => {
               />
             </div>
             <p className="font-normal text-center">Login to your Account</p>
-            <form className="flex flex-col gap-5 my-5">
+            <form className="flex flex-col gap-5 my-5" onSubmit={handleLogin}>
               <div className="w-full">
                 <div className="flex items-center gap-3 px-3 w-full rounded-[10px]">
                   <div>
@@ -44,6 +107,7 @@ const RenterSignup = () => {
                       label="Email"
                       required
                       type="email"
+                      onChange={updateSetEmail}
                       className="focus:ring-0"
                     />
                   </div>
@@ -94,12 +158,13 @@ const RenterSignup = () => {
                 <p className="underline text-primaryPurple">Forgot Password</p>
               </NavLink>
               <div className="flex flex-col gap-2">
-                <button
+                <Button
                   type="submit"
-                  className="transition-all duration-300 px-4 py-3 bg-primaryPurple rounded-lg text-white"
+                  loading={isLoading}
+                  className="transition-all font-poppins duration-300 px-4 py-3 bg-primaryPurple rounded-lg text-white"
                 >
                   Login
-                </button>
+                </Button>
                 <p className="text-center">or</p>
                 <button className="px-4 py-3 border border-gray-400 rounded-lg flex items-center justify-center gap-2">
                   <img
@@ -115,7 +180,7 @@ const RenterSignup = () => {
                   Don't have an account with Us?{" "}
                   <span>
                     <NavLink
-                      to="/renter-signup"
+                      to="/renter/signup"
                       className="underline text-primaryPurple"
                     >
                       Signup

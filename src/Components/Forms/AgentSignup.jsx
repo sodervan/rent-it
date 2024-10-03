@@ -1,28 +1,14 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import Typewriter from "typewriter-effect";
-import { Input, Checkbox, Typography, Button } from "@material-tailwind/react";
+import { Input, Checkbox, Typography } from "@material-tailwind/react";
 import { useState, useEffect } from "react";
-import { Toast } from "flowbite-react";
-import { HiCheck, HiExclamation } from "react-icons/hi";
 
-const RenterSignup = () => {
+const AgentSignup = () => {
   const [isStudent, setIsStudent] = useState(false);
   const [isTermsAndConditions, setIsTermsAndConditions] = useState(false);
   const [isPassword, setIsPassword] = useState("");
   const [isConfirmPassword, setIsConfirmPassword] = useState("");
   const [isAccurate, setIsAccurate] = useState(null);
-  const [showToast, setShowToast] = useState(false);
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phoneNumber: "",
-    password: "",
-    institution: "",
-  });
-  const [message, setMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
 
   const updateIsStudentState = () => {
     setIsStudent(!isStudent);
@@ -31,92 +17,29 @@ const RenterSignup = () => {
     setIsTermsAndConditions(!isTermsAndConditions);
   };
   const updateIsPassword = (event) => {
+    event.preventDefault();
     setIsPassword(event.target.value);
-    setFormData({ ...formData, password: event.target.value });
-  };
-  const updateConfirmPassword = (event) => {
-    setIsConfirmPassword(event.target.value);
   };
   useEffect(() => {
-    setIsAccurate(
-      isPassword && isConfirmPassword && isPassword === isConfirmPassword,
-    );
-  }, [isPassword, isConfirmPassword]);
+    console.log(isPassword);
+  }, [isPassword]);
+  useEffect(() => {
+    console.log(isConfirmPassword);
+  }, [isConfirmPassword]);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSignup = async (event) => {
+  const updateConfirmPassword = (event) => {
     event.preventDefault();
-
-    // Validate passwords
-    if (!isAccurate) {
-      setMessage("Passwords do not match.");
-      return;
-    }
-    setIsLoading(true);
-    try {
-      // Set isLoading to true before making the request
-      setIsLoading(true);
-
-      const response = await fetch(
-        "https://rent-it-api.onrender.com/api/v1/users/register",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: formData.email,
-            password: formData.password,
-            phoneNumber: formData.phoneNumber,
-            school: isStudent ? formData.institution : "none",
-            firstname: formData.firstName,
-            lastname: formData.lastName,
-            isStudent: isStudent,
-          }),
-        },
-      );
-
-      const result = await response.json();
-
-      if (response.ok) {
-        setMessage("Registration Successful");
-        navigate("/renter/signup/verifyemail");
-      } else {
-        console.log("Registration Failed");
-        setMessage(result.message || "Registration failed");
-      }
-    } catch (error) {
-      console.error("Error during registration:", error);
-      setMessage("Something went wrong, please try again later.");
-    } finally {
-      setIsLoading(false);
-      setShowToast(true);
-    }
+    setIsConfirmPassword(event.target.value);
   };
+
+  useEffect(() => {
+    if (isPassword && isConfirmPassword) {
+      setIsAccurate(isPassword === isConfirmPassword);
+    }
+  }, [isPassword, isConfirmPassword]);
 
   return (
     <>
-      {showToast && (
-        <div className="fixed top-2 right-2 z-[3000]">
-          <Toast>
-            <div
-              className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${message === "Registration Successful" ? "bg-green-100" : "bg-red-100"} ${message === "Registration Successful" ? "text-green-500" : "text-red-500"} dark:bg-green-800 dark:text-green-200`}
-            >
-              {message === "Registration Successful" && (
-                <HiCheck className="h-5 w-5" />
-              )}
-              {message !== "Registration Successful" && (
-                <HiExclamation className="h-5 w-5" />
-              )}
-            </div>
-            <div className="ml-3 text-sm font-normal">{message}</div>
-            <Toast.Toggle />
-          </Toast>
-        </div>
-      )}
       <div className="mt-20 flex flex-col lg:flex-row px-6 gap-3">
         <div className="w-full lg:w-[50%] flex items-center">
           <div className="lg:px-20 w-full">
@@ -133,42 +56,29 @@ const RenterSignup = () => {
               />
             </div>
             <p className="font-normal text-center">Create a New Account</p>
-            <form className="flex flex-col gap-5 my-5" onSubmit={handleSignup}>
-              {/* First Name */}
+            <form className="flex flex-col gap-5 my-5">
               <div className="w-full">
                 <div className="flex items-center gap-3 px-3 w-full rounded-[10px]">
                   <div>
                     <i className="fi fi-rr-user text-primaryPurple"></i>
                   </div>
                   <div className="w-full">
-                    <Input
-                      label="First Name"
-                      name="firstName"
-                      onChange={handleChange}
-                      required
-                    />
+                    <Input label="First Name" required />
                   </div>
                 </div>
               </div>
 
-              {/* Last Name */}
               <div className="w-full">
                 <div className="flex items-center gap-3 px-3 w-full rounded-[10px]">
                   <div>
                     <i className="fi fi-rr-user text-primaryPurple"></i>
                   </div>
                   <div className="w-full">
-                    <Input
-                      label="Last Name"
-                      name="lastName"
-                      onChange={handleChange}
-                      required
-                    />
+                    <Input label="Last Name" required />
                   </div>
                 </div>
               </div>
 
-              {/* Email */}
               <div className="w-full">
                 <div className="flex items-center gap-3 px-3 w-full rounded-[10px]">
                   <div>
@@ -177,34 +87,25 @@ const RenterSignup = () => {
                   <div className="w-full">
                     <Input
                       label="Email Address"
-                      name="email"
-                      type="email"
-                      onChange={handleChange}
-                      className="focus:ring-0"
                       required
+                      type="email"
+                      className="focus:ring-0"
                     />
                   </div>
                 </div>
               </div>
 
-              {/* Mobile Number */}
               <div className="w-full">
                 <div className="flex items-center gap-3 px-3 w-full rounded-[10px]">
                   <div>
                     <i className="fi fi-rr-phone-call text-primaryPurple"></i>
                   </div>
                   <div className="w-full">
-                    <Input
-                      label="Mobile Number"
-                      name="phoneNumber"
-                      onChange={handleChange}
-                      required
-                    />
+                    <Input label="Mobile Number" required />
                   </div>
                 </div>
               </div>
 
-              {/* Password */}
               <div className="w-full">
                 <div className="flex items-center gap-3 px-3 w-full rounded-[10px]">
                   <div>
@@ -214,16 +115,15 @@ const RenterSignup = () => {
                     <Input
                       label="Password"
                       type="password"
+                      className="focus:ring-0"
                       onChange={updateIsPassword}
                       value={isPassword}
-                      className="focus:ring-0"
                       required
                     />
                   </div>
                 </div>
               </div>
 
-              {/* Confirm Password */}
               <div className="w-full">
                 <div className="flex items-center gap-3 px-3 w-full rounded-[10px]">
                   <div>
@@ -244,7 +144,7 @@ const RenterSignup = () => {
                       <Typography
                         variant="small"
                         color="gray"
-                        className="mt-2 flex items-center gap-1"
+                        className="mt-2 flex items-center gap-1 font-normal"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -264,8 +164,6 @@ const RenterSignup = () => {
                   </div>
                 </div>
               </div>
-
-              {/* Student Institution */}
               {isStudent && (
                 <div className="w-full">
                   <div className="flex items-center gap-3 px-3 w-full rounded-[10px]">
@@ -275,58 +173,63 @@ const RenterSignup = () => {
                     <div className="w-full">
                       <Input
                         label="Institution"
-                        name="institution"
-                        onChange={handleChange}
-                        required
+                        className="focus:ring-0"
+                        required={isStudent}
                       />
                     </div>
                   </div>
                 </div>
               )}
-
-              {/* Checkboxes */}
               <div className="flex flex-col">
                 <div className="flex gap-1 items-center">
                   <Checkbox
-                    onChange={updateIsStudentState}
                     className="focus:ring-0"
+                    onChange={updateIsStudentState}
                   />
                   <p className="text-gray-500 text-[14px]">I am A Student</p>
                 </div>
                 <div className="flex gap-1 items-center">
                   <Checkbox
-                    onChange={updateIsTermsConditions}
                     className="focus:ring-0"
+                    onChange={updateIsTermsConditions}
                   />
                   <p className="text-gray-500 text-[14px]">
                     I have read and agreed to{" "}
-                    <span className="text-primaryPurple cursor-pointer">
+                    <span className="text-primaryPurple cursor-pointer hover:underline">
                       RentIT's Terms and Conditions
                     </span>
                   </p>
                 </div>
               </div>
-
-              {/* Submit Button */}
               <div className="flex flex-col gap-2">
-                <Button
-                  disabled={!isTermsAndConditions || !isAccurate}
-                  loading={isLoading}
+                <button
+                  disabled={!isTermsAndConditions}
                   type="submit"
-                  className={`transition-all duration-300 font-poppins ${isTermsAndConditions && isAccurate ? "px-4 py-3 bg-primaryPurple rounded-lg text-white" : "bg-gray-300 px-4 py-3 rounded-lg text-gray-500"}`}
+                  className={`transition-all duration-300 ${isTermsAndConditions && isAccurate ? "px-4 py-3 bg-primaryPurple rounded-lg text-white" : "bg-gray-300 px-4 py-3 rounded-lg text-gray-500"}`}
                 >
                   Sign up
-                </Button>
+                </button>
+                <p className="text-center">or</p>
+                <button className="px-4 py-3 border border-gray-400 rounded-lg flex items-center justify-center gap-2">
+                  <img
+                    src="https://res.cloudinary.com/dmlgns85e/image/upload/v1727705596/Social_icon_pixq6z.png"
+                    alt="#"
+                  />
+                  <p className="text-gray-600">Sign in with Google</p>
+                </button>
+              </div>
 
-                {/*{errorMessage && (*/}
-                {/*  <p className="text-red-500 text-center">{errorMessage}</p>*/}
-                {/*)}*/}
-
-                <p className="font-medium text-center">
-                  Already Have An Account?{" "}
-                  <NavLink to="/renter/login" className="text-primaryPurple underline">
-                    Login
-                  </NavLink>
+              <div>
+                <p className="text-sm text-gray-700">
+                  Have an account with Us?{" "}
+                  <span>
+                    <NavLink
+                      to="/renter-login"
+                      className="underline text-primaryPurple"
+                    >
+                      Login
+                    </NavLink>
+                  </span>
                 </p>
               </div>
             </form>
@@ -337,4 +240,4 @@ const RenterSignup = () => {
   );
 };
 
-export default RenterSignup;
+export default AgentSignup;

@@ -19,6 +19,9 @@ module.exports = withMT({
         xxs: "12px", // Example custom font size
         xxl: "1.75rem", // Example custom font size
       },
+      fontFamily: {
+        poppins: ['Poppins', 'sans-serif'],
+      },
     },
   },
   plugins: [flowbite.plugin()],

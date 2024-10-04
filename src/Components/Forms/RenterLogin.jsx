@@ -51,6 +51,7 @@ const RenterSignup = () => {
       const result = await response.json();
       if (response.ok) {
         setMessage("Login Successful");
+        console.log(result)
         // navigate("/renter/signup/verifyemail");
       } else {
         console.log("Registration Failed");
@@ -72,12 +73,12 @@ const RenterSignup = () => {
         <div className="fixed top-2 right-2 z-[3000]">
           <Toast>
             <div
-              className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${message === "Registration Successful" ? "bg-green-100" : "bg-red-100"} ${message === "Registration Successful" ? "text-green-500" : "text-red-500"} dark:bg-green-800 dark:text-green-200`}
+              className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${message === "Login Successful" ? "bg-green-100" : "bg-red-100"} ${message === "Login Successful" ? "text-green-500" : "text-red-500"} dark:bg-green-800 dark:text-green-200`}
             >
-              {message === "Registration Successful" && (
+              {message === "Login Successful" && (
                 <HiCheck className="h-5 w-5" />
               )}
-              {message !== "Registration Successful" && (
+              {message !== "Login Successful" && (
                 <HiExclamation className="h-5 w-5" />
               )}
             </div>

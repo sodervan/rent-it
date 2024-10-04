@@ -88,7 +88,7 @@ const RenterSignup = () => {
 
       if (response.ok) {
         setMessage("Registration Successful");
-        navigate("/renter/login");
+        navigate("/renter/signup/verifyemail");
       } else {
         console.log("Registration Failed");
         setMessage(result.message || "Registration failed");

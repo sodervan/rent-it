@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
+import { Avatar } from "@material-tailwind/react";
+import { useNavigate } from "react-router-dom";
 import {
   Tabs,
   TabsHeader,
@@ -8,17 +10,23 @@ import {
   TabPanel,
 } from "@material-tailwind/react";
 
-const NavBar = () => {
+const NavBar = ({ userId }) => {
   // State to control the visibility of the menu on small screens
+  const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("apartments");
-
   const data = [
     {
       label: "Apartments",
       value: "apartments",
-      desc: ["University of Lagos", "Ui", "Lekki", "Single room", "Self-contain"],
+      desc: [
+        "University of Lagos",
+        "Ui",
+        "Lekki",
+        "Single room",
+        "Self-contain",
+      ],
     },
     {
       label: "Agent",
@@ -41,6 +49,14 @@ const NavBar = () => {
           {/* Hamburger Menu (Visible on small screens) */}
           <div className="md:hidden">
             <div className="flex gap-5 items-center justify-center">
+              {userId && (
+                <div
+                  className="cursor-pointer"
+                  onClick={() => navigate("/profile")}
+                >
+                  <Avatar src="https://docs.material-tailwind.com/img/face-2.jpg" alt="#" size="sm" />
+                </div>
+              )}
               <button onClick={() => setSearchOpen(!searchOpen)}>
                 <i className="fi fi-rr-search text-primaryPurple"></i>
               </button>
@@ -136,7 +152,9 @@ const NavBar = () => {
               to="/renter/login"
               className="border border-primaryPurple py-2 px-4 rounded-lg hover:bg-opacity-90 transition duration-300 shadow-lg transform hover:-translate-y-1"
             >
-              <p className="text-primaryPurple font-medium">Login</p>
+              <p className="text-primaryPurple font-medium">
+                {userId ? "Log Out" : "Login"}
+              </p>
             </NavLink>
           </div>
         </div>
@@ -247,46 +265,48 @@ const NavBar = () => {
           </div>
           <div className="flex flex-col items-center justify-center gap-5 h-full">
             <NavLink
-                to="/"
-                onClick={() => setMenuOpen(false)}
-                className="text-center py-2 w-full border-b text-gray-600 hover:text-primaryPurple transition-colors duration-300"
+              to="/"
+              onClick={() => setMenuOpen(false)}
+              className="text-center py-2 w-full border-b text-gray-600 hover:text-primaryPurple transition-colors duration-300"
             >
               Home
             </NavLink>
             <NavLink
-                to="/blog"
-                onClick={() => setMenuOpen(false)}
-                className="text-center py-2 w-full border-b text-gray-600 hover:text-primaryPurple transition-colors duration-300"
+              to="/blog"
+              onClick={() => setMenuOpen(false)}
+              className="text-center py-2 w-full border-b text-gray-600 hover:text-primaryPurple transition-colors duration-300"
             >
               Blog
             </NavLink>
             <NavLink
-                to="/about"
-                onClick={() => setMenuOpen(false)}
-                className="text-center py-2 w-full border-b text-gray-600 hover:text-primaryPurple transition-colors duration-300"
+              to="/about"
+              onClick={() => setMenuOpen(false)}
+              className="text-center py-2 w-full border-b text-gray-600 hover:text-primaryPurple transition-colors duration-300"
             >
               About us
             </NavLink>
             <NavLink
-                to="/agent/signup"
-                onClick={() => setMenuOpen(false)}
-                className="text-center py-2 w-full border-b text-gray-600 hover:text-primaryPurple transition-colors duration-300"
+              to="/agent/signup"
+              onClick={() => setMenuOpen(false)}
+              className="text-center py-2 w-full border-b text-gray-600 hover:text-primaryPurple transition-colors duration-300"
             >
               For Landlords/Agents
             </NavLink>
-            <NavLink
+            {!userId && (
+              <NavLink
                 to="/renter/signup"
                 onClick={() => setMenuOpen(false)}
                 className="text-center bg-primaryPurple py-2 w-full rounded-lg text-white hover:bg-opacity-90 transition duration-300 shadow-lg"
-            >
-              Sign up
-            </NavLink>
+              >
+                Sign up
+              </NavLink>
+            )}
             <NavLink
-                to="/renter/login"
-                onClick={() => setMenuOpen(false)}
-                className="text-center border border-primaryPurple py-2 w-full rounded-lg text-primaryPurple hover:bg-primaryPurple hover:text-white transition-all duration-300"
+              to="/renter/login"
+              onClick={() => setMenuOpen(false)}
+              className="text-center border border-primaryPurple py-2 w-full rounded-lg text-primaryPurple hover:bg-primaryPurple hover:text-white transition-all duration-300"
             >
-              Login
+              {userId ? "Log Out" : "Login"}
             </NavLink>
           </div>
         </div>

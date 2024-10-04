@@ -51,6 +51,7 @@ const RenterSignup = () => {
       const result = await response.json();
       if (response.ok) {
         setMessage("Login Successful");
+        navigate("/", { state: { userId: result.payload.id } });
         console.log(result)
         // navigate("/renter/signup/verifyemail");
       } else {

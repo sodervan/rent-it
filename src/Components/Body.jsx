@@ -1,6 +1,6 @@
 import { Carousel } from "@material-tailwind/react";
 
-const Body = () => {
+const Body = ({userId}) => {
   return (
     <div>
       <div className="h-[400px] mt-20 sm:mt-[40px] sm:h-[550px] md:mt-[75px] md:h-[550px] relative">
@@ -19,7 +19,7 @@ const Body = () => {
           <div className="flex gap-5 flex-wrap justify-center whitespace-nowrap sm:gap-2">
             <div className="bg-[#F4EBFF] rounded-lg px-2 py-1 md:py-2 md:px-4">
               <p className="text-[12px] text-primaryPurple sm:text-primaryPurple font-normal sm:text-[14px]">
-                No unnecessary fees
+                {userId}
               </p>
             </div>
             <div className="bg-[#F4EBFF] rounded-lg px-2 py-1 md:py-2 md:px-4">

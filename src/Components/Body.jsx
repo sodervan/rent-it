@@ -1,8 +1,38 @@
+import { useState, useEffect } from "react";
 import { Carousel } from "@material-tailwind/react";
+import { Toast } from "flowbite-react";
+import { HiCheck } from "react-icons/hi";
 
-const Body = ({userId}) => {
+const Body = ({ userId }) => {
+  const [showToast, setShowToast] = useState(true); // State to control toast visibility
+
+  // Use useEffect to hide the toast after 5 seconds
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setShowToast(false);
+    }, 5000);
+
+    // Cleanup the timeout if the component unmounts
+    return () => clearTimeout(timeout);
+  }, []); // Empty dependency array ensures this runs once on mount
+
   return (
     <div>
+      {showToast && userId && (
+        <div className="fixed top-2 right-2 z-[3000]">
+          <Toast>
+            <div
+              className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200`}
+            >
+              <HiCheck className="h-5 w-5" />
+            </div>
+            <div className="ml-3 text-sm font-normal">Login Successful</div>
+            <Toast.Toggle />
+          </Toast>
+        </div>
+      )}
+
+      {/* The rest of your component */}
       <div className="h-[400px] mt-20 sm:mt-[40px] sm:h-[550px] md:mt-[75px] md:h-[550px] relative">
         <div className="absolute inset-0 z-10 flex flex-col gap-7 justify-center items-center">
           <div className="text-center px-4 md:px-20">

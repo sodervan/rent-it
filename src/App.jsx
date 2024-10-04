@@ -29,7 +29,7 @@ const router = createBrowserRouter(
       <Route path="/renter/signup/verifyemail" element={<VerifyEmail />} />
       <Route path="/agent/signup/verifyemail" element={<VerifyEmail />} />
       <Route
-        path="/renter/verificationemail"
+        path="/user/verificationemail"
         element={<RenterVerificationEmail />}
       />
       <Route

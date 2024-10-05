@@ -70,16 +70,16 @@ const VerificationEmail = () => {
             alt="#"
           />
           <div>
-            <p className="animate-fadeIn text-lg">Email Verified</p>
+            <p className="animate-fadeIn text-xl font-semibold">Email Verified</p>
           </div>
           <div className="flex flex-col items-center justify-center">
             <div>
-              <p className="text-gray-500 mb-2 text-center">
+              <p className="text-gray-500 mb-2 text-[15px]">
                 Signed up as renter?
               </p>
             </div>
             <button
-              className="px-3 text-[14px] py-2 bg-secondaryPurple rounded-lg transition-all duration-200 hover:bg-primaryPurple"
+              className="px-4 text-primaryPurple py-3 bg-secondaryPurple rounded-lg transition-all duration-200 hover:bg-primaryPurple"
               onClick={() => navigate("/renter/login")}
             >
               Go to Login
@@ -87,10 +87,10 @@ const VerificationEmail = () => {
           </div>
           <div className="flex flex-col items-center justify-center">
             <div>
-              <p className="text-gray-500 mb-2">Signed up as Agent?</p>
+              <p className="text-gray-500 mb-2 text-[15px]">Signed up as Agent?</p>
             </div>
             <button
-              className="px-3 text-[14px] py-2 bg-secondaryPurple rounded-lg transition-all duration-200 hover:bg-primaryPurple"
+              className="px-4 text-primaryPurple py-4 bg-secondaryPurple rounded-lg transition-all duration-200 hover:bg-primaryPurple"
               onClick={() => navigate("/agent/login")}
             >
               Login to continue Registration

@@ -41,8 +41,9 @@ const VerifyEmail = () => {
         </div>
         <div>
           <p className="text-center">
-            We’ve sent a verification link to {email}. Please check your inbox
-            and click the link to verify your email.
+            We’ve sent a verification link to{" "}
+            <span className="text-primaryPurple">{email}</span>. Please check
+            your inbox and click the link to verify your email.
           </p>
         </div>
         <button className="px-3 py-2 bg-secondaryPurple text-primaryPurple rounded-lg">

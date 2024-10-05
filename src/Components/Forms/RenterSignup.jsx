@@ -88,7 +88,9 @@ const RenterSignup = () => {
 
       if (response.ok) {
         setMessage("Registration Successful");
-        navigate("/renter/signup/verifyemail");
+        navigate("/renter/signup/verifyemail", {
+          state: { email: formData.email },
+        });
       } else {
         console.log("Registration Failed");
         setMessage(result.message || "Registration failed");
@@ -99,7 +101,7 @@ const RenterSignup = () => {
     } finally {
       setIsLoading(false);
       setShowToast(true);
-      timeOut()
+      timeOut();
     }
   };
 
@@ -121,7 +123,6 @@ const RenterSignup = () => {
             <div className="ml-3 text-sm font-normal">{message}</div>
             <Toast.Toggle />
           </Toast>
-
         </div>
       )}
       <div className="mt-20 flex flex-col lg:flex-row px-6 gap-3">

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 
 const VerificationEmail = () => {
@@ -59,28 +59,57 @@ const VerificationEmail = () => {
       )}
 
       {status === "success" && (
-        <div className="text-center transition-opacity duration-300">
-          <h2 className="text-3xl font-extrabold text-green-600 animate-fadeIn">
-            Success!
-          </h2>
-          <p className="mt-2 text-gray-700 animate-fadeIn">{message}</p>
-          <button
-            className="mt-6 px-6 py-3 bg-green-600 text-white rounded-lg shadow-md transition-all duration-200 hover:bg-green-700"
-            onClick={() => navigate("/renter/login")}
-          >
-            Go to Login
-          </button>
+        <div className="flex flex-col gap-3 items-center justify-center transition-opacity duration-300">
+          <img
+            src="https://res.cloudinary.com/dmlgns85e/image/upload/v1728146702/vector-2_vfbd1n.png"
+            alt="#"
+          />
+          <div className="text-center">
+            <p className="mt-2 text-gray-700 animate-fadeIn">Email Verified</p>
+          </div>
+          <div>
+            <p className="text-gray-500 mb-2 text-center">
+              Signed up as renter?
+            </p>
+            <button
+              className="mt-6 px-6 py-3 bg-green-600 text-white rounded-lg shadow-md transition-all duration-200 hover:bg-green-700"
+              onClick={() => navigate("/renter/login")}
+            >
+              Go to Login
+            </button>
+          </div>
+          <div>
+            <p className="text-gray-500 mb-2 text-center">Signed up as Agent</p>
+            <button
+              className="px-4 py-3 bg-secondaryPurple rounded-lg transition-all duration-200 hover:bg-primaryPurple"
+              onClick={() => navigate("/agent/login")}
+            >
+              Login to continue Registration
+            </button>
+          </div>
         </div>
       )}
 
       {status === "error" && (
-        <div className="text-center transition-opacity duration-300">
-          <h2 className="text-3xl font-extrabold text-red-600 animate-fadeIn">
-            Verification Failed
-          </h2>
-          <p className="mt-2 text-gray-700 animate-fadeIn">{message}</p>
+        <div className="flex flex-col items-center justify-center gap-3 transition-opacity duration-300">
+          <div>
+            <h2 className="text-xl font-bold text-primaryPurple animate-fadeIn">
+              Oops!
+            </h2>
+          </div>
+          <div>
+            <p className="mt-2 text-gray-700 animate-fadeIn">
+              Verification Failed. Please request another Link
+            </p>
+          </div>
           <button
-            className="mt-6 px-6 py-3 bg-red-600 text-white rounded-lg shadow-md transition-all duration-200 hover:bg-red-700"
+            className="px-4 py-3 bg-primaryPurple rounded-lg text-white transition-all duration-200 hover:shadow-lg"
+            onClick={() => navigate("/")}
+          >
+            Request another Link
+          </button>
+          <button
+            className="px-4 py-3 bg-secondaryPurple rounded-lg text-primaryPurple transition-all duration-200 hover:shadow-lg"
             onClick={() => navigate("/")}
           >
             Go to Home

@@ -1,8 +1,11 @@
 import { Toast } from "flowbite-react";
 import { HiCheck } from "react-icons/hi";
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 
 const VerifyEmail = () => {
+  const location = useLocation();
+  const email = location.state?.email;
   const [showToast, setShowToast] = useState(true);
 
   useEffect(() => {
@@ -38,8 +41,8 @@ const VerifyEmail = () => {
         </div>
         <div>
           <p className="text-center">
-            We’ve sent a verification link to [user's email address]. Please
-            check your inbox and click the link to verify your email.
+            We’ve sent a verification link to {email}. Please check your inbox
+            and click the link to verify your email.
           </p>
         </div>
         <button className="px-3 py-2 bg-secondaryPurple text-primaryPurple rounded-lg">

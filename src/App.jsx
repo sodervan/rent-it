@@ -16,6 +16,7 @@ import VerifyEmail from "./Components/VerifyEmail.jsx";
 import AgentsLogin from "./Components/Forms/AgentsLogin.jsx";
 import RenterVerificationEmail from "./Components/RenterVerificationEmail.jsx";
 import ProfilePage from "./Pages/ProfilePage.jsx";
+import AgentRegistration from "./Components/Forms/AgentRegistration.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -30,6 +31,7 @@ const router = createBrowserRouter(
       <Route path="/renter/signup/verifyemail" element={<VerifyEmail />} />
       <Route path="/agent/signup/verifyemail" element={<VerifyEmail />} />
       <Route path="/profile" element={<ProfilePage />} />
+      <Route path="/agent/agentregistration/step2" element={<AgentRegistration />} />
       <Route
         path="/user/verificationemail"
         element={<RenterVerificationEmail />}

@@ -52,12 +52,13 @@ const VerificationEmail = () => {
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 transition-all duration-300">
       {status === "loading" && (
         <div className="flex flex-col items-center justify-center">
-          <div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 animate-spin"></div>
           <div className="flex gap-2 items-center justify-center">
             <Spinner />
-            <p className="mt-4 text-gray-500 animate-fadeIn">
-              Verifying your email, please wait...
-            </p>
+            <div>
+              <p className="mt-4 text-gray-500 animate-fadeIn">
+                Verifying your email, please wait...
+              </p>
+            </div>
           </div>
         </div>
       )}
@@ -68,24 +69,28 @@ const VerificationEmail = () => {
             src="https://res.cloudinary.com/dmlgns85e/image/upload/v1728146702/vector-2_vfbd1n.png"
             alt="#"
           />
-          <div className="text-center">
-            <p className="mt-2 text-gray-700 animate-fadeIn">Email Verified</p>
-          </div>
           <div>
-            <p className="text-gray-500 mb-2 text-center">
-              Signed up as renter?
-            </p>
+            <p className="animate-fadeIn text-lg">Email Verified</p>
+          </div>
+          <div className="flex flex-col items-center justify-center">
+            <div>
+              <p className="text-gray-500 mb-2 text-center">
+                Signed up as renter?
+              </p>
+            </div>
             <button
-              className="mt-6 px-6 py-3 bg-green-600 text-white rounded-lg shadow-md transition-all duration-200 hover:bg-green-700"
+              className="px-3 text-[14px] py-2 bg-secondaryPurple rounded-lg transition-all duration-200 hover:bg-primaryPurple"
               onClick={() => navigate("/renter/login")}
             >
               Go to Login
             </button>
           </div>
-          <div>
-            <p className="text-gray-500 mb-2 text-center">Signed up as Agent</p>
+          <div className="flex flex-col items-center justify-center">
+            <div>
+              <p className="text-gray-500 mb-2">Signed up as Agent?</p>
+            </div>
             <button
-              className="px-4 py-3 bg-secondaryPurple rounded-lg transition-all duration-200 hover:bg-primaryPurple"
+              className="px-3 text-[14px] py-2 bg-secondaryPurple rounded-lg transition-all duration-200 hover:bg-primaryPurple"
               onClick={() => navigate("/agent/login")}
             >
               Login to continue Registration

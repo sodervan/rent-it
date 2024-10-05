@@ -88,7 +88,9 @@ const RenterSignup = () => {
 
       if (response.ok) {
         setMessage("Registration Successful");
-        navigate("/agent/signup/verifyemail");
+        navigate("/renter/signup/verifyemail", {
+          state: { email: formData.email },
+        });
       } else {
         console.log("Registration Failed");
         setMessage(result.message || "Registration failed");

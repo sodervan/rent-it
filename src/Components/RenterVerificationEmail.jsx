@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
+import { Spinner } from "@material-tailwind/react";
 
 const VerificationEmail = () => {
   const [status, setStatus] = useState("loading"); // loading, success, error, expired
@@ -52,9 +53,12 @@ const VerificationEmail = () => {
       {status === "loading" && (
         <div className="flex flex-col items-center justify-center">
           <div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 animate-spin"></div>
-          <p className="mt-4 text-gray-500 animate-fadeIn">
-            Verifying your email, please wait...
-          </p>
+          <div className="flex gap-2 items-center justify-center">
+            <Spinner />
+            <p className="mt-4 text-gray-500 animate-fadeIn">
+              Verifying your email, please wait...
+            </p>
+          </div>
         </div>
       )}
 

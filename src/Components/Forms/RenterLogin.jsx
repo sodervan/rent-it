@@ -50,9 +50,13 @@ const RenterSignup = () => {
       );
       const result = await response.json();
       if (response.ok) {
+        localStorage.setItem("userId", result.payload.id);
+        localStorage.setItem("accessToken", result.payload.access_token);
+        localStorage.setItem("refreshToken", result.payload.refresh_token);
         setMessage("Login Successful");
-        navigate("/", { state: { userId: result.payload.id } });
-        console.log(result)
+        navigate("/");
+        window.history.replaceState(null, "", "/");
+        console.log(result);
         // navigate("/renter/signup/verifyemail");
       } else {
         console.log("Registration Failed");
@@ -64,7 +68,7 @@ const RenterSignup = () => {
     } finally {
       setIsLoading(false);
       setShowToast(true);
-      timeOut()
+      timeOut();
     }
   };
 

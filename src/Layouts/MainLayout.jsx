@@ -1,14 +1,16 @@
 import { Outlet } from "react-router-dom";
 import NavBar from "../Components/NavBar";
-import { useLocation } from "react-router-dom";
+// import { useEffect, useState } from "react";
+// import { useLocation } from "react-router-dom";
 
 const MainLayout = () => {
-  const location = useLocation();
-  const { userId } = location.state || {};
+  // const [userId, setUserId] = useState(null);
+  // const location = useLocation();
+
   return (
     <>
-      <NavBar userId={userId} />
-      <Outlet context={{ userId }} />
+      <NavBar />
+      <Outlet />
     </>
   );
 };

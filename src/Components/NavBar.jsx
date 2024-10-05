@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { Avatar } from "@material-tailwind/react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import LogOutModal from "./Modals/LogOutModal.jsx";
 import {
   Tabs,
   TabsHeader,
@@ -10,8 +11,10 @@ import {
   TabPanel,
 } from "@material-tailwind/react";
 
-const NavBar = ({ userId }) => {
-  // State to control the visibility of the menu on small screens
+const NavBar = () => {
+  const [toggleModal, setToggleModal] = useState(false);
+  const [userId, setId] = useState(null);
+  const location = useLocation();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -35,8 +38,30 @@ const NavBar = ({ userId }) => {
       to follow my dreams and inspire other people to follow their dreams, too.`,
     },
   ];
+  const menu = () => {
+    setMenuOpen(false);
+  };
+  const toggleLogoutModal = () => {
+    setToggleModal(!toggleModal);
+  };
+  const logout = () => {
+    setId(null);
+    localStorage.removeItem("userId");
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    navigate("/");
+    window.history.replaceState(null, "", "/");
+    window.location.reload();
+  };
+
+  useEffect(() => {
+    setId(localStorage.getItem("userId"));
+  }, [location.pathname]);
   return (
     <>
+      {toggleModal && (
+        <LogOutModal onLogOut={logout} closeModal={toggleLogoutModal} />
+      )}
       <div className="fixed z-[200] top-0 left-0 w-full bg-white shadow-md border-b-2 border-primaryPurple py-3 px-5">
         <div className="flex justify-between items-center">
           {/* Logo */}
@@ -54,7 +79,11 @@ const NavBar = ({ userId }) => {
                   className="cursor-pointer"
                   onClick={() => navigate("/profile")}
                 >
-                  <Avatar src="https://docs.material-tailwind.com/img/face-2.jpg" alt="#" size="sm" />
+                  <Avatar
+                    src="https://docs.material-tailwind.com/img/face-2.jpg"
+                    alt="#"
+                    size="sm"
+                  />
                 </div>
               )}
               <button onClick={() => setSearchOpen(!searchOpen)}>
@@ -263,7 +292,7 @@ const NavBar = ({ userId }) => {
               </svg>
             </div>
           </div>
-          <div className="flex flex-col items-center justify-center gap-5 h-full">
+          <div className="flex flex-col items-center justify-center gap-5 h-full overflow-y-auto">
             <NavLink
               to="/"
               onClick={() => setMenuOpen(false)}
@@ -271,6 +300,45 @@ const NavBar = ({ userId }) => {
             >
               Home
             </NavLink>
+            {userId && (
+              <NavLink
+                to="/"
+                onClick={() => setMenuOpen(false)}
+                className="text-center py-2 w-full border-b text-gray-600 hover:text-primaryPurple transition-colors duration-300"
+              >
+                <div className="relative">
+                  <div className="absolute right-0 top-0 h-4 w-4 bg-primaryPurple rounded-full"></div>
+                  <p>Notifications</p>
+                </div>
+              </NavLink>
+            )}
+            {userId && (
+              <NavLink
+                to="/"
+                onClick={() => setMenuOpen(false)}
+                className="text-center py-2 w-full border-b text-gray-600 hover:text-primaryPurple transition-colors duration-300"
+              >
+                Saved Listings
+              </NavLink>
+            )}
+            {userId && (
+              <NavLink
+                to="/"
+                onClick={() => setMenuOpen(false)}
+                className="text-center py-2 w-full border-b text-gray-600 hover:text-primaryPurple transition-colors duration-300"
+              >
+                Bookings
+              </NavLink>
+            )}
+            {userId && (
+              <NavLink
+                to="/profile"
+                onClick={() => setMenuOpen(false)}
+                className="text-center py-2 w-full border-b text-gray-600 hover:text-primaryPurple transition-colors duration-300"
+              >
+                Profile & Settings
+              </NavLink>
+            )}
             <NavLink
               to="/blog"
               onClick={() => setMenuOpen(false)}
@@ -285,13 +353,15 @@ const NavBar = ({ userId }) => {
             >
               About us
             </NavLink>
-            <NavLink
-              to="/agent/signup"
-              onClick={() => setMenuOpen(false)}
-              className="text-center py-2 w-full border-b text-gray-600 hover:text-primaryPurple transition-colors duration-300"
-            >
-              For Landlords/Agents
-            </NavLink>
+            {!userId && (
+              <NavLink
+                to="/agent/signup"
+                onClick={() => setMenuOpen(false)}
+                className="text-center py-2 w-full border-b text-gray-600 hover:text-primaryPurple transition-colors duration-300"
+              >
+                For Landlords/Agents
+              </NavLink>
+            )}
             {!userId && (
               <NavLink
                 to="/renter/signup"
@@ -302,8 +372,15 @@ const NavBar = ({ userId }) => {
               </NavLink>
             )}
             <NavLink
-              to="/renter/login"
-              onClick={() => setMenuOpen(false)}
+              to={userId ? "#" : "/renter/login"}
+              onClick={() => {
+                if (userId) {
+                  menu();
+                  toggleLogoutModal();
+                } else {
+                  menu();
+                }
+              }} // Call logout if logged in
               className="text-center border border-primaryPurple py-2 w-full rounded-lg text-primaryPurple hover:bg-primaryPurple hover:text-white transition-all duration-300"
             >
               {userId ? "Log Out" : "Login"}

@@ -2,13 +2,19 @@ import Body from "../Components/Body";
 import General from "../Components/General";
 import WhoWeAre from "../Components/WhoWeAre";
 import Footer from "../Components/TheFooter.jsx";
-import { useOutletContext } from "react-router-dom";
+import { useEffect, useState } from "react";
+// import { useOutletContext } from "react-router-dom";
 
 const HomePage = () => {
-  const { userId } = useOutletContext();
+  const [id, setId] = useState(null);
+
+  useEffect(() => {
+    setId(localStorage.getItem("userId"));
+  }, []);
+  // const { userId } = useOutletContext();
   return (
     <>
-      <Body userId={userId} />
+      <Body userId={id} />
       <WhoWeAre />
       <General />
       <Footer />

@@ -44,7 +44,10 @@ const LogOutModal = ({ closeModal, unitsAvailable, onLogOut }) => {
             <div className="flex items-center justify-center gap-3">
               <button
                 className="bg-primaryPurple w-full py-3 text-white rounded-lg hover:shadow-lg transition-all duration-300"
-                onClick={onLogOut}
+                onClick={()=>{
+                  onLogOut()
+                  handleClose()
+                }}
               >
                 Log Out
               </button>

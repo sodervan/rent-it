@@ -50,8 +50,23 @@ const RenterSignup = () => {
       );
       const result = await response.json();
       if (response.ok) {
+        localStorage.setItem("userId", result.payload.id);
+        localStorage.setItem("accessToken", result.payload.access_token);
+        localStorage.setItem("refreshToken", result.payload.refresh_token);
+        localStorage.setItem("accountType", result.payload.role[0]);
+        localStorage.setItem(
+          "regStatus",
+          result.payload.isRegistrationComplete,
+        );
         setMessage("Login Successful");
-        console.log(result)
+        console.log(result);
+        if (result.payload.isRegistrationComplete === true) {
+          navigate("/");
+        } else {
+          navigate(
+            `/agent/agentregistration/${result.payload.registrationStep}`,
+          );
+        }
         // navigate("/renter/signup/verifyemail");
       } else {
         console.log("Registration Failed");
@@ -95,14 +110,14 @@ const RenterSignup = () => {
                 onInit={(typewriter) => {
                   typewriter
                     .typeString(
-                      '<strong style="font-size: 16px; font-weight: bold">WELCOME BACK!</strong>',
+                      '<strong style="font-size: 16px; font-weight: bold">WELCOME BACK </strong><span style="font-size: 16px; color: #7F56D9; font-weight: bold">AGENT!</span>',
                     )
                     .pauseFor(2500)
                     .start();
                 }}
               />
             </div>
-            <p className="font-normal text-center">Login to your Account</p>
+            <p className="font-normal text-center">Agent Login</p>
             <form className="flex flex-col gap-5 my-5" onSubmit={handleLogin}>
               <div className="w-full">
                 <div className="flex items-center gap-3 px-3 w-full rounded-[10px]">

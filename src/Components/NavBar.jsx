@@ -14,6 +14,8 @@ import {
 const NavBar = () => {
   const [toggleModal, setToggleModal] = useState(false);
   const [userId, setId] = useState(null);
+  const [role, setRole] = useState(null);
+  const [regStatus, setRegStatus] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -49,13 +51,20 @@ const NavBar = () => {
     localStorage.removeItem("userId");
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
-    navigate("/");
-    window.history.replaceState(null, "", "/");
+    localStorage.removeItem("accountType");
+    navigate(`${role === "user" ? "/" : "/agent/login"}`);
+    window.history.replaceState(
+      null,
+      "",
+      `${role === "user" ? "/" : "/agent/login"}`,
+    );
     window.location.reload();
   };
 
   useEffect(() => {
     setId(localStorage.getItem("userId"));
+    setRole(localStorage.getItem("accountType"));
+    setRegStatus(localStorage.getItem("regStatus") || null);
   }, [location.pathname]);
   return (
     <>
@@ -318,7 +327,7 @@ const NavBar = () => {
                 onClick={() => setMenuOpen(false)}
                 className="text-center py-2 w-full border-b text-gray-600 hover:text-primaryPurple transition-colors duration-300"
               >
-                Saved Listings
+                {role === "user" ? "Saved Listings" : "Add Listings"}
               </NavLink>
             )}
             {userId && (
@@ -327,7 +336,7 @@ const NavBar = () => {
                 onClick={() => setMenuOpen(false)}
                 className="text-center py-2 w-full border-b text-gray-600 hover:text-primaryPurple transition-colors duration-300"
               >
-                Bookings
+                {role === "user" ? "Bookings" : "Check Bookings"}
               </NavLink>
             )}
             {userId && (
@@ -355,7 +364,7 @@ const NavBar = () => {
             </NavLink>
             {!userId && (
               <NavLink
-                to="/agent/signup"
+                to="/agent/login"
                 onClick={() => setMenuOpen(false)}
                 className="text-center py-2 w-full border-b text-gray-600 hover:text-primaryPurple transition-colors duration-300"
               >

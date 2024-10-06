@@ -7,9 +7,11 @@ const VerificationEmail = () => {
   const [message, setMessage] = useState("");
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
+  const [role, setRole] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
+    setRole(localStorage.getItem("role"));
     if (!token) {
       setStatus("error");
       setMessage("No token found in the URL.");
@@ -70,30 +72,24 @@ const VerificationEmail = () => {
             alt="#"
           />
           <div>
-            <p className="animate-fadeIn text-xl font-semibold">Email Verified</p>
+            <p className="animate-fadeIn text-xl font-semibold">
+              Email Verified
+            </p>
           </div>
           <div className="flex flex-col items-center justify-center">
-            <div>
-              <p className="text-gray-500 mb-2 text-[15px]">
-                Signed up as renter?
-              </p>
-            </div>
             <button
-              className="px-4 text-primaryPurple py-3 bg-secondaryPurple rounded-lg transition-all duration-200 hover:bg-primaryPurple"
-              onClick={() => navigate("/renter/login")}
+              className="px-4 text-secondaryPurple py-3 bg-primaryPurple rounded-lg transition-all duration-200 hover:bg-shadow-lg"
+              onClick={() => {
+                if (role === "renter") {
+                  localStorage.removeItem("role");
+                  navigate("/renter/login");
+                } else {
+                  localStorage.removeItem("role");
+                  navigate("/agent/login");
+                }
+              }}
             >
               Go to Login
-            </button>
-          </div>
-          <div className="flex flex-col items-center justify-center">
-            <div>
-              <p className="text-gray-500 mb-2 text-[15px]">Signed up as Agent?</p>
-            </div>
-            <button
-              className="px-4 text-primaryPurple py-4 bg-secondaryPurple rounded-lg transition-all duration-200 hover:bg-primaryPurple"
-              onClick={() => navigate("/agent/login")}
-            >
-              Login to continue Registration
             </button>
           </div>
         </div>
@@ -107,7 +103,7 @@ const VerificationEmail = () => {
             </h2>
           </div>
           <div>
-            <p className="mt-2 text-gray-700 animate-fadeIn">
+            <p className="mt-2 text-xl font-semibold animate-fadeIn">
               Verification Failed. Please request another Link
             </p>
           </div>

@@ -4,6 +4,7 @@ import { Input, Checkbox, Typography, Button } from "@material-tailwind/react";
 import { useState, useEffect } from "react";
 import { Toast } from "flowbite-react";
 import { HiCheck, HiExclamation } from "react-icons/hi";
+import agentsLogin from "./AgentsLogin.jsx";
 
 const RenterSignup = () => {
   const [isStudent, setIsStudent] = useState(false);
@@ -88,6 +89,7 @@ const RenterSignup = () => {
 
       if (response.ok) {
         setMessage("Registration Successful");
+        localStorage.setItem("role", "renter");
         navigate("/renter/signup/verifyemail", {
           state: { email: formData.email },
         });

@@ -88,6 +88,7 @@ const RenterSignup = () => {
 
       if (response.ok) {
         setMessage("Registration Successful");
+        localStorage.setItem("role", "agent");
         navigate("/renter/signup/verifyemail", {
           state: { email: formData.email },
         });

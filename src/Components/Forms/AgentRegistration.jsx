@@ -1,13 +1,29 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import StepTwo from "../StepTwo.jsx";
+import StepThree from "../StepThree.jsx";
+import StepOne from "../StepOne.jsx";
 
 const AgentRegistration = () => {
+  const { step } = useParams();
+  const navigate = useNavigate();
+  const [userId, setUserId] = useState(null);
+  const [accessToken, setAccessToken] = useState(null);
+  const [refreshToken, setRefreshToken] = useState(null);
+  const [role, setRole] = useState(null);
   const [profileImage, setProfileImage] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [status, setStatus] = useState(null);
+  const [nin, setNin] = useState("");
 
+  const onNinChange = (e) => {
+    setNin(e.target.value);
+  };
   // Handle file selection or drop
   const handleFile = (file) => {
-    const reader = new FileReader();
-    reader.onload = (e) => setProfileImage(e.target.result);
-    reader.readAsDataURL(file);
+    setProfileImage(file); // Store the raw file instead of converting to base64
   };
 
   // Handle drop event
@@ -22,65 +38,134 @@ const AgentRegistration = () => {
     document.getElementById("fileInput").click();
   };
 
+  // Upload profile picture to the backend
+  const profilePicture = async (event) => {
+    event.preventDefault();
+
+    if (!profileImage) {
+      setMessage("Please select a profile image to upload.");
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+
+      const formData = new FormData(); // Create a FormData object
+      formData.append("profile", profileImage); // Append the file with the key "profile"
+
+      const response = await fetch(
+        "https://rent-it-api.onrender.com/api/v1/agents/profile-picture",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: formData, // Send the FormData object
+        },
+      );
+
+      const result = await response.json();
+      setStatus(result.statusCode);
+
+      if (response.ok) {
+        setMessage("Profile picture uploaded successfully!");
+        timeOut();
+      } else {
+        setMessage(result.message || "Failed to upload the profile picture.");
+        timeOut();
+      }
+    } catch (error) {
+      console.error("Error uploading profile picture:", error);
+      setMessage("An error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  {
+    /*HANDLING NIN UPLOAD*/
+  }
+  const handleNin = async (event) => {
+    event.preventDefault();
+    try {
+      setIsLoading(true);
+
+      const response = await fetch(
+        "https://rent-it-api.onrender.com/api/v1/agents/verify-nin",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: nin,
+        },
+      );
+
+      const result = await response.json();
+      setStatus(result.statusCode);
+
+      if (response.ok) {
+        setMessage("NIN updated successfully!");
+        timeOut();
+      } else {
+        setMessage(result.message || "Failed to update NIN.");
+        timeOut();
+      }
+    } catch (error) {
+      console.error("Error updating NIN:", error);
+      setMessage("An error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const timeOut = () => {
+    setTimeout(() => {
+      setMessage("");
+      navigate(`/agent/agentregistration/${parseInt(step) + 1}`);
+    }, 2000);
+  };
+
+  useEffect(() => {
+    setUserId(localStorage.getItem("userId"));
+    setAccessToken(localStorage.getItem("accessToken"));
+    setRefreshToken(localStorage.getItem("refreshToken"));
+    setRole(localStorage.getItem("accountType"));
+  }, []);
+
   return (
     <>
-      <div className="mt-20 px-6">
-        <div className="flex flex-col gap-4">
-          <div className="text-center text-lg font-semibold">
-            <p>Agent Registration</p>
-          </div>
-          <div className="text-[14px]">
-            <p className="text-gray-500">Step 2 of 5</p>
-          </div>
-          <div>
-            <p>Upload Profile Photo</p>
-          </div>
+      {step === "1" && (
+        <StepOne
+          triggerFileInput={triggerFileInput}
+          handleDrop={handleDrop}
+          profileImage={profileImage}
+          handleFile={handleFile}
+          isLoading={isLoading}
+          profilePicture={profilePicture}
+          message={message}
+          status={status}
+        />
+      )}
 
-          {/* Drag-and-drop or click-to-upload area */}
-          <div
-            className="w-full border border-gray-500 rounded-lg px-3 py-4 flex flex-col gap-3 items-center justify-center cursor-pointer"
-            onClick={triggerFileInput}
-            onDrop={handleDrop}
-            onDragOver={(e) => e.preventDefault()} // Prevent default to allow drop
-          >
-            {/* Display the uploaded image or a placeholder */}
-            {profileImage ? (
-              <img
-                src={profileImage}
-                alt="Uploaded profile"
-                className="w-32 h-32 object-cover rounded-full"
-              />
-            ) : (
-              <img
-                src="https://res.cloudinary.com/dmlgns85e/image/upload/v1725362394/Featured_icon_mtrbjd.png"
-                alt="Placeholder"
-              />
-            )}
-            <div>
-              <p className="text-gray-500 text-center text-[15px]">
-                <span className="text-primaryPurple cursor-pointer hover:underline">
-                  Click to upload
-                </span>{" "}
-                or drag and drop PNG, JPG (max. 800x400px)
-              </p>
-            </div>
-          </div>
+      {step === "2" && (
+        <StepTwo
+          nin={nin}
+          onNinChange={onNinChange}
+          isLoading={isLoading}
+          handleNin={handleNin}
+          message={message}
+          status={status}
+        />
+      )}
 
-
-          {/* Hidden file input */}
-          <input
-            id="fileInput"
-            type="file"
-            accept="image/png, image/jpeg"
-            className="hidden"
-            onChange={(e) => handleFile(e.target.files[0])}
-          />
-
-          <button className="bg-secondaryPurple px-4 py-3 text-primaryPurple rounded-lg hover:bg-primaryPurple hover:text-white transition-all duration-300">
-            Confirm
-          </button>
-        </div>
-      </div>
+      {step === "3" && (
+        <StepThree
+          accessToken={accessToken}
+          refreshToken={refreshToken}
+          step={step}
+        />
+      )}
     </>
   );
 };

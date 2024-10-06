@@ -53,6 +53,7 @@ const RenterSignup = () => {
         localStorage.setItem("userId", result.payload.id);
         localStorage.setItem("accessToken", result.payload.access_token);
         localStorage.setItem("refreshToken", result.payload.refresh_token);
+        localStorage.setItem("accountType", result.payload.role[0]);
         setMessage("Login Successful");
         navigate("/");
         window.history.replaceState(null, "", "/");
@@ -107,7 +108,7 @@ const RenterSignup = () => {
                 }}
               />
             </div>
-            <p className="font-normal text-center">Login to your Account</p>
+            <p className="font-normal text-center">Renter Login</p>
             <form className="flex flex-col gap-5 my-5" onSubmit={handleLogin}>
               <div className="w-full">
                 <div className="flex items-center gap-3 px-3 w-full rounded-[10px]">

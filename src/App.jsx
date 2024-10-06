@@ -31,7 +31,7 @@ const router = createBrowserRouter(
       <Route path="/renter/signup/verifyemail" element={<VerifyEmail />} />
       <Route path="/agent/signup/verifyemail" element={<VerifyEmail />} />
       <Route path="/profile" element={<ProfilePage />} />
-      <Route path="/agent/agentregistration/step2" element={<AgentRegistration />} />
+      <Route path="/agent/agentregistration/:step" element={<AgentRegistration />} />
       <Route
         path="/user/verificationemail"
         element={<RenterVerificationEmail />}

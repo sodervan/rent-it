@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import StepTwo from "../StepTwo.jsx";
 import StepThree from "../StepThree.jsx";
 import StepOne from "../StepOne.jsx";
+import StepFour from "../StepFour.jsx";
 
 const AgentRegistration = () => {
   const { step } = useParams();
@@ -72,7 +73,7 @@ const AgentRegistration = () => {
         timeOut();
       } else {
         setMessage(result.message || "Failed to upload the profile picture.");
-        timeOut();
+        failedTimeout();
       }
     } catch (error) {
       console.error("Error uploading profile picture:", error);
@@ -109,7 +110,7 @@ const AgentRegistration = () => {
         timeOut();
       } else {
         setMessage(result.message || "Failed to update NIN.");
-        timeOut();
+        failedTimeout();
       }
     } catch (error) {
       console.error("Error updating NIN:", error);
@@ -123,6 +124,11 @@ const AgentRegistration = () => {
     setTimeout(() => {
       setMessage("");
       navigate(`/agent/agentregistration/${parseInt(step) + 1}`);
+    }, 2000);
+  };
+  const failedTimeout = () => {
+    setTimeout(() => {
+      setMessage("");
     }, 2000);
   };
 
@@ -166,6 +172,7 @@ const AgentRegistration = () => {
           step={step}
         />
       )}
+      {step === "4" && <StepFour accessToken={accessToken} step={step}/>}
     </>
   );
 };

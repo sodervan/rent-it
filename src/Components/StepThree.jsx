@@ -11,7 +11,7 @@ const StepThree = ({ accessToken, refreshToken, step }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState(null);
   const [message, setMessage] = useState("");
-  const [profileImage, setProfileImage] = useState(null);
+  const [profileImage, setProfileImage] = useState("");
 
   const handleFile = (file) => {
     setProfileImage(file); // Store the raw file instead of converting to base64
@@ -40,17 +40,20 @@ const StepThree = ({ accessToken, refreshToken, step }) => {
     try {
       setIsLoading(true);
 
+      // Create FormData object
+      const formData = new FormData();
+      formData.append("organization", isOrg);
+      formData.append("licenseNumber", licenseNumber);
+      formData.append("certification", profileImage); // Append the image file directly
+
       const response = await fetch(
-        "https://rent-it-api.onrender.com/api/v1/agents/verify-nin",
+        "https://rent-it-api.onrender.com/api/v1/agents/certificationAndLicense",
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${accessToken}`, // Pass the token in headers
           },
-          body: {
-            organization: isOrg,
-            licenseNumber: licenseNumber,
-          },
+          body: formData, // Use formData as body
         },
       );
 
@@ -61,15 +64,24 @@ const StepThree = ({ accessToken, refreshToken, step }) => {
         setMessage("Details updated successfully!");
         timeOut();
       } else {
-        setMessage(result.message || "Failed to update NIN.");
-        timeOut();
+        setMessage(
+          result.message || "Failed to update certification and license.",
+        );
+        console.log(result);
+        failedTimeOut();
       }
     } catch (error) {
-      console.error("Error updating NIN:", error);
+      console.error("Error updating certification and license:", error);
       setMessage("An error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const failedTimeOut = () => {
+    setTimeout(() => {
+      setMessage("");
+    }, 2000);
   };
   const timeOut = () => {
     setTimeout(() => {
@@ -109,12 +121,12 @@ const StepThree = ({ accessToken, refreshToken, step }) => {
                   className: "min-w-0",
                 }}
               />
-              {/*{isLoading && (*/}
-              {/*  <Spinner*/}
-              {/*    size="sm"*/}
-              {/*    className="!absolute right-1 top-1 rounded h-4 w-4"*/}
-              {/*  />*/}
-              {/*)}*/}
+              {isLoading && (
+                <Spinner
+                  size="sm"
+                  className="!absolute right-1 top-1 rounded h-4 w-4"
+                />
+              )}
             </div>
           </div>
           <div>
@@ -130,12 +142,12 @@ const StepThree = ({ accessToken, refreshToken, step }) => {
                   className: "min-w-0",
                 }}
               />
-              {/*{isLoading && (*/}
-              {/*  <Spinner*/}
-              {/*    size="sm"*/}
-              {/*    className="!absolute right-1 top-1 rounded h-4 w-4"*/}
-              {/*  />*/}
-              {/*)}*/}
+              {isLoading && (
+                <Spinner
+                  size="sm"
+                  className="!absolute right-1 top-1 rounded h-4 w-4"
+                />
+              )}
             </div>
           </div>
           <div className="mt-3">
@@ -184,33 +196,28 @@ const StepThree = ({ accessToken, refreshToken, step }) => {
             <button
               className="px-4 py-3 rounded-lg bg-secondaryPurple text-primaryPurple hover:shadow-lg transition-all duration-300"
               onClick={() => {
-                navigate("/agent/agentregistration/3");
-                window.location.reload();
+                navigate("/agent/agentregistration/2");
+                // window.location.reload();
               }}
             >
               <div className="flex items-center justify-center">Previous</div>
             </button>
 
             <button
-              className={`${isOrg.length > 1 && licenseNumber.length > 0 && isLoading === false && profileImage !== null ? "bg-primaryPurple px-4 py-3 text-white rounded-lg hover:shadow-lg transition-all duration-300" : "bg-gray-200 px-4 py-3 text-gray-500 rounded-lg"}`}
+              className={`${isOrg.length > 1 && licenseNumber.length > 1 && isLoading === false && profileImage !== "" ? "bg-primaryPurple px-4 py-3 text-white rounded-lg hover:shadow-lg transition-all duration-300" : "bg-gray-200 px-4 py-3 text-gray-500 rounded-lg"}`}
               onClick={handleOrgAndLic}
               disabled={
                 isLoading ||
-                (isOrg.length < 1 &&
-                  licenseNumber.length < 1 &&
-                  profileImage === null) ||
-                (isOrg.length >= 1 &&
-                  licenseNumber.length >= 1 &&
-                  profileImage === null)
+                isOrg.length < 1 ||
+                licenseNumber.length < 1 ||
+                profileImage === ""
               }
             >
               <div className="flex items-center justify-center">Proceed</div>
             </button>
             <button
               className="px-4 py-3 rounded-lg bg-red-100 text-red-500"
-              onClick={() => {
-                navigate("/agent/agentregistration/4");
-              }}
+              onClick={handleOrgAndLic}
             >
               <div className="flex items-center justify-center">Skip</div>
             </button>

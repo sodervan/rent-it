@@ -20,21 +20,52 @@ const RenterSignup = () => {
       setShowToast(false);
     }, 5000);
   };
+
   const updateShowPasswordState = (e) => {
     e.preventDefault();
     setShowPassword(!showPassword);
   };
+
   const updateSetPassword = (e) => {
     setPassword(e.target.value);
   };
+
   const updateSetEmail = (e) => {
     setEmail(e.target.value);
   };
+
+  const fetchAgentDetails = async (accessToken) => {
+    try {
+      setIsLoading(true); // Start loading
+      const response = await fetch(
+        "https://rent-it-api.onrender.com/api/v1/agents",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+
+      const result = await response.json();
+      if (response.ok) {
+        localStorage.setItem("profileImage", result.payload.profilePicLink);
+        console.log(result)
+      } else {
+        console.log("Failed to fetch agent details");
+        setMessage("Error");
+      }
+    } catch (error) {
+      console.log("Error:", error);
+    } finally {
+      setIsLoading(false); // End loading
+    }
+  };
+
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
       setIsLoading(true);
-      console.log(email, password);
       const response = await fetch(
         "https://rent-it-api.onrender.com/api/v1/agents/login",
         {
@@ -59,21 +90,19 @@ const RenterSignup = () => {
           result.payload.isRegistrationComplete,
         );
         setMessage("Login Successful");
-        console.log(result);
+        const token = localStorage.getItem("accessToken");
+        await fetchAgentDetails(token);
         if (result.payload.isRegistrationComplete === true) {
-          navigate("/");
+          navigate("/agent/agentdashboard");
         } else {
           navigate(
             `/agent/agentregistration/${result.payload.registrationStep}`,
           );
         }
-        // navigate("/renter/signup/verifyemail");
       } else {
-        console.log("Registration Failed");
-        setMessage(result.message || "Registration failed");
+        setMessage(result.message || "Login failed");
       }
     } catch (error) {
-      console.error("Error during registration:", error);
       setMessage("Something went wrong, please try again later.");
     } finally {
       setIsLoading(false);
@@ -88,12 +117,18 @@ const RenterSignup = () => {
         <div className="fixed top-2 right-2 z-[3000]">
           <Toast>
             <div
-              className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${message === "Login Successful" ? "bg-green-100" : "bg-red-100"} ${message === "Login Successful" ? "text-green-500" : "text-red-500"} dark:bg-green-800 dark:text-green-200`}
+              className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
+                message === "Login Successful" ? "bg-green-100" : "bg-red-100"
+              } ${
+                message === "Login Successful"
+                  ? "text-green-500"
+                  : "text-red-500"
+              }`}
             >
-              {message === "Registration Successful" && (
+              {message === "Login Successful" && (
                 <HiCheck className="h-5 w-5" />
               )}
-              {message !== "Registration Successful" && (
+              {message !== "Login Successful" && (
                 <HiExclamation className="h-5 w-5" />
               )}
             </div>
@@ -102,6 +137,7 @@ const RenterSignup = () => {
           </Toast>
         </div>
       )}
+
       <div className="mt-20 flex flex-col lg:flex-row px-6 gap-3">
         <div className="w-full lg:w-[50%] flex items-center">
           <div className="lg:px-20 w-full">
@@ -152,46 +188,44 @@ const RenterSignup = () => {
                   </div>
                 </div>
               </div>
+
               <NavLink
                 to=""
-                className={`text-[14px] flex items-center ${password.length > 0 ? "justify-between" : "justify-end"}`}
+                className={`text-[14px] flex items-center ${
+                  password.length > 0 ? "justify-between" : "justify-end"
+                }`}
               >
                 {password.length > 0 && (
                   <button
-                    className={`flex items-center px-3 py-2 rounded-lg transition-all duration-300 ${
-                      showPassword ? "bg-secondaryPurple" : "bg-secondaryPurple"
-                    } hover:bg-opacity-80`}
+                    className="flex items-center px-3 py-2 rounded-lg bg-secondaryPurple hover:bg-opacity-80 transition-all duration-300"
                     onClick={updateShowPasswordState}
                   >
-                    <p
-                      className={`text-[14px] transition-all duration-300 ${showPassword ? "text-gray-500" : "text-gray-500"}`}
-                    >
+                    <p className="text-[14px] text-gray-500">
                       {showPassword ? "Hide" : "Show"} Password
                     </p>
                     <i
                       className={`ml-2 fi fi-rr-eye${
                         showPassword ? "-slash" : ""
-                      } transition-transform duration-300 transform ${
-                        showPassword ? "rotate-180" : "rotate-0"
-                      } text-gray-500`}
+                      } transition-transform duration-300 text-gray-500`}
                     ></i>
                   </button>
                 )}
                 <p className="underline text-primaryPurple">Forgot Password</p>
               </NavLink>
+
               <div className="flex flex-col gap-2">
                 <Button
                   type="submit"
-                  loading={isLoading}
+                  disabled={isLoading}
                   className="transition-all font-poppins duration-300 px-4 py-3 bg-primaryPurple rounded-lg text-white"
                 >
-                  Login
+                  {isLoading ? "Logging in..." : "Login"}
                 </Button>
                 <p className="text-center">or</p>
                 <button className="px-4 py-3 border border-gray-400 rounded-lg flex items-center justify-center gap-2">
                   <img
                     src="https://res.cloudinary.com/dmlgns85e/image/upload/v1727705596/Social_icon_pixq6z.png"
-                    alt="#"
+                    alt="Sign in with Google"
                   />
                   <p className="text-gray-600">Sign in with Google</p>
                 </button>
@@ -200,14 +234,12 @@ const RenterSignup = () => {
               <div>
                 <p className="text-sm text-gray-700">
                   Don't have an account with Us?{" "}
-                  <span>
-                    <NavLink
-                      to="/agent/signup"
-                      className="underline text-primaryPurple"
-                    >
-                      Signup
-                    </NavLink>
-                  </span>
+                  <NavLink
+                    to="/agent/signup"
+                    className="underline text-primaryPurple"
+                  >
+                    Signup
+                  </NavLink>
                 </p>
               </div>
             </form>

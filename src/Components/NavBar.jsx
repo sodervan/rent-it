@@ -16,6 +16,7 @@ const NavBar = () => {
   const [userId, setId] = useState(null);
   const [role, setRole] = useState(null);
   const [regStatus, setRegStatus] = useState(null);
+  const [profileImage, setProfileImage] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -52,6 +53,7 @@ const NavBar = () => {
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
     localStorage.removeItem("accountType");
+    localStorage.removeItem("profileImage");
     navigate(`${role === "user" ? "/" : "/agent/login"}`);
     window.history.replaceState(
       null,
@@ -65,6 +67,7 @@ const NavBar = () => {
     setId(localStorage.getItem("userId"));
     setRole(localStorage.getItem("accountType"));
     setRegStatus(localStorage.getItem("regStatus") || null);
+    setProfileImage(localStorage.getItem("profileImage") || null);
   }, [location.pathname]);
   return (
     <>
@@ -83,16 +86,12 @@ const NavBar = () => {
           {/* Hamburger Menu (Visible on small screens) */}
           <div className="md:hidden">
             <div className="flex gap-5 items-center justify-center">
-              {userId && (
+              {profileImage && (
                 <div
                   className="cursor-pointer"
                   onClick={() => navigate("/profile")}
                 >
-                  <Avatar
-                    src="https://docs.material-tailwind.com/img/face-2.jpg"
-                    alt="#"
-                    size="sm"
-                  />
+                  <Avatar src={profileImage} alt="#" size="xs" />
                 </div>
               )}
               <button onClick={() => setSearchOpen(!searchOpen)}>
@@ -341,7 +340,7 @@ const NavBar = () => {
             )}
             {userId && (
               <NavLink
-                to="/profile"
+                to={role === "user" ? "/renter/profile" : "/agent/profile"}
                 onClick={() => setMenuOpen(false)}
                 className="text-center py-2 w-full border-b text-gray-600 hover:text-primaryPurple transition-colors duration-300"
               >

@@ -30,6 +30,35 @@ const RenterSignup = () => {
   const updateSetEmail = (e) => {
     setEmail(e.target.value);
   };
+
+  const fetchRenterDetails = async (accessToken) => {
+    try {
+      setIsLoading(true); // Start loading
+      const response = await fetch(
+          "https://rent-it-api.onrender.com/api/v1/agents",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          },
+      );
+
+      const result = await response.json();
+      if (response.ok) {
+        localStorage.setItem("profileImage", result.payload.profilePicLink);
+        console.log(result)
+      } else {
+        console.log("Failed to fetch agent details");
+        setMessage("Error");
+      }
+    } catch (error) {
+      console.log("Error:", error);
+    } finally {
+      setIsLoading(false); // End loading
+    }
+  };
+
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
@@ -55,6 +84,7 @@ const RenterSignup = () => {
         localStorage.setItem("refreshToken", result.payload.refresh_token);
         localStorage.setItem("accountType", result.payload.role[0]);
         setMessage("Login Successful");
+        await fetchRenterDetails()
         navigate("/");
         window.history.replaceState(null, "", "/");
         console.log(result);

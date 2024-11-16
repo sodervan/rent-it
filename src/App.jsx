@@ -20,6 +20,7 @@ import AgentRegistration from "./Components/Forms/AgentRegistration.jsx";
 import DashBoard from "./Components/DashBoard.jsx";
 import AgentDashboard from "./Components/AgentDashboard.jsx";
 import RenterProfilePage from "./Pages/RenterProfilePage.jsx";
+import AllSteps from "./Components/AddListings/AllSteps.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -35,6 +36,7 @@ const router = createBrowserRouter(
       <Route path="/agent/signup/verifyemail" element={<VerifyEmail />} />
       <Route path="/agent/profile" element={<AgentProfilePage />} />
       <Route path="/renter/profile" element={<RenterProfilePage />} />
+      <Route path="/agent/addlisting/:step" element={<AllSteps />} />
       <Route
         path="/agent/agentregistration/:step"
         element={<AgentRegistration />}

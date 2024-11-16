@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { Avatar } from "@material-tailwind/react";
+import { Avatar, Button } from "@material-tailwind/react";
 import { useNavigate, useLocation } from "react-router-dom";
 import LogOutModal from "./Modals/LogOutModal.jsx";
 import {
@@ -86,12 +86,18 @@ const NavBar = () => {
           {/* Hamburger Menu (Visible on small screens) */}
           <div className="md:hidden">
             <div className="flex gap-5 items-center justify-center">
-              {profileImage && (
+              {role === "agent" && (
                 <div
                   className="cursor-pointer"
-                  onClick={() => navigate("/profile")}
+                  onClick={() => navigate("/agent/addlisting/1")}
                 >
-                  <Avatar src={profileImage} alt="#" size="xs" />
+                  <div>
+                    <Button className="bg-primaryPurple px-4 py-1 text-lg flex items-center">
+                      <div>
+                        <i className="fi fi-rr-square-plus"></i>
+                      </div>
+                    </Button>
+                  </div>
                 </div>
               )}
               <button onClick={() => setSearchOpen(!searchOpen)}>
@@ -265,7 +271,7 @@ const NavBar = () => {
                         </div>
                       ))
                     ) : (
-                      <p>No description available</p> // Fallback in case desc is not an array
+                      <p>No description available</p>
                     )}
                   </div>
                 </TabPanel>

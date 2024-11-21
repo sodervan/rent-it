@@ -1,7 +1,9 @@
-import { Button, Textarea } from "@material-tailwind/react";
-import {useNavigate} from "react-router-dom";
-const Description = () => {
-  const navigate = useNavigate()
+import {Button, Checkbox, Radio, Select, Option} from "@material-tailwind/react";
+import { useNavigate } from "react-router-dom";
+
+const FurnishingState = () => {
+  const navigate = useNavigate();
+
   return (
     <>
       <div className="mt-20">
@@ -14,27 +16,29 @@ const Description = () => {
           </div>
           <div className="px-6">
             <div className="mb-5">
-              <p className="text-gray-500 mt-2 font-medium">Step 4 of 15</p>
-              <p className="mt-2 text-lg">Add Description</p>
+              <p className="text-gray-500 mt-2 font-medium">Step 7 of 15</p>
+              <p className="mt-2 text-lg">Furnishing State</p>
+              <div className="w-full border border-gray-200 mt-3"></div>
             </div>
             <div>
-              <p className="text-gray-500 mb-2">Listing Description</p>
-              <div className="w-full">
-                <Textarea
-                  label="Enter a Description"
-                  variant="outlined"
-                  className="focus:ring-0"
-                />
+              <div className="mb-5">
+                <p className="text-md text-gray-600">Furnishing State</p>
+                <div className="w-full mt-3">
+                  <Select label="Select">
+                    <Option>Material Tailwind HTML</Option>
+                    <Option>Material Tailwind React</Option>
+                    <Option>Material Tailwind Vue</Option>
+                    <Option>Material Tailwind Angular</Option>
+                    <Option>Material Tailwind Svelte</Option>
+                  </Select>
+                </div>
               </div>
-            </div>
-            <div>
-              <p className="text-gray-500 text-sm">Max character: 1000</p>
             </div>
             <div className="my-8 flex items-center gap-4">
               <Button
                 className="capitalize font-medium bg-secondaryPurple text-primaryPurple w-full text-[15px] font-poppins"
                 onClick={() => {
-                  navigate("/agent/addlisting/3");
+                  navigate("/agent/addlisting/6");
                 }}
               >
                 Previous
@@ -42,7 +46,7 @@ const Description = () => {
               <Button
                 className="capitalize font-medium bg-primaryPurple text-white w-full text-[15px] font-poppins"
                 onClick={() => {
-                  navigate("/agent/addlisting/6");
+                  navigate("/agent/addlisting/8");
                 }}
               >
                 Proceed
@@ -55,4 +59,4 @@ const Description = () => {
   );
 };
 
-export default Description;
+export default FurnishingState;

@@ -47,41 +47,12 @@ const General = () => {
     }
   }, []);
 
-  // const firebaseUrll =
-  //   "https://rentit-c3304-default-rtdb.firebaseio.com/locations.json";
-  // const data = popularLocation;
-  // // Function to send data to Firebase
-  // const sendDataToFirebase = async (data) => {
-  //   try {
-  //     const response = await fetch(firebaseUrll, {
-  //       method: "PUT", // 'PUT' will replace the entire data, use 'POST' to add new data
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify(data),
-  //     });
-  //
-  //     if (!response.ok) {
-  //       throw new Error("Failed to send data to Firebase");
-  //     }
-  //
-  //     const result = await response.json();
-  //     console.log("Data sent successfully:", result);
-  //   } catch (error) {
-  //     console.error("Error sending data:", error);
-  //   }
-  // };
-  //
-  // // Call the function to send data
-  // useEffect(() => {
-  //   sendDataToFirebase(data);
-  // }, []);
 
   const handlePopularLocation = (location) => {
     setSelectedLocation(location);
   };
   return (
-    <>
+    <div className="container mx-auto">
       <RecentSearches />
       <div className="w-full px-6 sm:px-20 mb-20">
         <p className="text-[20px] sm:text-xl">Scout Generally</p>
@@ -173,7 +144,7 @@ const General = () => {
           />
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

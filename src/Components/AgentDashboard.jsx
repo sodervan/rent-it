@@ -5,7 +5,10 @@ import btn from "../assets/btn.png";
 import icon from "../assets/icon.png";
 import icon1 from "../assets/icon1.png";
 import icon2 from "../assets/icon2.png";
+import heart from "../assets/shared-icon.svg";
+import love from "../assets/tdesign_heart-filled.svg";
 import { Carousel } from "@material-tailwind/react";
+import {Pagination} from '../Components/AgentDashboard/Pagination.jsx'
 
 const CarouselCustomNavigation = ({ images }) => {
   return (
@@ -30,7 +33,6 @@ const CarouselCustomNavigation = ({ images }) => {
           key={index}
           src={image}
           alt={`image ${index + 1}`}
-
           className="w-full h-[20rem] object-cover "
         />
       ))}
@@ -97,11 +99,6 @@ const AgentDashboard = () => {
   const [agentData, setAgentData] = useState(null); // Use null initially
   const [accessToken, setAccessToken] = useState("");
   const [loading, setLoading] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
 
   const fetchAgentDetails = async (token) => {
     try {
@@ -176,9 +173,7 @@ const AgentDashboard = () => {
           </ul>
         </nav>
       </div>
-      <div
-        className={`content mt-20 lg:ml-[23rem] xl:ml-[25rem] `}
-      >
+      <div className={`content mt-20 lg:ml-[23rem] xl:ml-[25rem] `}>
         <div className="">
           {loading ? (
             <Loader />
@@ -186,30 +181,37 @@ const AgentDashboard = () => {
             <div className=" p-5 ">
               <h2 className="font-bold text-lg">Dashboard - Listings</h2>
 
-              <div className="grid lg:grid-cols-2 gap-10 mt-7  max-w-[900px] grid-cols-1">
+              <div className="grid xl:grid-cols-2 gap-10 mt-7  max-w-[900px] grid-cols-1">
                 {rooms.map((room) => (
                   <div
                     key={room.title}
                     className="w-full   bg-white pb-3 shadow-sm rounded-b-lg"
                   >
-                    <div className="relative">
-                    <CarouselCustomNavigation
-                      className="w-[30rem] rounded-t-lg h-[20rem]  "
-                      images={room.images}
-                    />
+                    <div className="relative ">
+                      <CarouselCustomNavigation
+                        className="w-[30rem] rounded-t-lg h-[20rem]  "
+                        images={room.images}
+                      />
 
-                    <div className="absolute top-3">
-                     <div className="flex justify-between items-center">
+                      <div className="absolute top-3 w-full">
+                        <div className="flex  border-gray-300 w-full justify-between items-center p-2">
+                          <div className="">
+                            <span className="w-fit p-1 text-xs rounded-lg bg-[#F4EBFF]">
+                              Communal
+                            </span>
+                          </div>
+                          <div className="flex gap-6">
+                            <img src={heart} alt="Heart Icon" />
+                            <img src={love} alt="Heart Icon" />
+                          </div>
+                        </div>
+                      </div>
 
-                     </div>
+                      <div className="absolute bottom-[2rem]  inset-0 flex justify-center items-end ">
+                        <span className="w-fit p-1 px-3 text-[#6941C6] text-sm rounded-lg bg-[#F4EBFF]">15 renters have booked this listing</span>
+                      </div>
                     </div>
-                    </div>
-                   
-                    {/* <img
-                      src={room.image}
-                      className="w-[28rem] rounded-t-lg h-[22rem]  "
-                      alt="room image"
-                    /> */}
+
                     <div className=" mt-3 p-2 rounded-b-lg">
                       <h2 className="text-lg font-semibold">{room.title}</h2>
 
@@ -227,6 +229,10 @@ const AgentDashboard = () => {
             </div>
           )}
         </div>
+        <div className="my-6">
+        <Pagination/>
+        </div>
+        
       </div>
     </>
   );

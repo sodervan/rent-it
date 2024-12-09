@@ -14,12 +14,12 @@ const FurnishingState = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const getFeaturesTags = async (page = 1) => {
+  const getBillsTags = async (page = 1) => {
     if (!accessToken) return; // Avoid fetching without a token
     try {
       setIsLoading(true);
       const response = await fetch(
-        `https://rent-it-api.onrender.com/api/v1/agents/listings-attributes/featuresTags?page=${page}`,
+        `https://rent-it-api.onrender.com/api/v1/agents/listings-attributes/billsTags?page=${page}`,
         {
           method: "GET",
           headers: {
@@ -41,11 +41,11 @@ const FurnishingState = () => {
     }
   };
   // zjoyfxsvk3k8z7ub46tfsp93
-  const postBasicFeatures = async () => {
+  const postBasicBills = async () => {
     setLoading(true);
     try {
       const response = await fetch(
-        `https://rent-it-api.onrender.com/api/v1/agents/listings/zjoyfxsvk3k8z7ub46tfsp93/featureTags?id=zjoyfxsvk3k8z7ub46tfsp93`,
+        `https://rent-it-api.onrender.com/api/v1/agents/listings/zjoyfxsvk3k8z7ub46tfsp93/billTags?id=zjoyfxsvk3k8z7ub46tfsp93`,
         {
           method: "POST",
           headers: {
@@ -53,19 +53,19 @@ const FurnishingState = () => {
             Authorization: `Bearer ${accessToken}`,
           },
           body: JSON.stringify({
-            featureTagsIds: selectedTags,
+            billTagsIds: selectedTags,
           }),
         },
       );
       if (response.ok) {
         const result = await response.json();
-        console.log(result)
-        // setTimeout(() => navigate("/agent/addlisting/8"), 500);
+        console.log(result);
+        // setTimeout(() => navigate("/agent/addlisting/9"), 500);
       } else {
-        console.error("Failed to post featureTags");
+        console.error("Failed to post BillTags");
       }
     } catch (error) {
-      console.error("Error posting featureTags:", error);
+      console.error("Error posting BillTags:", error);
     } finally {
       setLoading(false);
     }
@@ -80,7 +80,9 @@ const FurnishingState = () => {
   };
 
   useEffect(() => {
-    if (accessToken) getFeaturesTags(currentPage);
+    if (accessToken) {
+      getBillsTags(currentPage);
+    }
   }, [accessToken, currentPage]);
 
   return (
@@ -94,8 +96,8 @@ const FurnishingState = () => {
         </Button>
       </div>
       <div>
-        <p className="text-gray-600 font-medium">Step 7 of 15</p>
-        <h2 className="mt-2 text-lg text-gray-800">Add Other Features</h2>
+        <p className="text-gray-600 font-medium">Step 8 of 15</p>
+        <h2 className="mt-2 text-lg text-gray-800">Add Bills</h2>
         <div className="w-full my-3 h-[1px] bg-gray-300"></div>
         {isLoading ? (
           <LoaderTwo />
@@ -136,13 +138,13 @@ const FurnishingState = () => {
       <div className="flex justify-between mt-8 gap-4">
         <Button
           className="bg-secondaryPurple text-primaryPurple w-full font-medium"
-          onClick={() => navigate("/agent/addlisting/6")}
+          onClick={() => navigate("/agent/addlisting/7")}
         >
           Previous
         </Button>
         <Button
           disabled={loading}
-          onClick={postBasicFeatures}
+          onClick={postBasicBills}
           className={`${
             loading
               ? "bg-gray-200 text-gray-500"

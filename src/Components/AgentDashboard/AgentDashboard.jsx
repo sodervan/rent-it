@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Loader from "./Loaders/Loader.jsx";
+import Loader from "../Loaders/Loader.jsx";
 
 const AgentDashboard = () => {
   const navigate = useNavigate();

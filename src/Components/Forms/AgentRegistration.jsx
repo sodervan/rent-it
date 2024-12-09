@@ -51,8 +51,8 @@ const AgentRegistration = () => {
     try {
       setIsLoading(true);
 
-      const formData = new FormData(); // Create a FormData object
-      formData.append("profile", profileImage); // Append the file with the key "profile"
+      const formData = new FormData();
+      formData.append("profile", profileImage);
 
       const response = await fetch(
         "https://rent-it-api.onrender.com/api/v1/agents/profile-picture",
@@ -61,7 +61,7 @@ const AgentRegistration = () => {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
-          body: formData, // Send the FormData object
+          body: formData,
         },
       );
 

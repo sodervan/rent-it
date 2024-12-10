@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Loader from "./Loaders/Loader.jsx";
-import btn from "../assets/btn.png";
-import icon from "../assets/icon.png";
-import icon1 from "../assets/icon1.png";
-import icon2 from "../assets/icon2.png";
-import heart from "../assets/shared-icon.svg";
-import love from "../assets/tdesign_heart-filled.svg";
+import Loader from "../Loaders/Loader.jsx";
+import btn from "./../../assets/btn.png";
+import icon from "./../../assets/icon.png";
+import icon1 from "./../../assets/icon1.png";
+import icon2 from "./../../assets/icon2.png";
+import heart from "./../../assets/shared-icon.svg";
+import love from "./../../assets/tdesign_heart-filled.svg";
 import { Carousel } from "@material-tailwind/react";
-import { Pagination } from "../Components/AgentDashboard/Pagination.jsx";
-import Sidebar from "./AgentDashboard/Sidebar.jsx";
+import Sidebar from "./Sidebar.jsx";
+// import { Pagination } from "./Components/AgentDashboard/Pagination.jsx";
+// import Sidebar from "./AgentDashboard/Sidebar.jsx";
 
 const CarouselCustomNavigation = ({ images }) => {
   return (
@@ -198,7 +199,7 @@ const AgentDashboard = () => {
           )}
         </div>
         <div className="my-6">
-          <Pagination />
+          {/* <Pagination /> */}
         </div>
       </div>
     </>

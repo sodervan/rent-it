@@ -1,7 +1,57 @@
-import { Button, Textarea } from "@material-tailwind/react";
-import {useNavigate} from "react-router-dom";
+import { Button, Spinner, Textarea } from "@material-tailwind/react";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+
 const Description = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const [description, setDescription] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleDescription = (e) => {
+    e.preventDefault();
+    setDescription(e.target.value);
+  };
+
+  // POST DESCRIPTION TO THE API
+  const postDescription = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("accessToken");
+      const storedDetails = JSON.parse(localStorage.getItem("basicDetails"));
+
+      if (!storedDetails || !storedDetails.listingId) {
+        throw new Error("Invalid basicDetails or listingId missing.");
+      }
+      const data = {
+        description: description,
+      };
+
+      const response = await fetch(
+        `https://rent-it-api.onrender.com/api/v1/agents/listings/${storedDetails.listingId}/description?id=${storedDetails.listingId}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        },
+      );
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log("Success:", result);
+        localStorage.setItem("descriptionDetails", JSON.stringify(result.payload));
+        setTimeout(() => {
+          navigate("/agent/addlisting/5");
+        }, 500);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <>
       <div className="mt-20">
@@ -21,6 +71,7 @@ const Description = () => {
               <p className="text-gray-500 mb-2">Listing Description</p>
               <div className="w-full">
                 <Textarea
+                  onChange={handleDescription}
                   label="Enter a Description"
                   variant="outlined"
                   className="focus:ring-0"
@@ -40,12 +91,17 @@ const Description = () => {
                 Previous
               </Button>
               <Button
-                className="capitalize font-medium bg-primaryPurple text-white w-full text-[15px] font-poppins"
+                className={`${
+                  loading
+                    ? "bg-gray-200 px-4 py-3 text-gray-500 rounded-lg w-full flex justify-center items-center"
+                    : "bg-primaryPurple text-white w-full text-[15px] font-poppins flex justify-center items-center"
+                }`}
+                disabled={loading}
                 onClick={() => {
-                  navigate("/agent/addlisting/6");
+                  postDescription()
                 }}
               >
-                Proceed
+                {loading ? <Spinner className="h-4 w-4" /> : "Proceed"}
               </Button>
             </div>
           </div>

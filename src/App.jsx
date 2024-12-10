@@ -18,7 +18,7 @@ import RenterVerificationEmail from "./Components/RenterVerificationEmail.jsx";
 import AgentProfilePage from "./Pages/AgentProfilePage.jsx";
 import AgentRegistration from "./Components/Forms/AgentRegistration.jsx";
 import DashBoard from "./Components/DashBoard.jsx";
-import AgentDashboard from "./Components/AgentDashboard.jsx";
+import AgentDashboard from "./Components/AgentDashboard/AgentDashboard.jsx";
 import RenterProfilePage from "./Pages/RenterProfilePage.jsx";
 import AllSteps from "./Components/AddListings/AllSteps.jsx";
 import BookingListing from "./Components/AgentDashboard/BookingListing.jsx";

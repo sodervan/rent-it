@@ -8,7 +8,8 @@ import icon2 from "../assets/icon2.png";
 import heart from "../assets/shared-icon.svg";
 import love from "../assets/tdesign_heart-filled.svg";
 import { Carousel } from "@material-tailwind/react";
-import {Pagination} from '../Components/AgentDashboard/Pagination.jsx'
+import { Pagination } from "../Components/AgentDashboard/Pagination.jsx";
+import Sidebar from "./AgentDashboard/Sidebar.jsx";
 
 const CarouselCustomNavigation = ({ images }) => {
   return (
@@ -137,42 +138,7 @@ const AgentDashboard = () => {
   }, []);
   return (
     <>
-      <div
-        className={`sidebar hidden lg:block fixed top-0 left-0 h-screen mt-20`}
-      >
-        <nav className=" bg-[#F4EBFF] p-[32px]  rounded-r-lg h-screen w-[370px] border">
-          <div className="flex items-center justify-between">
-            <div className="">
-              <h6>Hi, Adewale Williams</h6>
-            </div>
-
-            <button>
-              <img src={btn} />
-            </button>
-          </div>
-
-          <ul className=" mt-10 flex flex-col space-y-6">
-            <li className="flex items-center gap-10">
-              <button>
-                <img src={icon} />
-              </button>
-              <a href="#home">My Listings</a>
-            </li>
-            <li className=" flex items-center gap-10">
-              <button>
-                <img src={icon1} />
-              </button>
-              <a href="#services">Booking Requests</a>
-            </li>
-            <li className="flex items-center gap-10">
-              <button>
-                <img src={icon2} />
-              </button>
-              <a href="#clients">Profile</a>
-            </li>
-          </ul>
-        </nav>
-      </div>
+      <Sidebar/>
       <div className={`content mt-20 lg:ml-[23rem] xl:ml-[25rem] `}>
         <div className="">
           {loading ? (
@@ -189,7 +155,7 @@ const AgentDashboard = () => {
                   >
                     <div className="relative ">
                       <CarouselCustomNavigation
-                        className="w-[30rem] rounded-t-lg h-[20rem]  "
+                        className="w-[30rem] rounded-t-lg h-[20rem] "
                         images={room.images}
                       />
 
@@ -207,8 +173,10 @@ const AgentDashboard = () => {
                         </div>
                       </div>
 
-                      <div className="absolute bottom-[2rem]  inset-0 flex justify-center items-end ">
-                        <span className="w-fit p-1 px-3 text-[#6941C6] text-sm rounded-lg bg-[#F4EBFF]">15 renters have booked this listing</span>
+                      <div className="absolute bottom-[2rem]  inset-1 flex justify-center items-end ">
+                        <span className="w-fit p-1 px-3 text-[#6941C6] text-sm rounded-lg bg-[#F4EBFF]">
+                          15 renters have booked this listing
+                        </span>
                       </div>
                     </div>
 
@@ -230,9 +198,8 @@ const AgentDashboard = () => {
           )}
         </div>
         <div className="my-6">
-        <Pagination/>
+          <Pagination />
         </div>
-        
       </div>
     </>
   );

@@ -2,8 +2,12 @@ import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import ShareModal from "./Modals/ShareModal.jsx";
 
+
+
 const PopularLocationDetails = ({ popularLocations }) => {
-  // Check if popularLocations exists and has accommodations
+  
+
+  
   const accommodations = popularLocations?.accommodations || [];
   const id = popularLocations?.id;
   const [hoveredIndex, setHoveredIndex] = useState(null);

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import Loader from "../Loaders/Loader.jsx";
 import btn from "./../../assets/btn.png";
 import icon from "./../../assets/icon.png";
@@ -9,6 +9,7 @@ import heart from "./../../assets/shared-icon.svg";
 import love from "./../../assets/tdesign_heart-filled.svg";
 import { Carousel } from "@material-tailwind/react";
 import Sidebar from "./Sidebar.jsx";
+import ShareModal from "../Modals/ShareModal.jsx";
 // import { Pagination } from "./Components/AgentDashboard/Pagination.jsx";
 // import Sidebar from "./AgentDashboard/Sidebar.jsx";
 
@@ -43,60 +44,112 @@ const CarouselCustomNavigation = ({ images }) => {
 };
 
 const AgentDashboard = () => {
-  const rooms = [
+  const popularLocations = [
     {
-      title: "Single Room Near Unilag Akoka for students",
-      address: "112 University Road, Akoka, Yaba, Lagos",
-      price: "₦100,000/yr",
-      availability: "20 unit(s) available",
-      bookings: "15 renters have booked this listing",
-      communal: true,
-      extra_info: "362",
-      images: [
+      name: "Lekki View Apartments",
+      address: "12 Lekki-Epe Expressway, Lagos",
+      agentName: "Greenview Realtors",
+      price: 1500000,
+      frequency: "per annum",
+      rating: 4.5,
+      unitsAvailable: 5,
+      rentersBooked: 2,
+      type: "Single man",
+      description:
+        "Modern one-bedroom apartments with great proximity to nature and local attractions.",
+      features: {
+        dateListed: "2024-08-01",
+        electricityStatus: "24/7 power",
+        type: "Single man",
+      },
+      billsIncluded: ["Water", "Security"],
+      propertyRules: ["No pets", "Quiet hours after 10 PM"],
+      landmarks: ["Lekki Mall", "Lekki Beach"],
+      poster:
         "https://res.cloudinary.com/dmlgns85e/image/upload/v1725052734/an_accommodation_interior_2_pf2qmg.jpg",
-        "https://res.cloudinary.com/dmlgns85e/image/upload/v1725052734/an_accommodation_interior_2_pf2qmg.jpg",
-      ],
     },
     {
-      title: "Shared Room Near FUTA Akure",
-      address: "2 Ondo Street, Akure, Ondo",
-      price: "₦60,000/yr",
-      availability: "12 unit(s) available",
-      bookings: "20 renters have booked this listing",
-      communal: true,
-      images: [
+      name: "Victoria Heights",
+      address: "45 Victoria Island Way, Lagos",
+      agentName: "Skyline Estates",
+      price: 2500000,
+      frequency: "per annum",
+      rating: 4.8,
+      unitsAvailable: 3,
+      rentersBooked: 5,
+      type: "Luxury",
+      description:
+        "Premium two-bedroom apartments located in the heart of Victoria Island, offering stunning city views.",
+      features: {
+        dateListed: "2024-07-15",
+        electricityStatus: "24/7 power",
+        type: "Luxury",
+      },
+      billsIncluded: ["Electricity", "Water", "Security"],
+      propertyRules: ["No smoking", "No pets"],
+      landmarks: ["Eko Atlantic", "Victoria Island Beach"],
+      poster:
         "https://res.cloudinary.com/dmlgns85e/image/upload/v1725052734/an_accommodation_interior_2_pf2qmg.jpg",
-        "https://res.cloudinary.com/dmlgns85e/image/upload/v1725052734/an_accommodation_interior_2_pf2qmg.jpg",
-      ],
     },
     {
-      title: "Single Room Near UI Ibadan for students",
-      address: "15 University Road, Ibadan, Oyo",
-      price: "₦80,000/yr",
-      availability: "10 unit(s) available",
-      bookings: "10 renters have booked this listing",
-      communal: true,
-      extra_info: "250",
-
-      images: [
+      name: "Ikoyi Residence",
+      address: "7 Osborne Road, Ikoyi, Lagos",
+      agentName: "Prime Properties",
+      price: 2000000,
+      frequency: "per annum",
+      rating: 4.6,
+      unitsAvailable: 2,
+      rentersBooked: 3,
+      type: "Family",
+      description:
+        "Spacious three-bedroom apartments in a serene and secure neighborhood of Ikoyi.",
+      features: {
+        dateListed: "2024-06-20",
+        electricityStatus: "24/7 power",
+        type: "Family",
+      },
+      billsIncluded: ["Security", "Water"],
+      propertyRules: ["No loud parties", "Quiet hours after 9 PM"],
+      landmarks: ["Ikoyi Club", "Banana Island"],
+      poster:
         "https://res.cloudinary.com/dmlgns85e/image/upload/v1725052734/an_accommodation_interior_2_pf2qmg.jpg",
-        "https://res.cloudinary.com/dmlgns85e/image/upload/v1725052734/an_accommodation_interior_2_pf2qmg.jpg",
-      ],
     },
     {
-      title: "Shared Room Near UNN Nsukka",
-      address: "3 University Road, Nsukka, Enugu",
-      price: "₦70,000/yr",
-      availability: "15 unit(s) available",
-      bookings: "18 renters have booked this listing",
-      communal: true,
-      images: [
+      name: "Yaba Central Flats",
+      address: "22 Herbert Macaulay Way, Yaba, Lagos",
+      agentName: "Urban Realty",
+      price: 800000,
+      frequency: "per annum",
+      rating: 4.3,
+      unitsAvailable: 10,
+      rentersBooked: 4,
+      type: "Single",
+      description:
+        "Affordable one-bedroom flats with easy access to public transport and major educational institutions.",
+      features: {
+        dateListed: "2024-09-01",
+        electricityStatus: "12/7 power",
+        type: "Single",
+      },
+      billsIncluded: ["Water"],
+      propertyRules: ["No pets"],
+      landmarks: ["University of Lagos", "Yaba Market"],
+      poster:
         "https://res.cloudinary.com/dmlgns85e/image/upload/v1725052734/an_accommodation_interior_2_pf2qmg.jpg",
-        "https://res.cloudinary.com/dmlgns85e/image/upload/v1725052734/an_accommodation_interior_2_pf2qmg.jpg",
-      ],
     },
   ];
 
+  const accommodations = popularLocations?.accommodations || [];
+  const id = popularLocations?.id;
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [share, setShare] = useState(null);
+
+  const updateShareState = () => {
+    setShare(true);
+  };
+  const closeShareModal = () => {
+    setShare(false);
+  };
   const navigate = useNavigate();
   const [agentData, setAgentData] = useState(null); // Use null initially
   const [accessToken, setAccessToken] = useState("");
@@ -139,8 +192,8 @@ const AgentDashboard = () => {
   }, []);
   return (
     <>
-      <Sidebar/>
-      <div className={`content mt-20 lg:ml-[23rem] xl:ml-[25rem] `}>
+      <Sidebar />
+      <div className={`content mt-20 lg:ml-[25rem] xl:ml-[23rem] `}>
         <div className="">
           {loading ? (
             <Loader />
@@ -148,59 +201,93 @@ const AgentDashboard = () => {
             <div className=" p-5 ">
               <h2 className="font-bold text-lg">Dashboard - Listings</h2>
 
-              <div className="grid xl:grid-cols-2 gap-10 mt-7  max-w-[900px] grid-cols-1">
-                {rooms.map((room) => (
-                  <div
-                    key={room.title}
-                    className="w-full   bg-white pb-3 shadow-sm rounded-b-lg"
-                  >
-                    <div className="relative ">
-                      <CarouselCustomNavigation
-                        className="w-[30rem] rounded-t-lg h-[20rem] "
-                        images={room.images}
-                      />
-
-                      <div className="absolute top-3 w-full">
-                        <div className="flex  border-gray-300 w-full justify-between items-center p-2">
-                          <div className="">
-                            <span className="w-fit p-1 text-xs rounded-lg bg-[#F4EBFF]">
-                              Communal
-                            </span>
+              <div className="grid xl:grid-cols-2 lg:grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-6 xl:px-10 px-4 w-full  mt-6 max-w-[950px] py-10">
+                {popularLocations.length > 0 ? (
+                  popularLocations.map((item, index) => (
+                    <div
+                      key={index}
+                      className="flex flex-col rounded-lg shadow-lg w-full lg:w-[25rem] h-[25rem] md:w-[20rem] cursor-pointer"
+                      onMouseEnter={() => setHoveredIndex(index)}
+                      onMouseLeave={() => setHoveredIndex(null)}
+                    >
+                      <div className="h-[60%] rounded-t-[15px] rounded-b-[20px] overflow-hidden relative">
+                        <div className="flex items-center justify-between absolute top-2 left-3 w-full z-[100]">
+                          <div className="bg-[#F4EBFF] p-2 rounded-xl">
+                            <p className="text-[12px] font-[600] text-primaryPurple">
+                              {item.type}
+                            </p>
                           </div>
-                          <div className="flex gap-6">
-                            <img src={heart} alt="Heart Icon" />
-                            <img src={love} alt="Heart Icon" />
+                          <div className="flex gap-1 mr-5">
+                            <div className="h-8 w-8 bg-[#F4EBFF] text-primaryPurple rounded-full flex items-center justify-center hover:bg-primaryPurple hover:text-white transition-all duration-300">
+                              <i className="fi fi-rr-heart text-[12px]"></i>
+                            </div>
+                            <button
+                              className="h-8 w-8 bg-[#F4EBFF] text-primaryPurple rounded-full flex items-center justify-center hover:bg-primaryPurple hover:text-white transition-all duration-300"
+                              onClick={updateShareState}
+                            >
+                              <i className="fi fi-rr-share text-[12px]"></i>
+                            </button>
                           </div>
                         </div>
+                        <div className="bg-[#F4EBFF] px-2 py-1 rounded-full mx-auto absolute z-[100] bottom-2 left-1/2 transform -translate-x-1/2 flex items-center justify-center">
+                          <div>
+                            <p className="text-[12px] text-primaryPurple whitespace-nowrap">
+                              <span className="text-sm font-semibold">
+                                {item.rentersBooked + " "}
+                              </span>
+                              renters have booked this listing
+                            </p>
+                          </div>
+                        </div>
+                        <img
+                          src={item.poster}
+                          alt="#"
+                          className={`w-full h-full object-cover transition-transform duration-500 ${
+                            hoveredIndex === index ? "transform scale-110" : ""
+                          }`}
+                        />
                       </div>
 
-                      <div className="absolute bottom-[2rem]  inset-1 flex justify-center items-end ">
-                        <span className="w-fit p-1 px-3 text-[#6941C6] text-sm rounded-lg bg-[#F4EBFF]">
-                          15 renters have booked this listing
-                        </span>
-                      </div>
+                      <NavLink
+                        to={`/listing-details-page/${id}/${index}`}
+                        className="h-[40%] p-2 flex flex-col gap-2 justify-center"
+                      >
+                        <p className="text-sm font-bold">{item.name}</p>
+                        <div className="flex gap-1 items-center">
+                          <p className="text-[15px] text-gray-600">
+                            {`N ${item.price.toLocaleString()}`}
+                          </p>
+                          <p className="text-xs bg-[#D7D6FD] font-light px-2 rounded-full">
+                            {item.frequency}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <i className="fi fi-rr-text-box text-[#FF3D3D]"></i>
+                          <p className="text-xs">
+                            Units Available: {item.unitsAvailable}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <i className="fi fi-rr-marker text-[#FF3D3D]"></i>
+                          <p className="text-xs">{item.address}</p>
+                        </div>
+                      </NavLink>
+                      {share && (
+                        <ShareModal
+                          closeModal={closeShareModal}
+                          name={item.name}
+                        />
+                      )}
                     </div>
-
-                    <div className=" mt-3 p-2 rounded-b-lg">
-                      <h2 className="text-lg font-semibold">{room.title}</h2>
-
-                      <p className="text-sm">{room.address}</p>
-
-                      <div className="mt-2">
-                        <h1 className="text-2xl font-semibold">{room.price}</h1>
-
-                        <p className="text-sm mt-1">{room.availability}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  <p>No accommodations available.</p>
+                )}
               </div>
             </div>
           )}
         </div>
-        <div className="my-6">
-          {/* <Pagination /> */}
-        </div>
+        <div className="my-6">{/* <Pagination /> */}</div>
       </div>
     </>
   );

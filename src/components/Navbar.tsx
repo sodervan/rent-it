@@ -6,8 +6,8 @@ function Navbar() {
 	return (
 		<div className="flex h-16 border-b px-2 ">
 			<div className="container flex items-center mx-auto">
-				<h1 className="">rentit</h1>
-				<div className="ml-auto flex gap-2 px-2 items-center" >
+				<h1 className="text-xl font-bold text-purple-600">Rentit</h1>
+				<div className="ml-auto flex gap-4 px-2 items-center">
 					{nav_routes.map(({ name, to }) => (
 						<NavLink
 							to={to}
@@ -16,8 +16,8 @@ function Navbar() {
 							{name}
 						</NavLink>
 					))}
-          <Button>Sign Up</Button>
-          <Button>Login</Button>
+					<Button className="bg-purple-600">Sign Up</Button>
+					<Button variant={"outline"}>Login</Button>
 				</div>
 			</div>
 		</div>

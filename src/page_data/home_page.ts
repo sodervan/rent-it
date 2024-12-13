@@ -38,4 +38,26 @@ const highlight_data: IHighLight[] = [
 	},
 ];
 
-export { carousel_data, highlight_data };
+const hero_data = [
+	{
+		title: "Are You a Renter or a Student",
+		subtitle:
+			"Find your perfect home with ease. Our platform offers you a seamless experience to search, compare, and secure your next apartment, all in one place. Explore verified listings and connect directly with landlords or agents.",
+		button: {
+			title: "Get Started Today",
+			function: () => {},
+		},
+		img: "https://res.cloudinary.com/dmlgns85e/image/upload/v1725089764/Pngtree_a_business_man_wearing_purple_15424326_1_uzoou5.png",
+	},
+	{
+		title: "Are You a Renter or a Student",
+		subtitle:
+			"Find your perfect home with ease. Our platform offers you a seamless experience to search, compare, and secure your next apartment, all in one place. Explore verified listings and connect directly with landlords or agents.",
+		button: {
+			title: "Get Started Today",
+			function: () => {},
+		},
+		img: "https://res.cloudinary.com/dmlgns85e/image/upload/v1725090751/Pexels_Photo_by_Ketut_Subiyanto_h5pma8.png",
+	},
+];
+export { carousel_data, highlight_data, hero_data };

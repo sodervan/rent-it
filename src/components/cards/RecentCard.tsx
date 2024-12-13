@@ -1,5 +1,4 @@
 import { IconSearch } from "@tabler/icons-react";
-import React from "react";
 import { NavLink } from "react-router-dom";
 
 function RecentCard() {

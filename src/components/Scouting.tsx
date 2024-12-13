@@ -1,5 +1,4 @@
 import ScoutCard from "./cards/ScoutCard";
-
 function Scouting() {
 	return (
 		<div className="container mx-auto">

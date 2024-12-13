@@ -1,4 +1,3 @@
-import React from "react";
 import RecentCard from "./cards/RecentCard";
 
 function Recents() {

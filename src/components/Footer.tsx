@@ -1,5 +1,4 @@
 import { footer_data } from "@/page_data/footer_data";
-import React from "react";
 import { Link } from "react-router-dom";
 
 function Footer() {

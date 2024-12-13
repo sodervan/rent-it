@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { IconLock, IconMail, IconUser } from "@tabler/icons-react";
-import React, { FormEvent, useState } from "react";
+import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { toast } from "react-toastify";
 const notify = () => toast("Wow so easy !");

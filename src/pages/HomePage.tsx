@@ -19,20 +19,20 @@ const HomePage = () => {
 					className="embla isolate relative "
 					ref={emblaRef}
 				>
-					<div className="absolute inset-0 z-20">
+					<div className="absolute inset-0 z-20 px-4 md:px-0">
 						<div className="mx-auto  gap-4 flex-col items-center justify-center flex h-full">
-							<h1 className="text-5xl text-white font-bold">
+							<h1 className="text-2xl  md:text-5xl text-white font-bold text-center">
 								{carousel_data.header}
 							</h1>
-							<p className="text-white">
+							<p className="text-white text-center">
 								Simplifying apartment hunting for students and
 								renters with transparency, reliability, and
 								ease.
 							</p>
-							<div className="flex gap-2">
+							<div className="flex gap-2 flex-wrap justify-center">
 								{carousel_data.pills.map((e) => (
 									<Badge
-										className="bg-purple-600 text-md pointer-events-none"
+										className="bg-purple-600 text-sm md:text-md pointer-events-none"
 										key={e}
 									>
 										{e}

@@ -3,8 +3,8 @@ import { nav_routes } from "../page_data/nav_data";
 import { Button } from "./ui/button";
 
 function Navbar() {
-	let navigation  =useNavigate()
-	
+	let navigation = useNavigate();
+
 	return (
 		<div className="flex h-16 border-b px-2 ">
 			<div className="container flex items-center mx-auto">
@@ -20,16 +20,20 @@ function Navbar() {
 					))}
 					<Button
 						className="bg-purple-600"
-						onClick={()=>{
-							navigation("/auth/renter/signup")
+						onClick={() => {
+							navigation("/auth/renter/signup");
 						}}
 					>
 						Sign Up
 					</Button>
-					<Button variant={"outline"} onClick={()=>{
-							navigation("/auth/renter/signin")
-
-					}}>Login</Button>
+					<Button
+						variant={"outline"}
+						onClick={() => {
+							navigation("/auth/renter/signin");
+						}}
+					>
+						Login
+					</Button>
 				</div>
 			</div>
 		</div>

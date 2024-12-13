@@ -54,7 +54,7 @@ const hero_data = [
 		subtitle:
 			"Find your perfect home with ease. Our platform offers you a seamless experience to search, compare, and secure your next apartment, all in one place. Explore verified listings and connect directly with landlords or agents.",
 		button: {
-			title: "Get Started Today",
+			title: "Expand Your Reach",
 			function: () => {},
 		},
 		img: "https://res.cloudinary.com/dmlgns85e/image/upload/v1725090751/Pexels_Photo_by_Ketut_Subiyanto_h5pma8.png",

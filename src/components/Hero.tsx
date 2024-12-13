@@ -13,11 +13,13 @@ interface IHero {
 function Hero({ title, subtitle, img, button }: IHero) {
 	return (
 		<div className="bg-neutral-200">
-			<div className="container mx-auto gap-2 flex flex-wrap">
-				<div className="flex-[1_1_400px] h-[400px]  flex-shrink-0 flex flex-col justify-center gap-6">
+			<div className="container mx-auto gap-2 flex flex-wrap ">
+				<div className="flex-[1_1_400px] h-[400px]   flex flex-col justify-center gap-6 px-4 md:px-0">
 					<h1 className="text-2xl font-bold">{title}</h1>
 					<p className="text-neutral-600">{subtitle}</p>
-					<Button className="w-fit text-md p-6">{button.title}</Button>
+					<Button className="w-fit text-md p-6 bg-purple-600">
+						{button.title}
+					</Button>
 				</div>
 				<div className="flex-[1_1_45%] h-[400px]  flex-shrink-0 justify-end flex">
 					<img

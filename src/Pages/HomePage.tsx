@@ -1,15 +1,18 @@
 import General from "../components/General";
 import WhoWeAre from "../components/WhoWeAre";
-import Footer from "../components/TheFooter.jsx";
 import { useEffect, useState } from "react";
 import Body from "@/components/Body";
+import Footer from "@/components/Footer";
 // import { useOutletContext } from "react-router-dom";
 
 const HomePage = () => {
-	const [id, setId] = useState(null);
+	const [id, setId] = useState<string| null>(null);
 
-	useEffect(() => {
+	const getItem = ()=>{
 		setId(localStorage.getItem("userId"));
+	}
+	useEffect(() => {
+		getItem()		
 	}, []);
 	// const { userId } = useOutletContext();
 	return (
@@ -17,8 +20,8 @@ const HomePage = () => {
 			{/* <Body userId={id} /> */}
 			<Body userId={id} />
 			<WhoWeAre />
-			<General />
-			<Footer />
+			{/* <General /> */}
+			<Footer/>
 		</>
 	);
 };

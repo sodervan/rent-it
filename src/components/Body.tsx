@@ -1,36 +1,21 @@
-import { useState, useEffect } from "react";
-import {
-	Carousel,
-	CarouselContent,
-	CarouselItem,
-	CarouselPrevious,
-	CarouselNext,
-} from "@/components/ui/carousel";
-import { Button } from "@/components/ui/button";
+import Autoplay from "embla-carousel-autoplay";
 import { IconSearch } from "@tabler/icons-react";
-
+import { Button } from "@mantine/core";
+import "@mantine/carousel/styles.css";
 const image_list = [
 	"https://res.cloudinary.com/dmlgns85e/image/upload/v1724857270/pexels-binyaminmellish-106399_ana2ff.jpg",
 	"https://res.cloudinary.com/dmlgns85e/image/upload/v1724858745/ultimate-guide-to-home-exterior-design_leq7ty.jpg",
 	"https://res.cloudinary.com/dmlgns85e/image/upload/v1724858656/white-house-a-frame-section-c0a4a3b3-e722202f114e4aeea4370af6dbb4312b_rzafww.jpg",
 ];
-const Body = ({ userId }: { userId: string }) => {
-	const [showToast, setShowToast] = useState(true); // State to control toast visibility
-
+import { Carousel } from "@mantine/carousel";
+import { useRef } from "react";
+const Body = ({ userId }: { userId: string | null }) => {
 	// Use useEffect to hide the toast after 5 seconds
-	useEffect(() => {
-		const timeout = setTimeout(() => {
-			setShowToast(false);
-		}, 5000);
-
-		// Cleanup the timeout if the component unmounts
-		return () => clearTimeout(timeout);
-	}, []); // Empty dependency array ensures this runs once on mount
-
+	const autoplay = useRef(Autoplay({ delay: 5000 }));
 	return (
 		<div>
 			{/* The rest of your component */}
-			<div className="h-[400px] mt-20 sm:mt-[40px] sm:h-[550px] md:mt-[75px] md:h-[550px] relative">
+			<div className="h-[400px]  sm:h-[550px]  md:h-[550px] relative">
 				<div className="absolute inset-0 z-10 flex flex-col gap-7 justify-center items-center">
 					<div className="text-center px-4 md:px-20">
 						<p className="text-white text-[25px] sm:text-[40px] md:text-[45px] lg:text-[50px] font-bold">
@@ -68,33 +53,37 @@ const Body = ({ userId }: { userId: string }) => {
 								placeholder="Search by University, Location, Property"
 							/>
 						</div>
-							<Button className="h-full m-0 rounded-l-none bg-purple-800">
-								<IconSearch />
-								Search
-							</Button>
+						<Button
+						size="compact-md"
+						
+							leftSection={<IconSearch />}
+							className=" m-0 !bg-purple-800 rounded-none !rounded-l-none !h-full"
+						>
+							Search
+						</Button>
 					</div>
 				</div>
-				<Carousel className="">
-					<CarouselContent
-						className={"h-[400px]   sm:h-[550px]  bg-red-400"}
-					>
-						{image_list.map((e) => {
-							return (
-								<CarouselItem
-									className={"bg-green-300 relative"}
-								>
-									<div className="absolute h-full w-full bg-black z-20 bg-opacity-70"></div>
-									<img
-										src={e}
-										alt="..."
-										className="w-full h-full object-cover rounded-none"
-									/>
-								</CarouselItem>
-							);
-						})}
-					</CarouselContent>
-					<CarouselPrevious />
-					<CarouselNext />
+				<Carousel
+					loop
+					plugins={[autoplay.current]}
+					className="h-[500px] max  sm:h-[650px]  bg-red-400"
+				>
+					{image_list.map((e) => {
+						return (
+							<Carousel.Slide
+								className={
+									" relative h-[500px] max  sm:h-[650px]"
+								}
+							>
+								<div className="absolute h-full w-full bg-black z-20 bg-opacity-70"></div>
+								<img
+									src={e}
+									alt="..."
+									className="w-full h-full object-cover rounded-none"
+								/>
+							</Carousel.Slide>
+						);
+					})}
 				</Carousel>
 			</div>
 		</div>

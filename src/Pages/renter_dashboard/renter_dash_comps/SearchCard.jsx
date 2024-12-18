@@ -6,7 +6,7 @@ function SearchCard() {
 			padding="lg"
 			radius="md"
 			withBorder
-            className="w-[352px]"
+            className="w-[300px]"
             // className="flex-shrink-0"
 		>
 			<Card.Section>

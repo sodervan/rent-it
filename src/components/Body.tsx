@@ -1,5 +1,11 @@
 import { useState, useEffect } from "react";
-import { Carousel, CarouselContent, CarouselItem,CarouselPrevious,CarouselNext } from "@/components/ui/carousel";
+import {
+	Carousel,
+	CarouselContent,
+	CarouselItem,
+	CarouselPrevious,
+	CarouselNext,
+} from "@/components/ui/carousel";
 
 const image_list = [
 	"https://res.cloudinary.com/dmlgns85e/image/upload/v1724857270/pexels-binyaminmellish-106399_ana2ff.jpg",

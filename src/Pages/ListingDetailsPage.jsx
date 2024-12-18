@@ -1,9 +1,9 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Avatar, Rating, Spinner } from "@material-tailwind/react";
-import TheFooter from "../Components/TheFooter.jsx";
-import BookMarkListingModal from "../Components/Modals/BookMarkListingModal.jsx";
-import ChatAgentModal from "../Components/Modals/ChatAgentModal.jsx";
+import TheFooter from "../components/TheFooter.jsx";
+import BookMarkListingModal from "../components/Modals/BookMarkListingModal.jsx";
+import ChatAgentModal from "../components/Modals/ChatAgentModal.jsx";
 const firebaseUrl =
 	"https://rentit-c3304-default-rtdb.firebaseio.com/locations.json";
 const ListingDetailsPage = () => {

@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
-import PopularLocationDetails from "../Components/PopularLocationDetails";
+import PopularLocationDetails from "./PopularLocationDetails";
 import RecentSearches from "./RecentSearches";
 import { useLocation } from "react-router-dom";
 import popularLocation from "../Data/popular_locations.json";
-import { Loader } from "@mantine/core";
 
 const General = () => {
 	const [popularLocations, setPopularLocations] = useState([]);
@@ -83,9 +82,7 @@ const General = () => {
 							</div>
 						))
 					) : (
-						<div className="flex items-center justify-center w-full mt-4">
-							<Loader className="h-10 w-10" />
-						</div>
+						<div className="flex items-center justify-center w-full mt-4"></div>
 					)}
 				</div>
 

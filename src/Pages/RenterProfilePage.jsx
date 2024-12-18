@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import LoaderTwo from "../Components/Loaders/LoaderTwo.jsx";
+import LoaderTwo from "../components/Loaders/LoaderTwo.jsx";
 import { Avatar } from "@material-tailwind/react";
 import { FiEdit, FiBookmark, FiCreditCard, FiLock } from "react-icons/fi";
 import { useNavigate } from "react-router-dom"; // Importing the edit icon from react-icons
-import EditProfile from "../Components/ProfileComponents/EditProfile.jsx";
+import EditProfile from "../components/ProfileComponents/EditProfile.jsx";
 
 const RenterProfilePage = () => {
   const navigate = useNavigate();

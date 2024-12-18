@@ -1,8 +1,8 @@
-import Body from "../Components/Body";
-import General from "../Components/General";
-import WhoWeAre from "../Components/WhoWeAre";
-import Footer from "../Components/TheFooter.jsx";
+import General from "../components/General";
+import WhoWeAre from "../components/WhoWeAre";
+import Footer from "../components/TheFooter.jsx";
 import { useEffect, useState } from "react";
+import Body from "@/components/Body";
 // import { useOutletContext } from "react-router-dom";
 
 const HomePage = () => {
@@ -14,6 +14,7 @@ const HomePage = () => {
 	// const { userId } = useOutletContext();
 	return (
 		<>
+			{/* <Body userId={id} /> */}
 			<Body userId={id} />
 			<WhoWeAre />
 			<General />

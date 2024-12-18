@@ -1,4 +1,3 @@
-import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import RenterDashPage from "./Pages/renter_dashboard/RenterDashPage";
 import MainLayout from "./Layouts/MainLayout";

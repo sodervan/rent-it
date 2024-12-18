@@ -1,13 +1,18 @@
-import { NavLink, useNavigate,} from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { nav_routes } from "../page_data/nav_data";
 import { Button } from "@mantine/core";
+import { useAtom } from "jotai";
+import { countAtom } from "@/store/store";
 
 function Navbar() {
 	let navigation = useNavigate();
+	const [count, setCount] = useAtom(countAtom);
 	return (
 		<div className="flex h-20 border-b px-2  sticky top-0 z-20 bg-white">
 			<div className="container flex items-center mx-auto">
-				<h1 className="text-xl font-bold text-purple-600">Rentit</h1>
+				<h1 className="text-xl font-bold text-purple-600">
+					Rentit {count}
+				</h1>
 				<div className="ml-auto  gap-4 px-2 items-center hidden md:flex">
 					{nav_routes.map(({ name, to }) => (
 						<NavLink

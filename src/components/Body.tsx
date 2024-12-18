@@ -6,6 +6,8 @@ import {
 	CarouselPrevious,
 	CarouselNext,
 } from "@/components/ui/carousel";
+import { Button } from "@/components/ui/button";
+import { IconSearch } from "@tabler/icons-react";
 
 const image_list = [
 	"https://res.cloudinary.com/dmlgns85e/image/upload/v1724857270/pexels-binyaminmellish-106399_ana2ff.jpg",
@@ -58,7 +60,6 @@ const Body = ({ userId }: { userId: string }) => {
 							</p>
 						</div>
 					</div>
-
 					<div className="hidden md:flex items-center w-3/5">
 						<div className=" w-[80%] bg-white py-3 px-4 rounded-l-[11px]">
 							<input
@@ -67,9 +68,10 @@ const Body = ({ userId }: { userId: string }) => {
 								placeholder="Search by University, Location, Property"
 							/>
 						</div>
-						<div className="flex bg-primaryPurple w-[20%] py-3 px-4 rounded-r-[11px] items-center justify-center gap-1">
-							<div></div>
-						</div>
+							<Button className="h-full m-0 rounded-l-none bg-purple-800">
+								<IconSearch />
+								Search
+							</Button>
 					</div>
 				</div>
 				<Carousel className="">

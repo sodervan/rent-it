@@ -1,4 +1,4 @@
-import { AppShell } from "@mantine/core";
+import { AppShell, Box, Container, Divider, Stack, Title } from "@mantine/core";
 import { Route, Routes } from "react-router-dom";
 import NavBarItems from "./renter_dash_comps/NavBarItems";
 import { useDisclosure } from "@mantine/hooks";
@@ -14,10 +14,16 @@ function RenterDashPage() {
 				collapsed: { mobile: !opened },
 			}}
 		>
-			<AppShell.Navbar>
-				<NavBarItems />
+			<AppShell.Navbar className="">
+				<div className="h-full flex flex-col gap-2">
+					<div className="h-20 bg-red-200 ">
+						<p>Rentit</p>
+					</div>
+					<Divider />
+					<NavBarItems />
+				</div>
 			</AppShell.Navbar>
-			<AppShell.Main>
+			<AppShell.Main className="">
 				<Routes>
 					<Route
 						path="/"

@@ -25,8 +25,9 @@ function SearchPage() {
 						<IconFilter />
 					</Button>
 				</Flex>
-				<Divider />
+				<Divider />	
 			</div>
+			
 			<div className="flex p-2   flex-wrap gap-3 justify-center">
 				{arr.map((e, i) => (
 					<SearchCard key={"card+_" + i} />

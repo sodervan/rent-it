@@ -1,0 +1,476 @@
+[
+  {
+    "id": 1,
+    "name": "Lekki Conservation Centre",
+    "city": "Lagos",
+    "state": "Lagos",
+    "description": "A large natural reserve featuring diverse wildlife, scenic boardwalks, and Africa's longest canopy walkway.",
+    "coordinates": {
+      "latitude": 6.4419,
+      "longitude": 3.5316
+    },
+    "accommodations": [
+      {
+        "name": "Lekki View Apartments",
+        "price": 1500000,
+        "frequency": "per annum",
+        "unitsAvailable": 5,
+        "address": "12 Lekki-Epe Expressway, Lagos",
+        "poster": "https://res.cloudinary.com/dmlgns85e/image/upload/v1725052734/an_accommodation_interior_2_pf2qmg.jpg",
+        "type": "Single man",
+        "rentersBooked": 2,
+        "agentName": "Greenview Realtors",
+        "rating": 4.5,
+        "description": "Modern one-bedroom apartments with great proximity to nature and local attractions.",
+        "features": {
+          "type": "Single man",
+          "dateListed": "2024-08-01",
+          "electricityStatus": "24/7 power"
+        },
+        "billsIncluded": [
+          "Water",
+          "Security"
+        ],
+        "propertyRules": [
+          "No pets",
+          "Quiet hours after 10 PM"
+        ],
+        "landmarks": [
+          "Lekki Mall",
+          "Lekki Beach"
+        ]
+      },
+      {
+        "name": "Coastal Breeze Homes",
+        "price": 20000,
+        "frequency": "weekly",
+        "unitsAvailable": 10,
+        "address": "5B Admiralty Road, Lekki Phase 1, Lagos",
+        "poster": "https://res.cloudinary.com/dmlgns85e/image/upload/v1725052732/an_accommodation_interior_3_u9snxd.jpg",
+        "type": "Communal",
+        "rentersBooked": 7,
+        "agentName": "Lekki Realtors",
+        "rating": 4.2,
+        "description": "Affordable and comfortable communal living spaces near the coast.",
+        "features": {
+          "type": "Communal",
+          "dateListed": "2024-07-25",
+          "electricityStatus": "Prepaid meters"
+        },
+        "billsIncluded": [
+          "Water",
+          "Electricity",
+          "Wi-Fi"
+        ],
+        "propertyRules": [
+          "No smoking",
+          "Pets allowed"
+        ],
+        "landmarks": [
+          "Lekki Phase 1 Market",
+          "The Palms Shopping Mall"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Obudu Mountain Resort",
+    "city": "Obudu",
+    "state": "Cross River",
+    "description": "A picturesque mountain resort offering a cool climate, cable cars, and various outdoor activities.",
+    "coordinates": {
+      "latitude": 6.3842,
+      "longitude": 9.3958
+    },
+    "accommodations": [
+      {
+        "name": "Obudu Lodge",
+        "price": 500000,
+        "frequency": "per annum",
+        "unitsAvailable": 3,
+        "address": "Obudu Mountain Resort, Cross River",
+        "type": "Three man",
+        "rentersBooked": 1,
+        "agentName": "Mountainview Realty",
+        "rating": 4.7,
+        "description": "Spacious and comfortable lodges in a serene mountain environment.",
+        "features": {
+          "type": "Three man",
+          "dateListed": "2024-09-10",
+          "electricityStatus": "24/7 power with backup"
+        },
+        "billsIncluded": [
+          "Water",
+          "Security"
+        ],
+        "propertyRules": [
+          "No smoking",
+          "No loud music"
+        ],
+        "landmarks": [
+          "Obudu Cable Cars",
+          "Obudu Water Park"
+        ]
+      },
+      {
+        "name": "Highland Cottages",
+        "price": 15000,
+        "frequency": "weekly",
+        "unitsAvailable": 7,
+        "address": "20 Hilltop Road, Obudu, Cross River",
+        "type": "Single man",
+        "rentersBooked": 5,
+        "agentName": "Obudu Estates",
+        "rating": 4.4,
+        "description": "Cozy cottages ideal for individuals seeking a peaceful retreat.",
+        "features": {
+          "type": "Single man",
+          "dateListed": "2024-08-15",
+          "electricityStatus": "Prepaid meters"
+        },
+        "billsIncluded": [
+          "Water",
+          "Wi-Fi"
+        ],
+        "propertyRules": [
+          "No pets",
+          "Quiet hours after 9 PM"
+        ],
+        "landmarks": [
+          "Mountain Peaks",
+          "Cable Car Station"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Yankari National Park",
+    "city": "Bauchi",
+    "state": "Bauchi",
+    "description": "A national park known for its wildlife, including elephants and baboons, as well as its warm springs.",
+    "coordinates": {
+      "latitude": 9.7539,
+      "longitude": 10.501
+    },
+    "accommodations": [
+      {
+        "name": "Wikki Camp Lodge",
+        "price": 300000,
+        "frequency": "per annum",
+        "unitsAvailable": 8,
+        "address": "Yankari National Park, Bauchi",
+        "type": "Communal",
+        "rentersBooked": 4,
+        "agentName": "Safari Homes",
+        "rating": 4.1,
+        "description": "Communal lodges within the heart of nature, perfect for adventure seekers.",
+        "features": {
+          "type": "Communal",
+          "dateListed": "2024-07-05",
+          "electricityStatus": "24/7 power"
+        },
+        "billsIncluded": [
+          "Water",
+          "Security"
+        ],
+        "propertyRules": [
+          "No feeding animals",
+          "No loud music"
+        ],
+        "landmarks": [
+          "Wikki Warm Springs",
+          "Yankari Safari Tours"
+        ]
+      },
+      {
+        "name": "Savannah Suites",
+        "price": 12000,
+        "frequency": "weekly",
+        "unitsAvailable": 15,
+        "address": "10 Safari Avenue, Bauchi",
+        "type": "Single man",
+        "rentersBooked": 10,
+        "agentName": "Savannah Estates",
+        "rating": 4.3,
+        "description": "Affordable suites offering a comfortable stay amidst wildlife.",
+        "features": {
+          "type": "Single man",
+          "dateListed": "2024-07-25",
+          "electricityStatus": "Prepaid meters"
+        },
+        "billsIncluded": [
+          "Water",
+          "Wi-Fi"
+        ],
+        "propertyRules": [
+          "No smoking",
+          "Quiet hours after 8 PM"
+        ],
+        "landmarks": [
+          "Yankari Game Reserve",
+          "Wildlife Observation Posts"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "name": "Olumo Rock",
+    "city": "Abeokuta",
+    "state": "Ogun",
+    "description": "A historic rock formation that served as a refuge during wars and offers panoramic views of the city.",
+    "coordinates": {
+      "latitude": 7.157,
+      "longitude": 3.3486
+    },
+    "accommodations": [
+      {
+        "name": "Olumo Apartments",
+        "price": 1000000,
+        "frequency": "per annum",
+        "unitsAvailable": 4,
+        "address": "Rock Road, Abeokuta, Ogun",
+        "type": "Single man",
+        "rentersBooked": 3,
+        "agentName": "Rockview Realty",
+        "rating": 4.6,
+        "description": "Elegant apartments with stunning views of Olumo Rock.",
+        "features": {
+          "type": "Single man",
+          "dateListed": "2024-06-15",
+          "electricityStatus": "24/7 power with backup generator"
+        },
+        "billsIncluded": [
+          "Water",
+          "Security",
+          "Wi-Fi"
+        ],
+        "propertyRules": [
+          "No pets",
+          "No loud music"
+        ],
+        "landmarks": [
+          "Olumo Rock",
+          "Abeokuta Cultural Centre"
+        ]
+      },
+      {
+        "name": "Rock View Suites",
+        "price": 18000,
+        "frequency": "weekly",
+        "unitsAvailable": 6,
+        "address": "15 Cliffside Street, Abeokuta, Ogun",
+        "type": "Communal",
+        "rentersBooked": 4,
+        "agentName": "Cliffside Properties",
+        "rating": 4.2,
+        "description": "Comfortable suites close to historic Olumo Rock.",
+        "features": {
+          "type": "Communal",
+          "dateListed": "2024-07-01",
+          "electricityStatus": "Prepaid meters"
+        },
+        "billsIncluded": [
+          "Water",
+          "Wi-Fi"
+        ],
+        "propertyRules": [
+          "No pets",
+          "No parties"
+        ],
+        "landmarks": [
+          "Rockview Park",
+          "Abeokuta Central Market"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "name": "Nike Art Gallery",
+    "city": "Lagos",
+    "state": "Lagos",
+    "description": "One of the largest art galleries in Nigeria, featuring a wide range of traditional and contemporary African art.",
+    "coordinates": {
+      "latitude": 6.4311,
+      "longitude": 3.4252
+    },
+    "accommodations": [
+      {
+        "name": "Artisan Residences",
+        "price": 1200000,
+        "frequency": "per annum",
+        "unitsAvailable": 3,
+        "address": "10 Gallery Lane, Lekki, Lagos",
+        "type": "Three man",
+        "rentersBooked": 2
+      },
+      {
+        "name": "Gallery Heights",
+        "price": 25000,
+        "frequency": "weekly",
+        "unitsAvailable": 8,
+        "address": "4 Art Avenue, Lekki, Lagos",
+        "type": "Single man",
+        "rentersBooked": 5
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "name": "Millennium Park",
+    "city": "Abuja",
+    "state": "Federal Capital Territory",
+    "description": "A large public park in the heart of Abuja, offering green spaces, walking paths, and recreational activities.",
+    "coordinates": {
+      "latitude": 9.0631,
+      "longitude": 7.4962
+    },
+    "accommodations": [
+      {
+        "name": "Millennium Apartments",
+        "price": 1800000,
+        "frequency": "per annum",
+        "unitsAvailable": 2,
+        "address": "1 Parkside Road, Abuja",
+        "type": "Single man",
+        "rentersBooked": 1
+      },
+      {
+        "name": "Capital City Suites",
+        "price": 22000,
+        "frequency": "weekly",
+        "unitsAvailable": 12,
+        "address": "5 Central Avenue, Abuja",
+        "type": "Communal",
+        "rentersBooked": 9
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "name": "Erin Ijesha Waterfall",
+    "city": "Erin Ijesha",
+    "state": "Osun",
+    "description": "A multi-step waterfall that is a popular tourist attraction, offering scenic beauty and refreshing pools.",
+    "coordinates": {
+      "latitude": 7.6167,
+      "longitude": 4.8631
+    },
+    "accommodations": [
+      {
+        "name": "Waterfall Lodge",
+        "price": 400000,
+        "frequency": "per annum",
+        "unitsAvailable": 5,
+        "address": "Erin Ijesha Road, Osun",
+        "type": "Three man",
+        "rentersBooked": 3
+      },
+      {
+        "name": "Cascade Apartments",
+        "price": 13000,
+        "frequency": "weekly",
+        "unitsAvailable": 10,
+        "address": "8 Falls Way, Erin Ijesha, Osun",
+        "type": "Communal",
+        "rentersBooked": 6
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "name": "Kajuru Castle",
+    "city": "Kajuru",
+    "state": "Kaduna",
+    "description": "A medieval-style castle built on a hill in Kaduna, known for its unique architecture and scenic views.",
+    "coordinates": {
+      "latitude": 10.3527,
+      "longitude": 7.6682
+    },
+    "accommodations": [
+      {
+        "name": "Castle Suites",
+        "price": 250000,
+        "frequency": "per annum",
+        "unitsAvailable": 4,
+        "address": "1 Castle Hill, Kajuru, Kaduna",
+        "type": "Single man",
+        "rentersBooked": 2
+      },
+      {
+        "name": "Fortress Lodge",
+        "price": 15000,
+        "frequency": "weekly",
+        "unitsAvailable": 9,
+        "address": "2 Fortress Street, Kajuru, Kaduna",
+        "type": "Communal",
+        "rentersBooked": 7
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "name": "Zuma Rock",
+    "city": "Madalla",
+    "state": "Niger",
+    "description": "A giant monolith located along the Abuja-Kaduna expressway, often referred to as the 'Gateway to Abuja.'",
+    "coordinates": {
+      "latitude": 9.0817,
+      "longitude": 7.2455
+    },
+    "accommodations": [
+      {
+        "name": "Zuma Hilltop Apartments",
+        "price": 1100000,
+        "frequency": "per annum",
+        "unitsAvailable": 6,
+        "address": "5 Rock Road, Madalla, Niger",
+        "type": "Three man",
+        "rentersBooked": 3
+      },
+      {
+        "name": "Monolith Residences",
+        "price": 20000,
+        "frequency": "weekly",
+        "unitsAvailable": 10,
+        "address": "12 Cliffside Avenue, Madalla, Niger",
+        "type": "Communal",
+        "rentersBooked": 5
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "name": "Ikogosi Warm Springs",
+    "city": "Ikogosi",
+    "state": "Ekiti",
+    "description": "A natural warm spring that merges with a cold spring, creating a rare phenomenon.",
+    "coordinates": {
+      "latitude": 7.6011,
+      "longitude": 4.9134
+    },
+    "accommodations": [
+      {
+        "name": "Warm Springs Resort",
+        "price": 850000,
+        "frequency": "per annum",
+        "unitsAvailable": 5,
+        "address": "Ikogosi Warm Springs, Ekiti",
+        "type": "Three man",
+        "rentersBooked": 2
+      },
+      {
+        "name": "Spring Breeze Apartments",
+        "price": 17000,
+        "frequency": "weekly",
+        "unitsAvailable": 7,
+        "address": "3 Waterway Road, Ikogosi, Ekiti",
+        "type": "Communal",
+        "rentersBooked": 6
+      }
+    ]
+  }
+]

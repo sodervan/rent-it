@@ -15,7 +15,7 @@ const Body = ({ userId }: { userId: string | null }) => {
 	return (
 		<div>
 			{/* The rest of your component */}
-			<div className="h-[400px]  sm:h-[550px]  md:h-[550px] relative">
+			<div className="h-[500px]  sm:h-[650px]  md:h-[550px] relative">
 				<div className="absolute inset-0 z-10 flex flex-col gap-7 justify-center items-center">
 					<div className="text-center px-4 md:px-20">
 						<p className="text-white text-[25px] sm:text-[40px] md:text-[45px] lg:text-[50px] font-bold">
@@ -54,8 +54,7 @@ const Body = ({ userId }: { userId: string | null }) => {
 							/>
 						</div>
 						<Button
-						size="compact-md"
-						
+							size="compact-md"
 							leftSection={<IconSearch />}
 							className=" m-0 !bg-purple-800 rounded-none !rounded-l-none !h-full"
 						>

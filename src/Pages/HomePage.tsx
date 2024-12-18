@@ -6,22 +6,23 @@ import Footer from "@/components/Footer";
 // import { useOutletContext } from "react-router-dom";
 
 const HomePage = () => {
-	const [id, setId] = useState<string| null>(null);
+	const [id, setId] = useState<string | null>(null);
 
-	const getItem = ()=>{
+	const getItem = () => {
 		setId(localStorage.getItem("userId"));
-	}
+	};
 	useEffect(() => {
-		getItem()		
+		getItem();
 	}, []);
 	// const { userId } = useOutletContext();
 	return (
 		<>
-			{/* <Body userId={id} /> */}
 			<Body userId={id} />
+			<div className="h-40 "></div>
 			<WhoWeAre />
-			{/* <General /> */}
-			<Footer/>
+			
+			<General />
+			<Footer />
 		</>
 	);
 };

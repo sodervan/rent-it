@@ -4,7 +4,7 @@ import React from "react";
 
 function NavBarItems() {
 	return (
-		<Stack className="px-2 gap-2 bg-red-200 h-full">
+		<Stack className="px-2 gap-2 h-full">
 			<Stack p={"md"}>
 				<Group className="gap-2">
 					<Avatar />

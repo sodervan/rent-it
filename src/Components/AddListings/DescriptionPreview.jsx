@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 const Description = () => {
   const navigate = useNavigate();
-  const [descriptionDetails, setDescriptionDetails] = useState([]);
+  const [descriptionDetails, setDescriptionDetails] = useState("");
 
   useEffect(() => {
     setDescriptionDetails(

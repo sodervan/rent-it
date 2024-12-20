@@ -40,12 +40,13 @@ const FurnishingState = () => {
       setIsLoading(false);
     }
   };
-  // zjoyfxsvk3k8z7ub46tfsp93
+  // dtyfez7dk0hw0mocmkobchck
   const postBasicFeatures = async () => {
+    const storedDetails = JSON.parse(localStorage.getItem("basicDetails"));
     setLoading(true);
     try {
       const response = await fetch(
-        `https://rent-it-api.onrender.com/api/v1/agents/listings/zjoyfxsvk3k8z7ub46tfsp93/featureTags?id=zjoyfxsvk3k8z7ub46tfsp93`,
+        `https://rent-it-api.onrender.com/api/v1/agents/listings/${storedDetails.listingId}/featureTags?id=${storedDetails.listingId}`,
         {
           method: "POST",
           headers: {
@@ -59,8 +60,8 @@ const FurnishingState = () => {
       );
       if (response.ok) {
         const result = await response.json();
-        console.log(result)
-        // setTimeout(() => navigate("/agent/addlisting/8"), 500);
+        console.log(result);
+        setTimeout(() => navigate("/agent/addlisting/8"), 500);
       } else {
         console.error("Failed to post featureTags");
       }

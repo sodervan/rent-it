@@ -41,7 +41,7 @@ const Description = () => {
       if (response.ok) {
         const result = await response.json();
         console.log("Success:", result);
-        localStorage.setItem("descriptionDetails", JSON.stringify(result.payload));
+        localStorage.setItem("descriptionDetails", JSON.stringify(description));
         setTimeout(() => {
           navigate("/agent/addlisting/5");
         }, 500);

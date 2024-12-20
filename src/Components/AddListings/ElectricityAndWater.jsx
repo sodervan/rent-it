@@ -163,12 +163,11 @@ const ElectricityAndWater = () => {
                   <div className="w-full mt-3">
                     <Select
                       label="Select"
-                      value={furnishingState}
                       onChange={(e) => setFurnishingState(e)}
                     >
-                      <Option value="Fully Furnished">Fully Furnished</Option>
+                      <Option value="Fully-Furnished">Fully Furnished</Option>
                       <Option value="Semi-Furnished">Semi-Furnished</Option>
-                      <Option value="Not Furnished">Not Furnished</Option>
+                      <Option value="Not-Furnished">Not Furnished</Option>
                     </Select>
                   </div>
                 </div>

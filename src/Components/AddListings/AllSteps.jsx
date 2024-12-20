@@ -10,6 +10,9 @@ import DescriptionPreview from "./DescriptionPreview.jsx";
 import AddBills from "./AddBills.jsx";
 import UploadListingImages from "./UploadListingImages.jsx";
 import UploadListingVideos from "./UploadListingVideos.jsx";
+import UploadTenancyAgreement from "./UploadTenancyAgreement.jsx";
+import ListingLocation from "./ListingMap.jsx";
+import ReviewListing from "./ReviewListing.jsx";
 
 const AllSteps = () => {
   const step = useParams().step;
@@ -28,6 +31,9 @@ const AllSteps = () => {
           {step == 8 && <AddBills />}
           {step == 9 && <UploadListingImages />}
           {step == 10 && <UploadListingVideos />}
+          {step == 11 && <ListingLocation />}
+          {step == 12 && <UploadTenancyAgreement />}
+          {step == 13 && <ReviewListing />}
         </div>
       </div>
     </>

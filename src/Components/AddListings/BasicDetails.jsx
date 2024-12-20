@@ -88,19 +88,6 @@ const BasicDetails = () => {
       console.log("Error fetching states:", error);
     }
   };
-  // useEffect(() => {
-  //   const clearStorageOnTabClose = (event) => {
-  //     if (!event.persisted) {
-  //       localStorage.removeItem("basicDetails");
-  //     }
-  //   };
-  //
-  //   window.addEventListener("beforeunload", clearStorageOnTabClose);
-  //
-  //   return () => {
-  //     window.removeEventListener("beforeunload", clearStorageOnTabClose);
-  //   };
-  // }, []);
   // POST BASIC DETAILS
   const postBasicDetails = async () => {
     isLoading(true);

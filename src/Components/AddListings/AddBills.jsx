@@ -42,10 +42,11 @@ const FurnishingState = () => {
   };
   // zjoyfxsvk3k8z7ub46tfsp93
   const postBasicBills = async () => {
+    const storedDetails = JSON.parse(localStorage.getItem("basicDetails"));
     setLoading(true);
     try {
       const response = await fetch(
-        `https://rent-it-api.onrender.com/api/v1/agents/listings/zjoyfxsvk3k8z7ub46tfsp93/billTags?id=zjoyfxsvk3k8z7ub46tfsp93`,
+        `https://rent-it-api.onrender.com/api/v1/agents/listings/${storedDetails.listingId}/billTags?id=${storedDetails.listingId}`,
         {
           method: "POST",
           headers: {
@@ -60,7 +61,7 @@ const FurnishingState = () => {
       if (response.ok) {
         const result = await response.json();
         console.log(result);
-        // setTimeout(() => navigate("/agent/addlisting/9"), 500);
+        setTimeout(() => navigate("/agent/addlisting/9"), 500);
       } else {
         console.error("Failed to post BillTags");
       }

@@ -22,6 +22,7 @@ import AgentDashboard from "./Components/AgentDashboard/AgentDashboard.jsx";
 import RenterProfilePage from "./Pages/RenterProfilePage.jsx";
 import AllSteps from "./Components/AddListings/AllSteps.jsx";
 import BookingListing from "./Components/AgentDashboard/BookingListing.jsx";
+import AgentProfile from "./Components/AgentDashboard/AgentProfile.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -44,6 +45,7 @@ const router = createBrowserRouter(
       />
       <Route path="/agent/dashboard" element={<DashBoard />} />
       <Route path="/agent/agentdashboard" element={<AgentDashboard />} />
+      <Route path="/agent/agentprofile" element={<AgentProfile />} />
       <Route path="/agent/booklisting" element={<BookingListing />} />
       <Route
         path="/user/verificationemail"

@@ -40,7 +40,7 @@ const BookingListing = () => {
         <div className="grid  max-w-[1000px] w-[95%] mx-auto xl:mx-0 xl:grid-cols-2 grid-cols-1 gap-6">
           {data.map((group, groupIndex) => (
             <div key={groupIndex} className="w-full ">
-              <h2 className="text-lg font-semibold text-gray-800 mb-4">
+              <h2 className="text-base font-semibold text-gray-800 mb-4">
                 {group.title}
               </h2>
               <div className="space-y-4">

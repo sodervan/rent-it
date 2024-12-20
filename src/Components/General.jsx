@@ -9,6 +9,7 @@ const General = () => {
   const [popularLocations, setPopularLocations] = useState([]);
 
   const [selectedLocation, setSelectedLocation] = useState(null);
+  console.log(selectedLocation)
 
   const firebaseUrl =
     "https://rentit-c3304-default-rtdb.firebaseio.com/locations.json";

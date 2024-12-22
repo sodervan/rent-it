@@ -1,11 +1,24 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import RenterDashPage from "./Pages/renter_dashboard/RenterDashPage";
 import MainLayout from "./Layouts/MainLayout";
-import HomePage from "./Pages/HomePage"
+import HomePage from "./Pages/HomePage";
+import RenterLogin from "@/components/Forms/RenterLogin";
+import RenterSignup from "./components/Forms/AgentSignup";
+import SignupChoice from "./components/Forms/SignupChoice";
+import SearchResultsPage from "./Pages/SearchResultsPage";
 function Routing() {
 	return (
 		<BrowserRouter>
 			<Routes>
+				<Route
+					path="/renter/dashboard/"
+					element={
+						<Navigate
+							to="/renter/dashboard/home"
+							replace
+						/>
+					}
+				/>
 				<Route
 					element={<RenterDashPage />}
 					path="/renter/dashboard/*"
@@ -18,7 +31,7 @@ function Routing() {
 						path="/"
 						element={<HomePage />}
 					/>
-					{/*<Route
+					<Route
 						path="/renter/login"
 						element={<RenterLogin />}
 					/>
@@ -30,10 +43,14 @@ function Routing() {
 						path="/signup"
 						element={<SignupChoice />}
 					/>
-					<Route
+					{/* <Route
 						path="/search-results"
 						element={<SearchResultsPage />}
-					/>
+					/> */}
+					{/*
+					
+					
+					
 					<Route
 						path="/agent/signup"
 						element={<AgentSignup />}

@@ -1,33 +1,56 @@
-import { Avatar, Button, Group, NavLink, Stack, Text } from "@mantine/core";
-import { IconHeart, IconHistory, IconHome, IconSettings } from "@tabler/icons-react";
+import { Button, Group, NavLink, Stack, Text } from "@mantine/core";
+import { NavLink as Link } from "react-router-dom";
+import {
+	IconHeart,
+	IconHistory,
+	IconHome,
+	IconLocationBolt,
+	IconSettings,
+	IconUser,
+} from "@tabler/icons-react";
 import React from "react";
 
 function NavBarItems() {
 	return (
-		<Stack className="px-2 gap-2 h-full">
-			<Stack p={"md"}>
-				<Group className="gap-2">
-					<Avatar />
-					<Text>Jon Doe</Text>
-				</Group>
-			</Stack>
-			<NavLink
-				label="Home"
-				leftSection={<IconHome />}
-			/>
-			<NavLink
-				label="Transaction History"
-				leftSection={<IconHistory />}
-			/>
-			
-			<NavLink
-				label="Booking History"
-				leftSection={<IconHistory />}
-			/>
-			<NavLink
-				label="Saved"
-				leftSection={<IconHeart />}
-			/>
+		<div className="flex flex-col  h-full py-2 gap-2">
+			<div className="p-2 flex items-center gap-2">
+				<IconUser size={20}/>
+				<Text>Jon Doe</Text>
+			</div>
+
+			<Link
+				to={"/renter/dashboard/home"}
+				className={({ isActive }) => {
+					return `flex p-2 gap-2 items-center text-sm  ${
+						isActive ? "bg-neutral-200 text-neutral-800" : "bg-none"
+					}`;
+				}}
+			>
+				<IconHome size={20} />
+				Home
+			</Link>
+			<Link
+				to={"/renter/dashboard/transactions"}
+				className={({ isActive }) => {
+					return `flex p-2 gap-2 items-center text-sm  ${
+						isActive ? "bg-neutral-200 text-neutral-800" : "bg-none"
+					}`;
+				}}
+			>
+				<IconHistory size={20} />
+				Transaction History
+			</Link>
+			<Link
+				to={"/renter/dashboard/popular"}
+				className={({ isActive }) => {
+					return `flex p-2 gap-2 items-center text-sm  ${
+						isActive ? "bg-neutral-200 text-neutral-800" : "bg-none"
+					}`;
+				}}
+			>
+				<IconLocationBolt size={20} />
+				popular
+			</Link>
 
 			<Stack className="mt-auto pb-4">
 				<NavLink
@@ -35,7 +58,7 @@ function NavBarItems() {
 					leftSection={<IconSettings />}
 				/>
 			</Stack>
-		</Stack>
+		</div>
 	);
 }
 

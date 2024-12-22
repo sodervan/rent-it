@@ -1,4 +1,5 @@
 import { Card, Image, Text, Badge, Button, Group } from "@mantine/core";
+import { toast } from "react-toastify";
 function SearchCard() {
 	return (
 		<Card
@@ -40,6 +41,9 @@ function SearchCard() {
 				fullWidth
 				mt="md"
 				radius="md"
+				onClick={()=>{
+					toast("thanks boss")
+				}}
 			>
 				Book classic tour now
 			</Button>

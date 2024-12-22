@@ -13,9 +13,9 @@ import {
 	TextInput,
 } from "@mantine/core";
 import { IconFilter, IconSearch } from "@tabler/icons-react";
-import SearchCard from "../renter_dash_comps/SearchCard";
 import { useQuery } from "@tanstack/react-query";
 
+import { Input as IP } from "@material-tailwind/react";
 type category = {
 	id: number;
 	title: string;
@@ -39,6 +39,7 @@ function SearchPage() {
 		queryKey: ["test"],
 		queryFn: async () => await get_joke(),
 	});
+
 	return (
 		<div className="isolate">
 			<div className="h-20 sticky top-0 z-10 bg-white">
@@ -60,7 +61,7 @@ function SearchPage() {
 					<SearchCard key={"card+_" + i} />
 				))} */}
 				{/* <p>{JSON.stringify(data)}</p> */}
-
+			
 				{isFetching ? (
 					<div className="w-full flex items-center justify-center h-[calc(100dvh-100px)] bg-red-200">
 						<Loader />

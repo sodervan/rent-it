@@ -3,8 +3,6 @@ import Typewriter from "typewriter-effect";
 import { Input, Button } from "@material-tailwind/react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Toast } from "flowbite-react";
-import { HiCheck, HiExclamation } from "react-icons/hi";
 import { toast } from "react-toastify";
 
 const RenterSignup = () => {
@@ -109,7 +107,7 @@ const RenterSignup = () => {
 
   return (
     <>
-      {showToast && (
+      {/* {showToast && (
         <div className="fixed top-2 right-2 z-[3000]">
           <Toast>
             <div
@@ -126,7 +124,7 @@ const RenterSignup = () => {
             <Toast.Toggle />
           </Toast>
         </div>
-      )}
+      )} */}
       <div className="mt-20 flex flex-col lg:flex-row px-6 gap-3">
         <div className="w-full lg:w-[50%] flex items-center">
           <div className="lg:px-20 w-full">

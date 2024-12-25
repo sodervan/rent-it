@@ -1,6 +1,6 @@
 import { Spinner } from "@material-tailwind/react";
-import { Toast } from "flowbite-react";
-import { HiCheck, HiExclamation } from "react-icons/hi";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const StepOne = ({
   triggerFileInput,
@@ -12,6 +12,15 @@ const StepOne = ({
   message,
   status,
 }) => {
+  // Display notification using React Toastify when the message changes
+  if (message) {
+    if (status === 201) {
+      toast.success("Successful", { position: "top-right", autoClose: 3000 });
+    } else {
+      toast.error(message, { position: "top-right", autoClose: 3000 });
+    }
+  }
+
   return (
     <div>
       <div className="mt-20 px-6">
@@ -33,7 +42,7 @@ const StepOne = ({
             onDrop={handleDrop}
             onDragOver={(e) => e.preventDefault()} // Prevent default to allow drop
           >
-            {/* Display the uploaded image or a placeholder */}
+            {/* Display uploaded image or placeholder */}
             {profileImage ? (
               <img
                 src={URL.createObjectURL(profileImage)} // Use URL.createObjectURL to display the file
@@ -67,35 +76,18 @@ const StepOne = ({
 
           {/* Confirm button to trigger upload */}
           <button
-            className={`${profileImage && isLoading === false ? "bg-secondaryPurple px-4 py-3 text-primaryPurple rounded-lg hover:bg-primaryPurple hover:text-white transition-all duration-300" : "bg-gray-200 px-4 py-3 text-gray-500 rounded-lg"}`}
+            className={`${
+              profileImage && !isLoading
+                ? "bg-secondaryPurple px-4 py-3 text-primaryPurple rounded-lg hover:bg-primaryPurple hover:text-white transition-all duration-300"
+                : "bg-gray-200 px-4 py-3 text-gray-500 rounded-lg"
+            }`}
             onClick={profilePicture}
-            disabled={isLoading || profileImage === null}
+            disabled={isLoading || !profileImage}
           >
             <div className="flex items-center justify-center">
               {isLoading ? <Spinner /> : "Confirm"}
             </div>
           </button>
-
-          {/* Display message */}
-          {message && (
-            <div className="fixed top-2 right-2 z-[3000]">
-              <Toast>
-                <div
-                  className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${status === 201 ? "bg-green-100 text-green-500" : "bg-red-100 text-red-500"} dark:bg-green-800 dark:text-green-200`}
-                >
-                  {status === 201 ? (
-                    <HiCheck className="h-5 w-5" />
-                  ) : (
-                    <HiExclamation className="h-5 w-5" />
-                  )}
-                </div>
-                <div className="ml-3 text-sm font-normal">
-                  {status === 201 ? "Successful" : message}
-                </div>
-                <Toast.Toggle />
-              </Toast>
-            </div>
-          )}
         </div>
       </div>
     </div>

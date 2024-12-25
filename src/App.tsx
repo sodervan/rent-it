@@ -4,6 +4,7 @@ import Routing from "./Routing";
 import { MantineProvider } from "@mantine/core";
 // import Routing from "./Routing.jsx";
 import '@mantine/core/styles.css';
+import "../src/styles/tailwind.css"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const queryClient = new QueryClient()

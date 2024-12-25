@@ -5,15 +5,15 @@ let nav_routes = [
 	},
     {
 		name: "Blog",
-		to: "",
+		to: "/blog",
 	},
     {
 		name: "About us",
-		to: "",
+		to: "/aboutus",
 	},
     {
 		name: "For LandLords/Agents",
-		to: "",
+		to: "/agent/signup",
 	},
 ];
 

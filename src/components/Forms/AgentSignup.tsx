@@ -1,354 +1,265 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import Typewriter from "typewriter-effect";
-import { Input, Checkbox, Typography, Button } from "@material-tailwind/react";
+import { Input, Checkbox, Button, Typography } from "@material-tailwind/react";
 import { useState, useEffect } from "react";
 
-const RenterSignup = () => {
+const AgentSignup = () => {
   const [isStudent, setIsStudent] = useState(false);
   const [isTermsAndConditions, setIsTermsAndConditions] = useState(false);
-  const [isPassword, setIsPassword] = useState("");
-  const [isConfirmPassword, setIsConfirmPassword] = useState("");
-  const [isAccurate, setIsAccurate] = useState(null);
-  const [showToast, setShowToast] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
     phoneNumber: "",
     password: "",
+    confirmPassword: "",
     institution: "",
   });
-  const [message, setMessage] = useState("");
+  const [isAccurate, setIsAccurate] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const timeOut = () => {
-    setTimeout(() => {
-      setShowToast(false);
-    }, 5000);
-  };
-  const updateIsStudentState = () => {
-    setIsStudent(!isStudent);
-  };
-  const updateIsTermsConditions = () => {
-    setIsTermsAndConditions(!isTermsAndConditions);
-  };
-  const updateIsPassword = (event) => {
-    setIsPassword(event.target.value);
-    setFormData({ ...formData, password: event.target.value });
-  };
-  const updateConfirmPassword = (event) => {
-    setIsConfirmPassword(event.target.value);
-  };
+  // Update password match status on change
   useEffect(() => {
     setIsAccurate(
-      isPassword && isConfirmPassword && isPassword === isConfirmPassword,
+        formData.password &&
+        formData.confirmPassword &&
+        formData.password === formData.confirmPassword
     );
-  }, [isPassword, isConfirmPassword]);
+  }, [formData.password, formData.confirmPassword]);
 
+  // Handle form state updates
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Submit handler
   const handleSignup = async (event) => {
     event.preventDefault();
 
-    // Validate passwords
-    if (!isAccurate) {
-      setMessage("Passwords do not match.");
-      return;
-    }
+    if (!isAccurate || !isTermsAndConditions) return;
+
     setIsLoading(true);
     try {
-      // Set isLoading to true before making the request
-      setIsLoading(true);
-
       const response = await fetch(
-        "https://rent-it-api.onrender.com/api/v1/agents/register",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: formData.email,
-            password: formData.password,
-            phoneNumber: formData.phoneNumber,
-            school: isStudent ? formData.institution : "none",
-            firstname: formData.firstName,
-            lastname: formData.lastName,
-            isStudent: isStudent,
-          }),
-        },
+          "https://rent-it-api.onrender.com/api/v1/agents/register",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: formData.email,
+              password: formData.password,
+              phoneNumber: formData.phoneNumber,
+              school: isStudent ? formData.institution : "none",
+              firstname: formData.firstName,
+              lastname: formData.lastName,
+              isStudent,
+            }),
+          }
       );
 
       const result = await response.json();
-
       if (response.ok) {
-        setMessage("Registration Successful");
-        localStorage.setItem("role", "agent");
+        // Go to verify email page on success
         navigate("/renter/signup/verifyemail", {
           state: { email: formData.email },
         });
       } else {
-        console.log("Registration Failed");
-        setMessage(result.message || "Registration failed");
+        console.error("Registration Failed:", result.message);
+        alert(result.message || "Registration failed");
       }
     } catch (error) {
-      console.error("Error during registration:", error);
-      setMessage("Something went wrong, please try again later.");
+      console.error("Error during signup:", error);
+      alert("Something went wrong. Please try again later.");
     } finally {
       setIsLoading(false);
-      setShowToast(true);
-      timeOut();
     }
   };
 
   return (
-    <>
-      {/* {showToast && (
-        <div className="fixed top-2 right-2 z-[3000]">
-          <Toast>
-            <div
-              className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${message === "Registration Successful" ? "bg-green-100" : "bg-red-100"} ${message === "Registration Successful" ? "text-green-500" : "text-red-500"} dark:bg-green-800 dark:text-green-200`}
-            >
-              {message === "Registration Successful" && (
-                <HiCheck className="h-5 w-5" />
-              )}
-              {message !== "Registration Successful" && (
-                <HiExclamation className="h-5 w-5" />
-              )}
-            </div>
-            <div className="ml-3 text-sm font-normal">{message}</div>
-            <Toast.Toggle />
-          </Toast>
-        </div>
-      )} */}
-      <div className="mt-20 flex flex-col lg:flex-row px-6 gap-3">
-        <div className="w-full lg:w-[50%] flex items-center">
-          <div className="lg:px-20 w-full">
-            <div className="flex items-center justify-center mb-6">
-              <Typewriter
+      <div className="flex items-center justify-center min-h-screen px-4 md:px-10 lg:px-20 ">
+        <div className="w-full max-w-screen-sm bg-white rounded-lg p-6 md:p-10">
+          {/* Welcome Message */}
+          <div className="text-center">
+            <Typewriter
                 onInit={(typewriter) => {
                   typewriter
-                    .typeString(
-                      '<strong style="font-size: 16px; font-weight: bold">WELCOME TO <span style="color: #6941C6;">RentIT!</span></strong>',
-                    )
-                    .pauseFor(2500)
-                    .start();
+                      .typeString(
+                          '<strong style="font-size: 20px; font-weight: bold">WELCOME TO <span style="color: #6941C6;">RentIT!</span></strong>'
+                      )
+                      .pauseFor(2500)
+                      .start();
                 }}
+            />
+            <p className="text-gray-600 font-medium mt-2">Create Your Account</p>
+          </div>
+
+          {/* Signup Form */}
+          <form className="mt-8 flex flex-col gap-6" onSubmit={handleSignup}>
+            {/* First Name */}
+            <div className="flex items-center gap-3 px-4 rounded-lg ">
+              <i className="fi fi-rr-user text-primaryPurple"></i>
+              <Input
+                  label="First Name"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  required
+                  className="bg-transparent focus:ring-0 w-full"
               />
             </div>
-            <p className="font-normal text-center">Create a New Account</p>
-            <p className="text-gray-400 text-[14px] mt-2 text-center">
-              You have to create an account before proceeding to Agents
-              registration
-            </p>
-            <form className="flex flex-col gap-5 my-5" onSubmit={handleSignup}>
-              {/* First Name */}
-              <div className="w-full">
-                <div className="flex items-center gap-3 px-3 w-full rounded-[10px]">
-                  <div>
-                    <i className="fi fi-rr-user text-primaryPurple"></i>
-                  </div>
-                  <div className="w-full">
-                    <Input
-                      label="First Name"
-                      name="firstName"
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-                </div>
+
+            {/* Last Name */}
+            <div className="flex items-center gap-3 px-4 rounded-lg ">
+              <i className="fi fi-rr-user text-primaryPurple"></i>
+              <Input
+                  label="Last Name"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  required
+                  className="bg-transparent focus:ring-0 w-full"
+              />
+            </div>
+
+            {/* Email */}
+            <div className="flex items-center gap-3 px-4 rounded-lg ">
+              <i className="fi fi-rr-envelope text-primaryPurple"></i>
+              <Input
+                  label="Email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  type="email"
+                  required
+                  className="bg-transparent focus:ring-0 w-full"
+              />
+            </div>
+
+            {/* Phone Number */}
+            <div className="flex items-center gap-3 px-4 rounded-lg ">
+              <i className="fi fi-rr-phone-call text-primaryPurple"></i>
+              <Input
+                  label="Mobile Number"
+                  name="phoneNumber"
+                  value={formData.phoneNumber}
+                  onChange={handleChange}
+                  required
+                  className="bg-transparent focus:ring-0 w-full"
+              />
+            </div>
+
+            {/* Password */}
+            <div className="flex items-center gap-3 px-4 rounded-lg ">
+              <i className="fi fi-rr-lock text-primaryPurple"></i>
+              <Input
+                  label="Password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  type="password"
+                  required
+                  className="bg-transparent focus:ring-0 w-full"
+              />
+            </div>
+
+            {/* Confirm Password */}
+            <div>
+              <div className="flex items-center gap-3 px-4 rounded-lg ">
+                <i className="fi fi-rr-lock text-primaryPurple"></i>
+                <Input
+                    label="Confirm Password"
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    type="password"
+                    required
+                    className="bg-transparent focus:ring-0 w-full"
+                />
               </div>
-
-              {/* Last Name */}
-              <div className="w-full">
-                <div className="flex items-center gap-3 px-3 w-full rounded-[10px]">
-                  <div>
-                    <i className="fi fi-rr-user text-primaryPurple"></i>
-                  </div>
-                  <div className="w-full">
-                    <Input
-                      label="Last Name"
-                      name="lastName"
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Email */}
-              <div className="w-full">
-                <div className="flex items-center gap-3 px-3 w-full rounded-[10px]">
-                  <div>
-                    <i className="fi fi-rr-envelope text-primaryPurple"></i>
-                  </div>
-                  <div className="w-full">
-                    <Input
-                      label="Email Address"
-                      name="email"
-                      type="email"
-                      onChange={handleChange}
-                      className="focus:ring-0"
-                      required
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Mobile Number */}
-              <div className="w-full">
-                <div className="flex items-center gap-3 px-3 w-full rounded-[10px]">
-                  <div>
-                    <i className="fi fi-rr-phone-call text-primaryPurple"></i>
-                  </div>
-                  <div className="w-full">
-                    <Input
-                      label="Mobile Number"
-                      name="phoneNumber"
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Password */}
-              <div className="w-full">
-                <div className="flex items-center gap-3 px-3 w-full rounded-[10px]">
-                  <div>
-                    <i className="fi fi-rr-lock text-primaryPurple"></i>
-                  </div>
-                  <div className="w-full">
-                    <Input
-                      label="Password"
-                      type="password"
-                      onChange={updateIsPassword}
-                      value={isPassword}
-                      className="focus:ring-0"
-                      required
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Confirm Password */}
-              <div className="w-full">
-                <div className="flex items-center gap-3 px-3 w-full rounded-[10px]">
-                  <div>
-                    <i className="fi fi-rr-lock text-primaryPurple"></i>
-                  </div>
-                  <div className="w-full">
-                    <Input
-                      label="Confirm Password"
-                      type="password"
-                      value={isConfirmPassword}
-                      onChange={updateConfirmPassword}
-                      success={isAccurate === true}
-                      error={isAccurate === false}
-                      className="focus:ring-0"
-                      required
-                    />
-                    {!isAccurate && (
-                      <Typography
-                        variant="small"
-                        color="gray"
-                        className="mt-2 flex items-center gap-1"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                          className="-mt-px h-4 w-4"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 01.67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 11-.671-1.34l.041-.022zM12 9a.75.75 0 100-1.5.75.75 0 000 1.5z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                        Passwords must match
-                      </Typography>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Student Institution */}
-              {isStudent && (
-                <div className="w-full">
-                  <div className="flex items-center gap-3 px-3 w-full rounded-[10px]">
-                    <div>
-                      <i className="fi fi-rr-school text-primaryPurple"></i>
-                    </div>
-                    <div className="w-full">
-                      <Input
-                        label="Institution"
-                        name="institution"
-                        onChange={handleChange}
-                        required
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Checkboxes */}
-              <div className="flex flex-col">
-                <div className="flex gap-1 items-center">
-                  <Checkbox
-                    onChange={updateIsStudentState}
-                    className="focus:ring-0"
-                  />
-                  <p className="text-gray-500 text-[14px]">I am A Student</p>
-                </div>
-                <div className="flex gap-1 items-center">
-                  <Checkbox
-                    onChange={updateIsTermsConditions}
-                    className="focus:ring-0"
-                  />
-                  <p className="text-gray-500 text-[14px]">
-                    I have read and agreed to{" "}
-                    <span className="text-primaryPurple cursor-pointer">
-                      RentIT's Terms and Conditions
-                    </span>
-                  </p>
-                </div>
-              </div>
-
-              {/* Submit Button */}
-              <div className="flex flex-col gap-2">
-                <Button
-                  disabled={!isTermsAndConditions || !isAccurate}
-                  loading={isLoading}
-                  type="submit"
-                  className={`transition-all duration-300 font-poppins ${isTermsAndConditions && isAccurate ? "px-4 py-3 bg-primaryPurple rounded-lg text-white" : "bg-gray-300 px-4 py-3 rounded-lg text-gray-500"}`}
-                >
-                  Sign up
-                </Button>
-
-                {/*{errorMessage && (*/}
-                {/*  <p className="text-red-500 text-center">{errorMessage}</p>*/}
-                {/*)}*/}
-
-                <p className="font-medium text-center">
-                  Already Have An Account?{" "}
-                  <NavLink
-                    to="/agent/login"
-                    className="text-primaryPurple underline"
+              {!isAccurate && formData.confirmPassword.length > 0 && (
+                  <Typography
+                      variant="small"
+                      className="text-red-500 mt-1 ml-3 text-sm"
                   >
-                    Login
-                  </NavLink>
-                </p>
+                    Passwords do not match.
+                  </Typography>
+              )}
+            </div>
+
+            {/* Institution Field (Student Only) */}
+            {isStudent && (
+                <div className="flex items-center gap-3 px-4 rounded-lg ">
+                  <i className="fi fi-rr-school text-primaryPurple"></i>
+                  <Input
+                      label="Institution"
+                      name="institution"
+                      value={formData.institution}
+                      onChange={handleChange}
+                      required
+                      className="bg-transparent focus:ring-0 w-full"
+                  />
+                </div>
+            )}
+
+            {/* Checkboxes */}
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center">
+                <Checkbox
+                    onChange={() => setIsStudent((prev) => !prev)}
+                    className="cursor-pointer"
+                />
+                <span className="text-sm text-gray-600">
+                I am a student.
+              </span>
               </div>
-            </form>
-          </div>
+              <div className="flex items-center">
+                <Checkbox
+                    onChange={() =>
+                        setIsTermsAndConditions((prev) => !prev)
+                    }
+                    className="cursor-pointer"
+                />
+                <span className="text-sm text-gray-600">
+                I agree to the{" "}
+                  <span className="text-primaryPurple underline cursor-pointer">
+                  RentIT Terms and Conditions
+                </span>
+              </span>
+              </div>
+            </div>
+
+            {/* Submit Button */}
+            <Button
+                type="submit"
+                loading={isLoading}
+                disabled={!isTermsAndConditions || !isAccurate}
+                className={`py-3 rounded-lg text-lg font-medium w-full transition-all ${
+                    isTermsAndConditions && isAccurate
+                        ? "bg-primaryPurple hover:bg-purple-700 text-white"
+                        : "bg-gray-300 cursor-not-allowed text-gray-500"
+                }`}
+            >
+              Sign Up
+            </Button>
+
+            {/* Login Link */}
+            <p className="text-center text-sm text-gray-600 mt-4">
+              Already have an account?{" "}
+              <NavLink
+                  to="/agent/login"
+                  className="text-primaryPurple underline hover:text-purple-700"
+              >
+                Login
+              </NavLink>
+            </p>
+          </form>
         </div>
       </div>
-    </>
   );
 };
 
-export default RenterSignup;
+export default AgentSignup;

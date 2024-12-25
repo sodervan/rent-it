@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  /* Placeholder Styles */
+  .placeholder-fade-in::placeholder {
+    opacity: 1; /* Fully visible */
+    color: #6b7280; /* Tailwind 'gray-500' for a less harsh gray compared to 'gray-400' */
+    transition:
+      opacity 0.5s ease-in,
+      color 0.5s ease-in;
+  }
+
+  .placeholder-fade-out::placeholder {
+    opacity: 0; /* Hidden */
+    color: #9ca3af; /* Slightly lighter gray before it fades out */
+    transition:
+      opacity 0.5s ease-out,
+      color 0.5s ease-out;
+  }
+}

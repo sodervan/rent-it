@@ -23,6 +23,9 @@
     p {
         font-family: "Poppins", sans-serif;
     }
+  :root {
+        --radius: 0.5rem;
+    }
 }
 
 @layer utilities {

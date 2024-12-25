@@ -2,90 +2,78 @@
 
 const WhoWeAre = () => {
   return (
-    <div className="my-5 container mx-auto px-16 sm:my-20 sm:px-32">
-      <div className="flex flex-col  md:flex-row justify-center items-center gap-2">
-        <div className="flex flex-col justify-center gap-3 items-center">
-          <div>
-            <img
-              src="https://res.cloudinary.com/dmlgns85e/image/upload/v1726676819/House_searching-bro_1_1_pdxvng.png"
-              alt=""
-            />
-          </div>
-          <div>
-            <p className="text-xl text-center font-semibold">
-              Find your next home
-            </p>
-          </div>
-          <div>
-            <p className="text-sm text-center">
+      <div className="container mx-auto px-4 sm:px-8 lg:px-16 xl:px-24">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* First Feature */}
+          <div className="flex flex-col items-center text-center bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <div className="flex items-center justify-center w-full h-[150px] mb-6">
+              <img
+                  src="src/assets/search-vector.png"
+                  alt="Find your next home"
+                  className="max-w-[150px] max-h-[150px] object-contain"
+              />
+            </div>
+            <h3 className="text-xl font-semibold">Find Your Next Home</h3>
+            <p className="text-sm text-gray-600 my-3">
               With powerful search filters and personalized recommendations, our
               platform makes it easy to discover a home or apartment that
               perfectly suits your needs.
             </p>
+            <NavLink
+                to="/"
+                className="py-2 px-6 bg-primaryPurple text-white text-sm font-medium rounded-full hover:bg-purple-700 transition-colors duration-300"
+            >
+              Find an Apartment Near You
+            </NavLink>
           </div>
-          <NavLink
-            to="/"
-            className="py-2 px-4 bg-primaryPurple rounded-lg whitespace-nowrap"
-          >
-            <p className="text-white text-center">Find an apartment near you</p>
-          </NavLink>
-        </div>
 
-        <div className="flex flex-col justify-center gap-3 items-center">
-          <div>
-            <img
-              src="https://res.cloudinary.com/dmlgns85e/image/upload/v1726676820/Realtor-rafiki_1_kihxqx.png"
-              alt=""
-            />
-          </div>
-          <div>
-            <p className="text-xl text-center font-semibold">
-              List Your property
-            </p>
-          </div>
-          <div>
-            <p className="text-sm text-center">
+          {/* Second Feature */}
+          <div className="flex flex-col items-center text-center bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <div className="flex items-center justify-center w-full h-[150px] mb-6">
+              <img
+                  src="src/assets/list-vector.png"
+                  alt="List Your Property"
+                  className="max-w-[150px] max-h-[150px] object-contain"
+              />
+            </div>
+            <h3 className="text-xl font-semibold">List Your Property</h3>
+            <p className="text-sm text-gray-600 my-3">
               Whether you’re an agent or landlord, our intuitive tools let you
               manage and showcase your properties with ease, reaching a wider
               audience of potential renters.
             </p>
+            <NavLink
+                to="/"
+                className="py-2 px-6 bg-primaryPurple text-white text-sm font-medium rounded-full hover:bg-purple-700 transition-colors duration-300"
+            >
+              List a Property
+            </NavLink>
           </div>
-          <NavLink
-            to="/"
-            className="py-2 px-4 bg-primaryPurple rounded-lg whitespace-nowrap"
-          >
-            <p className="text-white">List a property</p>
-          </NavLink>
-        </div>
 
-        <div className="flex flex-col justify-center gap-3 items-center">
-          <div>
-            <img
-              src="https://res.cloudinary.com/dmlgns85e/image/upload/v1726676819/Location_search-pana_1_ywdzgk.png"
-              alt=""
-            />
-          </div>
-          <div>
-            <p className="text-xl text-center font-semibold">
-              Explore Neighbourhoods
-            </p>
-          </div>
-          <div>
-            <p className="text-sm text-center">
+          {/* Third Feature */}
+          <div className="flex flex-col items-center text-center bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <div className="flex items-center justify-center w-full h-[150px] mb-6">
+              <img
+                  src="src/assets/explore.png"
+                  alt="Explore Neighborhoods"
+                  className="max-w-[150px] max-h-[150px] object-contain"
+              />
+            </div>
+            <h3 className="text-xl font-semibold">Explore Neighborhoods</h3>
+            <p className="text-sm text-gray-600 my-3">
               Get in-depth insights on communities near you. From schools and
               transport to nearby attractions, discover what makes each
               neighborhood unique.
             </p>
+            <NavLink
+                to="/"
+                className="py-2 px-6 bg-primaryPurple text-white text-sm font-medium rounded-full hover:bg-purple-700 transition-colors duration-300"
+            >
+              Start Your Search
+            </NavLink>
           </div>
-          <NavLink
-            to="/"
-            className="py-2 px-4 bg-primaryPurple rounded-lg whitespace-nowrap"
-          >
-            <p className="text-white">Start your search</p>
-          </NavLink>
         </div>
       </div>
-    </div>
   );
 };
 

@@ -1,9 +1,76 @@
-import { Button, Checkbox, Radio } from "@material-tailwind/react";
+import {
+  Button,
+  Checkbox,
+  Option,
+  Radio,
+  Select,
+  Spinner,
+} from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 const ElectricityAndWater = () => {
   const navigate = useNavigate();
+  const [paymentType, setPaymentType] = useState("");
+  const [accessType, setAccessType] = useState("");
+  const [waterSupply, setWaterSupply] = useState([]);
+  const [furnishingState, setFurnishingState] = useState("");
+  const [loading, setLoading] = useState(false);
 
+  const handleWaterSupplyChange = (label) => {
+    setWaterSupply((prev) =>
+      prev.includes(label)
+        ? prev.filter((item) => item !== label)
+        : [...prev, label],
+    );
+  };
+  // POST ELECTRICITY AND WATER DETAILS TO THE API
+  const postElecAndWater = async () => {
+    setLoading(true);
+    console.log(paymentType, accessType, waterSupply, furnishingState);
+    try {
+      const token = localStorage.getItem("accessToken");
+      const storedDetails = JSON.parse(localStorage.getItem("basicDetails"));
+
+      if (!storedDetails || !storedDetails.listingId) {
+        throw new Error("Invalid basicDetails or listingId missing.");
+      }
+      const data = {
+        electricityPaymentType: paymentType.toLowerCase(),
+        electricityAccessType: accessType.toLowerCase(),
+        inHouseRunningWater: waterSupply.includes("In-House running water"),
+        outDoorWaterTaps: waterSupply.includes("Outdoor water taps"),
+        waterFromExternalSource: waterSupply.includes(
+          "Water from external source",
+        ),
+        furnishingState: furnishingState.toLowerCase(),
+      };
+      console.log(data);
+      const response = await fetch(
+        `https://rent-it-api.onrender.com/api/v1/agents/listings/${storedDetails.listingId}/features?id=${storedDetails.listingId}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        },
+      );
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log("Success:", result);
+        setTimeout(() => {
+          navigate("/agent/addlisting/7");
+        }, 500);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <>
       <div className="mt-20">
@@ -24,30 +91,85 @@ const ElectricityAndWater = () => {
               <div className="border-b border-gray-300 mb-5">
                 <p className="text-md">Electricity</p>
                 <div>
+                  {/* PAYMENT TYPE */}
                   <div>
                     <p className="mt-5 text-gray-600">Payment type</p>
                     <div className="flex gap-3">
-                      <Radio label="Prepaid" name="type" />
-                      <Radio name="type" label="Postpaid" />
+                      <Radio
+                        label="Prepaid"
+                        name="type"
+                        checked={paymentType === "Prepaid"}
+                        onChange={() => setPaymentType("Prepaid")}
+                      />
+                      <Radio
+                        name="type"
+                        label="Postpaid"
+                        checked={paymentType === "Postpaid"}
+                        onChange={() => setPaymentType("Postpaid")}
+                      />
                     </div>
                   </div>
-
+                  {/* ACCESS TYPE */}
                   <div className="mb-2">
                     <p className="mt-5 text-gray-600">Access type</p>
                     <div className="flex gap-3">
-                      <Radio label="Shared" name="access" />
-                      <Radio name="access" label="Personal" />
+                      <Radio
+                        label="Shared"
+                        name="access"
+                        checked={accessType === "Shared"}
+                        onChange={() => setAccessType("Shared")}
+                      />
+                      <Radio
+                        name="access"
+                        label="Personal"
+                        checked={accessType === "Personal"}
+                        onChange={() => setAccessType("Personal")}
+                      />
                     </div>
                   </div>
                 </div>
               </div>
-              {/*WaterSupply*/}
-              <div>
+              {/* WATER SUPPLY */}
+              <div className="border-b border-gray-300 mb-5">
                 <p className="text-md mb-3">Water Supply</p>
                 <div className="mb-4">
-                  <Checkbox label="In-House running water" />
-                  <Checkbox label="Outdoor water taps" />
-                  <Checkbox label="Water from external source" />
+                  <Checkbox
+                    label="In-House running water"
+                    checked={waterSupply.includes("In-House running water")}
+                    onChange={() =>
+                      handleWaterSupplyChange("In-House running water")
+                    }
+                  />
+                  <Checkbox
+                    label="Outdoor water taps"
+                    checked={waterSupply.includes("Outdoor water taps")}
+                    onChange={() =>
+                      handleWaterSupplyChange("Outdoor water taps")
+                    }
+                  />
+                  <Checkbox
+                    label="Water from external source"
+                    checked={waterSupply.includes("Water from external source")}
+                    onChange={() =>
+                      handleWaterSupplyChange("Water from external source")
+                    }
+                  />
+                </div>
+              </div>
+              {/* FURNISHING STATE */}
+              <div>
+                <div className="mb-5">
+                  <p className="text-md text-gray-600">Furnishing State</p>
+                  <div className="w-full mt-3">
+                    <Select
+                      label="Select"
+                      onChange={(e) => setFurnishingState(e)}
+                    >
+                      <Option value="Fully-Furnished">Fully Furnished</Option>
+                      <Option value="Semi-Furnished">Semi-Furnished</Option>
+                      <Option value="Not-Furnished">Not Furnished</Option>
+                    </Select>
+                  </div>
                 </div>
               </div>
             </div>
@@ -61,12 +183,17 @@ const ElectricityAndWater = () => {
                 Previous
               </Button>
               <Button
-                className="capitalize font-medium bg-primaryPurple text-white w-full text-[15px] font-poppins"
+                className={`${
+                  loading
+                    ? "bg-gray-200 px-4 py-3 text-gray-500 rounded-lg w-full flex justify-center items-center"
+                    : "bg-primaryPurple text-white w-full text-[15px] font-poppins flex justify-center items-center"
+                }`}
+                disabled={loading}
                 onClick={() => {
-                  navigate("/agent/addlisting/7");
+                  postElecAndWater();
                 }}
               >
-                Proceed
+                {loading ? <Spinner className="h-4 w-4" /> : "Proceed"}
               </Button>
             </div>
           </div>

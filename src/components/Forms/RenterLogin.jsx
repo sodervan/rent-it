@@ -4,6 +4,9 @@ import { Input, Button } from "@material-tailwind/react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+import { ToastContainer } from "react-toastify";
 
 const RenterSignup = () => {
   const navigate = useNavigate();
@@ -12,20 +15,16 @@ const RenterSignup = () => {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [showToast, setShowToast] = useState(false);
 
-  const timeOut = () => {
-    setTimeout(() => {
-      setShowToast(false);
-    }, 5000);
-  };
   const updateShowPasswordState = (e) => {
     e.preventDefault();
     setShowPassword(!showPassword);
   };
+
   const updateSetPassword = (e) => {
     setPassword(e.target.value);
   };
+
   const updateSetEmail = (e) => {
     setEmail(e.target.value);
   };
@@ -49,9 +48,18 @@ const RenterSignup = () => {
         console.log(result);
       } else {
         console.log("Failed to fetch agent details");
-        // setMessage("Error");
-
-        toast("meessage in here");
+        toast.error(
+          result.message || "An error occurred while fetching agent details.",
+          {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          },
+        );
       }
     } catch (error) {
       console.log("Error:", error);
@@ -84,23 +92,50 @@ const RenterSignup = () => {
         localStorage.setItem("accessToken", result.payload.access_token);
         localStorage.setItem("refreshToken", result.payload.refresh_token);
         localStorage.setItem("accountType", result.payload.role[0]);
-        setMessage("Login Successful");
+        setMessage(result.message || "Login Successful");
+        toast.success(result.message || "Login Successful!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
         await fetchRenterDetails();
         navigate("/");
         window.history.replaceState(null, "", "/");
         console.log(result);
-        // navigate("/renter/signup/verifyemail");
       } else {
         console.log("Registration Failed");
-        setMessage(result.message || "Registration failed");
+        setMessage(result.message || "Login failed");
+        toast.error(
+          result.message || "Login failed. Please check your credentials.",
+          {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          },
+        );
       }
     } catch (error) {
-      console.error("Error during registration:", error);
+      console.error("Error during login:", error);
       setMessage("Something went wrong, please try again later.");
+      toast.error("Something went wrong, please try again later.", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     } finally {
       setIsLoading(false);
-      setShowToast(true);
-      timeOut();
     }
   };
 
@@ -128,28 +163,28 @@ const RenterSignup = () => {
             <form className="flex flex-col gap-6" onSubmit={handleLogin}>
               {/* Email Input */}
               <div className="relative">
-                <div className="flex items-center gap-3 px-3 rounded-lg bg-gray-100">
+                <div className="flex items-center gap-3 px-3 rounded-lg ">
                   <i className="fi fi-rr-envelope text-primaryPurple"></i>
                   <Input
                     label="Email"
                     required
                     type="email"
                     onChange={updateSetEmail}
-                    className="bg-transparent focus:ring-0 border-none"
+                    className="bg-transparent focus:ring-0"
                   />
                 </div>
               </div>
 
               {/* Password Input */}
               <div className="relative">
-                <div className="flex items-center gap-3 px-3 rounded-lg bg-gray-100">
+                <div className="flex items-center gap-3 px-3 rounded-lg ">
                   <i className="fi fi-rr-lock text-primaryPurple"></i>
                   <Input
                     label="Password"
                     required
                     type={showPassword ? "text" : "password"}
                     onChange={updateSetPassword}
-                    className="bg-transparent focus:ring-0 border-none"
+                    className="bg-transparent focus:ring-0"
                   />
                 </div>
               </div>
@@ -161,11 +196,6 @@ const RenterSignup = () => {
                     onClick={updateShowPasswordState}
                     className="bg-transparent flex items-center text-gray-500 hover:text-primaryPurple transition-all duration-300"
                   >
-                    <i
-                      className={`fi fi-rr-eye ${
-                        showPassword ? "-slash" : ""
-                      } mr-2`}
-                    ></i>
                     {showPassword ? "Hide" : "Show"} Password
                   </button>
                 )}
@@ -211,6 +241,7 @@ const RenterSignup = () => {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </>
   );
 };

@@ -1,8 +1,6 @@
-import Autoplay from "embla-carousel-autoplay";
+import { Carousel } from "@mantine/carousel";
 import { IconSearch } from "@tabler/icons-react";
 import "@mantine/carousel/styles.css";
-import { Carousel } from "@mantine/carousel";
-import { useEffect, useRef, useState } from "react";
 
 const image_list = [
   "https://res.cloudinary.com/dmlgns85e/image/upload/v1724857270/pexels-binyaminmellish-106399_ana2ff.jpg",
@@ -11,81 +9,54 @@ const image_list = [
 ];
 
 const Body = ({ userId }: { userId: string | null }) => {
-  const placeholders = [
-    "Search by University",
-    "Search by Location",
-    "Search by Property",
-  ];
-  const [placeholderIndex, setPlaceholderIndex] = useState(0);
-  const [fadeClass, setFadeClass] = useState("placeholder-fade-in");
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      // Trigger fade-out effect
-      setFadeClass("placeholder-fade-out");
-
-      setTimeout(() => {
-        // Update placeholder text and trigger fade-in
-        setPlaceholderIndex((prevIndex) => (prevIndex + 1) % placeholders.length);
-        setFadeClass("placeholder-fade-in");
-      }, 500);
-    }, 3000); // Change every 3 seconds
-
-    return () => clearInterval(interval);
-  }, []);
-  const autoplay = useRef(Autoplay({ delay: 5000 }));
   return (
     <div>
-      {/* The rest of your component */}
-      <div className="h-[500px] sm:h-[650px] md:h-[550px] relative">
+      {/* Main Body Section */}
+      <div className="h-[500px] sm:h-[650px] md:h-[550px] relative overflow-hidden">
+        {/* Text and Inputs Overlay */}
         <div className="absolute inset-0 z-10 flex flex-col gap-7 justify-center items-center">
-          {/* Heading Section */}
+          {/* Static Heading Section */}
           <div className="text-center px-4 md:px-20">
-            <p className="text-white text-[25px] sm:text-[40px] md:text-[45px] lg:text-[50px] font-bold">
-              Find Your Perfect Home, Hassle Free
+            <p className="text-white text-[25px] sm:text-[40px] md:text-[45px] lg:text-[50px] font-bold leading-tight">
+              Find Your <span className="text-primaryPurple">Perfect Home</span>{" "}
+              Hassle Free
             </p>
           </div>
 
-          {/* Subheading Section */}
           <div className="px-4 sm:px-10 md:px-20">
-            <p className="text-white text-[14px] sm:text-sm md:text-base text-center">
+            <p className="text-white text-[14px] sm:text-sm md:text-base text-center leading-relaxed">
               Simplifying apartment hunting for students and renters with
               transparency, reliability, and ease.
             </p>
           </div>
 
           {/* Feature Tags */}
-          <div className="flex gap-5 flex-wrap justify-center whitespace-nowrap sm:gap-2">
-            <div className="bg-[#F4EBFF] rounded-lg px-2 py-1 md:py-2 md:px-4">
-              <p className="text-[12px] text-primaryPurple sm:text-primaryPurple font-normal sm:text-[14px]">
-                No Unnecessary Fees
-              </p>
-            </div>
-            <div className="bg-[#F4EBFF] rounded-lg px-2 py-1 md:py-2 md:px-4">
-              <p className="text-[12px] text-primaryPurple sm:text-primaryPurple font-normal sm:text-[14px]">
-                Renter Protection
-              </p>
-            </div>
-            <div className="bg-[#F4EBFF] rounded-lg px-2 py-1 md:py-2 md:px-4">
-              <p className="text-[12px] text-primaryPurple sm:text-primaryPurple font-normal sm:text-[14px]">
-                Student Accommodation
-              </p>
-            </div>
+          <div className="flex gap-3 flex-wrap justify-center sm:gap-2">
+            {[
+              "No Unnecessary Fees",
+              "Renter Protection",
+              "Student Accommodation",
+            ].map((feature, index) => (
+              <div
+                key={index}
+                className="bg-[#F4EBFF] rounded-lg px-3 py-2 md:py-2.5 md:px-6"
+              >
+                <p className="text-[12px] sm:text-[14px] font-medium text-primaryPurple text-center">
+                  {feature}
+                </p>
+              </div>
+            ))}
           </div>
 
-          {/* Search Section */}
-          <div className="flex items-center w-full md:w-3/5 px-4 md:px-0">
-            <div className="flex flex-grow bg-white border border-gray-300 rounded-lg shadow-sm overflow-hidden">
-              {/* Search Input with Animated Placeholder */}
+          <div className="relative w-full md:w-3/5 px-4 md:px-0">
+            <div className="flex justify-between items-center bg-white border border-gray-300 rounded-full shadow-lg p-2 overflow-hidden">
               <input
-                  className={`flex-grow p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-700 transition-all duration-500 ${fadeClass}`}
-                  type="text"
-                  placeholder={placeholders[placeholderIndex]} // Dynamically updated placeholder
+                className="flex-grow px-6 py-3 placeholder-gray-500 text-gray-700 rounded-full focus:outline-none focus:ring-2 focus:ring-primaryPurple transition-all duration-500"
+                type="text"
+                placeholder="Search by University, Location or Property"
               />
-              {/* Search Button */}
-              <button
-                  className="flex items-center justify-center bg-purple-800 text-white px-4 md:px-6 hover:bg-purple-900 transition-colors">
-                <IconSearch className="h-5 w-5 md:h-6 md:w-6"/>
+              <button className="flex items-center justify-center h-[50px] w-[50px] rounded-full bg-primaryPurple text-white hover:bg-purple-900 transition duration-300 shadow-md">
+                <IconSearch className="w-6 h-6" />
               </button>
             </div>
           </div>
@@ -93,28 +64,35 @@ const Body = ({ userId }: { userId: string | null }) => {
 
         {/* Image Carousel */}
         <Carousel
-            loop
-            plugins={[autoplay.current]}
-            className="h-[500px] sm:h-[650px] bg-red-400"
+          loop
+          className="h-[500px] sm:h-[650px] md:h-[550px] overflow-hidden"
+          withIndicators
+          styles={{
+            indicator: {
+              width: "10px",
+              height: "10px",
+              transition: "opacity 250ms ease",
+              "&[data-active]": {
+                opacity: 1,
+                backgroundColor: "#6941C6",
+              },
+            },
+          }}
         >
-          {image_list.map((e, index) => (
-              <Carousel.Slide
-                  key={index}
-                  className="relative h-[500px] sm:h-[650px]"
-              >
-                <div className="absolute h-full w-full bg-black z-20 bg-opacity-70"></div>
-                <img
-                    src={e}
-                    alt="Carousel Slide"
-                    className="w-full h-full object-cover rounded-none"
-                />
-              </Carousel.Slide>
+          {image_list.map((url, index) => (
+            <Carousel.Slide key={index}>
+              <div className="absolute inset-0 bg-black bg-opacity-70 z-10" />
+              <img
+                src={url}
+                alt={`Carousel Slide ${index}`}
+                className="w-full h-full object-cover"
+              />
+            </Carousel.Slide>
           ))}
         </Carousel>
       </div>
     </div>
   );
 };
-
 
 export default Body;

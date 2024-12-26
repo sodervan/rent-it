@@ -48,7 +48,8 @@ const Body = ({ userId }: { userId: string | null }) => {
             ))}
           </div>
 
-          <div className="relative w-full md:w-3/5 px-4 md:px-0">
+          {/* Search Bar (only visible on screens md and larger) */}
+          <div className="relative w-full md:w-3/5 px-4 md:px-0 hidden md:block">
             <div className="flex justify-between items-center bg-white border border-gray-300 rounded-full shadow-lg p-2 overflow-hidden">
               <input
                 className="flex-grow px-6 py-3 placeholder-gray-500 text-gray-700 rounded-full focus:outline-none focus:ring-2 focus:ring-primaryPurple transition-all duration-500"
@@ -64,8 +65,9 @@ const Body = ({ userId }: { userId: string | null }) => {
 
         {/* Image Carousel */}
         <Carousel
+            height= "100%"
           loop
-          className="h-[500px] sm:h-[650px] md:h-[550px] overflow-hidden"
+          className="h-[500px] sm:h-[650px] md:h-[550px] relative]"
           withIndicators
           styles={{
             indicator: {
@@ -80,12 +82,16 @@ const Body = ({ userId }: { userId: string | null }) => {
           }}
         >
           {image_list.map((url, index) => (
-            <Carousel.Slide key={index}>
-              <div className="absolute inset-0 bg-black bg-opacity-70 z-10" />
+            <Carousel.Slide
+              key={index}
+              className="h-full" /* Ensure slides take full height */
+            >
+              {/* Full height layer to ensure images align properly */}
+              <div className="absolute inset-0 bg-black bg-opacity-70 z-10 h-full" />
               <img
                 src={url}
                 alt={`Carousel Slide ${index}`}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover" /* Ensure images take full height */
               />
             </Carousel.Slide>
           ))}

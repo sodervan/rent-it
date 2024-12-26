@@ -1,28 +1,37 @@
 /** @type {import('tailwindcss').Config} */
 const withMT = require("@material-tailwind/react/utils/withMT");
-const flowbite = require("flowbite-react/tailwind");
-module.exports = withMT({
-  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}", flowbite.content()],
+
+export default withMT({
+  darkMode: ["class"], // Enable dark mode
+  content: ["./index.html", "./src/**/*.{ts,tsx,js,jsx}"], // Specify paths to your content files
   theme: {
-    screens: {
-      sm: "640px",
-      md: "768px",
-      lg: "1024px",
-      xl: "1440px",
-    },
     extend: {
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
       colors: {
-        primaryPurple: "#7F56D9",
-        secondaryPurple: "#F9F5FF",
+        primaryPurple: "#7F56D9", // Add your custom color
+        secondaryPurple: "#F9F5FF"
       },
-      fontSize: {
-        xxs: "12px", // Example custom font size
-        xxl: "1.75rem", // Example custom font size
+      keyframes: {
+        slideUp: {
+          '0%': { transform: 'translateY(100%)', opacity: '0' },
+          '50%': { opacity: '1' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        slideDown: {
+          '0%': { transform: 'translateY(0)', opacity: '1' },
+          '50%': { opacity: '1' },
+          '100%': { transform: 'translateY(-100%)', opacity: '0' },
+        },
       },
-      fontFamily: {
-        poppins: ['Poppins', 'sans-serif'],
+      animation: {
+        slideUp: 'slideUp 1s ease-out',
+        slideDown: 'slideDown 1s ease-in',
       },
     },
   },
-  plugins: [flowbite.plugin()],
+  plugins: [require("tailwindcss-animate")], // Add any additional plugins here
 });

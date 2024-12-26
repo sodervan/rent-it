@@ -8,7 +8,7 @@ const WhoWeAre = () => {
           <div className="flex flex-col items-center text-center bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center justify-center w-full h-[150px] mb-6">
               <img
-                  src="src/assets/search-vector.png"
+                  src="../../public/assets/search-vector.png"
                   alt="Find your next home"
                   className="max-w-[150px] max-h-[150px] object-contain"
               />
@@ -31,7 +31,7 @@ const WhoWeAre = () => {
           <div className="flex flex-col items-center text-center bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center justify-center w-full h-[150px] mb-6">
               <img
-                  src="src/assets/list-vector.png"
+                  src="../../public/assets/list-vector.png"
                   alt="List Your Property"
                   className="max-w-[150px] max-h-[150px] object-contain"
               />
@@ -54,7 +54,7 @@ const WhoWeAre = () => {
           <div className="flex flex-col items-center text-center bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center justify-center w-full h-[150px] mb-6">
               <img
-                  src="src/assets/explore.png"
+                  src="../../public/assets/explore.png"
                   alt="Explore Neighborhoods"
                   className="max-w-[150px] max-h-[150px] object-contain"
               />

@@ -3,7 +3,7 @@ import Typewriter from "typewriter-effect";
 import { Input, Button } from "@material-tailwind/react";
 import { useState } from "react";
 import Lottie from "lottie-react"; // Lottie animations
-import loginAnimation from "../../assets/signup-animation.json"; // Animation path
+import loginAnimation from "../../../public/assets/signup-animation.json"; // Animation path
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 

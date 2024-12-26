@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Loader from "./Loaders/Loader.jsx";
-import btn from "../assets/btn.png";
-import icon from "../assets/icon.png";
-import icon1 from "../assets/icon1.png";
-import icon2 from "../assets/icon2.png";
+import btn from "../../public/assets/btn.png";
+import icon from "../../public/assets/icon.png";
+import icon1 from "../../public/assets/icon1.png";
+import icon2 from "../../public/assets/icon2.png";
 import { Carousel } from "@material-tailwind/react";
 
 const CarouselCustomNavigation = ({ images }) => {

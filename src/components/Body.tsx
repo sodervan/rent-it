@@ -65,7 +65,7 @@ const Body = ({ userId }: { userId: string | null }) => {
 
         {/* Image Carousel */}
         <Carousel
-            height= "100%"
+          height="100%"
           loop
           className="h-[500px] sm:h-[650px] md:h-[550px] relative]"
           withIndicators

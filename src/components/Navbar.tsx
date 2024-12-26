@@ -2,14 +2,11 @@ import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { nav_routes } from "../page_data/nav_data";
 import { Button } from "@mantine/core";
-import { useAtom } from "jotai";
-import { countAtom } from "@/store/store";
-import { IconSearch } from "@tabler/icons-react";
 import clsx from "clsx";
+import { IconSearch } from "@tabler/icons-react";
 
 function Navbar() {
-  let navigation = useNavigate();
-  const [count] = useAtom(countAtom);
+  const navigation = useNavigate();
 
   // State to toggle the mobile menu
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -19,7 +16,7 @@ function Navbar() {
   const [searchQuery, setSearchQuery] = useState("");
 
   // Toggle functionality for menu
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const toggleMenu = () => setIsMenuOpen((prev) => !prev);
 
   // Close menu
   const closeMenu = () => setIsMenuOpen(false);
@@ -40,9 +37,7 @@ function Navbar() {
       <div className="flex h-16 md:h-20 shadow-md px-4 sticky top-0 z-[200] bg-white border-b">
         <div className="container flex items-center mx-auto">
           {/* Logo */}
-          <h1 className="text-lg md:text-xl font-bold text-purple-700">
-            RentIt {count}
-          </h1>
+          <h1 className="text-lg md:text-xl font-bold text-purple-700">RentIt</h1>
 
           {/* Desktop Menu */}
           <div className="ml-auto items-center gap-6 hidden md:flex">
@@ -53,7 +48,7 @@ function Navbar() {
                     className={({ isActive }) =>
                         clsx(
                             "relative px-3 py-1 text-base font-medium transition-all duration-200 ease-in-out text-gray-700 hover:text-purple-700",
-                            { "text-purple-700 font-semibold": isActive },
+                            { "text-purple-700 font-semibold": isActive }
                         )
                     }
                 >
@@ -79,7 +74,7 @@ function Navbar() {
             </Button>
           </div>
 
-          {/* Mobile Menu */}
+          {/* Mobile Controls */}
           <div className="md:hidden ml-auto flex items-center">
             {/* Search Icon */}
             <button
@@ -114,6 +109,85 @@ function Navbar() {
           </div>
         </div>
 
+        {/* Mobile Menu */}
+        <div
+            className={clsx(
+                "fixed inset-0 bg-white transition-transform duration-300 ease-in-out z-[150] md:hidden flex flex-col",
+                {
+                  "translate-y-0": isMenuOpen, // Show menu
+                  "-translate-y-full": !isMenuOpen, // Hide menu
+                }
+            )}
+        >
+          {/* Close Button */}
+          <button
+              className="self-end p-4 text-gray-600 hover:text-gray-800 transition-all"
+              onClick={closeMenu}
+              aria-label="Close Menu"
+          >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="2"
+                stroke="currentColor"
+                className="w-6 h-6"
+            >
+              <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+
+          {/* Navbar Links */}
+          <ul className="space-y-4 px-6 flex-grow flex flex-col justify-center items-center">
+            {nav_routes.map(({ name, to }) => (
+                <li key={name} className="w-full">
+                  <NavLink
+                      to={to}
+                      onClick={closeMenu} // Close the menu after clicking a link
+                      className={({ isActive }) =>
+                          clsx(
+                              "block text-lg font-medium px-2 py-3 w-full text-center border-b transition-all duration-300",
+                              {
+                                "text-purple-700 border-purple-600 font-semibold": isActive,
+                                "text-gray-700 border-gray-300 hover:text-purple-700 hover:border-purple-600": !isActive,
+                              }
+                          )
+                      }
+                  >
+                    {name}
+                  </NavLink>
+                </li>
+            ))}
+          </ul>
+
+          {/* Sign Up / Login Buttons */}
+          <div className="px-6 mb-6">
+            <Button
+                className="w-full bg-purple-600 text-white hover:bg-purple-700 transition-all"
+                onClick={() => {
+                  closeMenu();
+                  navigation("/renter/signup");
+                }}
+            >
+              Sign Up
+            </Button>
+            <Button
+                variant="outline"
+                className="w-full mt-2 border-purple-600 text-purple-600 hover:bg-purple-50 hover:text-purple-700 transition-all"
+                onClick={() => {
+                  closeMenu();
+                  navigation("/renter/login");
+                }}
+            >
+              Login
+            </Button>
+          </div>
+        </div>
+
         {/* Search Input */}
         <div
             className={clsx(
@@ -121,10 +195,9 @@ function Navbar() {
                 {
                   "translate-y-0": isSearchOpen, // Show when search is open
                   "-translate-y-full": !isSearchOpen, // Hide when search is closed
-                },
+                }
             )}
         >
-          {/* Search Bar */}
           <div className="relative mb-2 flex items-center">
             <input
                 type="text"
@@ -160,30 +233,6 @@ function Navbar() {
                 />
               </svg>
             </button>
-          </div>
-
-          {/* Suggestions Box */}
-          <div
-              className={clsx(
-                  "w-full bg-gray-50 border rounded-md shadow-md p-4 transition-opacity duration-300 ease-in-out",
-                  {
-                    "opacity-100 translate-y-0": isSearchOpen, // Show suggestion box
-                    "opacity-0 -translate-y-2 pointer-events-none": !isSearchOpen, // Hide suggestion box
-                  },
-              )}
-          >
-            <p className="text-sm text-gray-500 mb-2">Suggestions</p>
-            <ul>
-              <li className="py-2 text-gray-700 hover:text-purple-600 cursor-pointer">
-                Suggested Search 1
-              </li>
-              <li className="py-2 text-gray-700 hover:text-purple-600 cursor-pointer">
-                Suggested Search 2
-              </li>
-              <li className="py-2 text-gray-700 hover:text-purple-600 cursor-pointer">
-                Suggested Search 3
-              </li>
-            </ul>
           </div>
         </div>
       </div>

@@ -3,12 +3,12 @@ import icon from "../../../public/assets/icon.png";
 import icon1 from "../../../public/assets/icon1.png";
 import icon2 from "../../../public/assets/icon2.png";
 
-const Sidebar = () => {
+const Sidebar = ({firstname}) => {
   return (
     <div className="sidebar hidden lg:block fixed z-10 top-0 left-0 h-screen mt-20">
       <nav className="bg-[#F4EBFF] p-8 rounded-r-lg h-screen w-[370px] border">
         <div className="flex items-center justify-between">
-          <h6>Hi, Adewale Williams</h6>
+          <p className="font-medium">Hi, {firstname}</p>
           <button>
             <img src={btn} alt="Settings" />
           </button>

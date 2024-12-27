@@ -71,19 +71,16 @@ const RenterSignup = () => {
     try {
       setIsLoading(true);
       console.log(email, password);
-      const response = await fetch(
-        `${apiUrl}/api/v1/users/login`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: email,
-            password: password,
-          }),
+      const response = await fetch(`${apiUrl}/api/v1/users/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+      });
       const result = await response.json();
       if (response.ok) {
         localStorage.setItem("userId", result.payload.id);
@@ -101,7 +98,12 @@ const RenterSignup = () => {
           progress: undefined,
         });
         await fetchRenterDetails();
-        navigate("/");
+        if (result.payload.accountType[0] === "user") {
+          navigate("/renter/dashboard");
+        } else {
+          navigate("/agent/dashboard");
+        }
+
         window.history.replaceState(null, "", "/");
         console.log(result);
       } else {
@@ -139,6 +141,7 @@ const RenterSignup = () => {
 
   return (
     <>
+
       <div className="flex items-center justify-center h-screen px-4 md:px-10 lg:px-20">
         <div className="w-full max-w-screen-md bg-white rounded-lg p-6 md:p-10">
           <div className="flex flex-col gap-6">

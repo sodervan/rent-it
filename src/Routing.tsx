@@ -12,6 +12,7 @@ import ListingDetailsPage from "@/Pages/ListingDetailsPage";
 import AgentsLogin from "@/components/Forms/AgentsLogin";
 import AgentDashboard from "@/components/AgentDashboard/AgentDashboard";
 import AgentProfile from "@/components/AgentDashboard/AgentProfile";
+import AgentRegistration from "@/components/Forms/AgentRegistration";
 
 // import SearchResultsPage from "./Pages/SearchResultsPage";
 
@@ -39,6 +40,10 @@ function Routing() {
           <Route path="/agent/login" element={<AgentsLogin />} />
           <Route path="/agent/dashboard" element={<AgentDashboard />} />
           <Route path="agent/dashboard/profile" element={<AgentProfile />} />
+          <Route
+            path="/agent/agentregistration/:step"
+            element={<AgentRegistration />}
+          />
           {/* <Route
 						path="/search-results"
 						element={<SearchResultsPage />}
@@ -66,10 +71,7 @@ function Routing() {
 						path="/agent/addlisting/:step"
 						element={<AllSteps />}
 					/>
-					<Route
-						path="/agent/agentregistration/:step"
-						element={<AgentRegistration />}
-					/>
+
 
 					<Route
 						path="/agent/agentdashboard"

@@ -1,46 +1,168 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import ConfirmationModal from "@/components/AgentDashboard/ConfirmationModal.tsx";
 import { useNavigate } from "react-router-dom";
+import { IconEdit } from "@tabler/icons-react";
+import { toast } from "react-toastify";
+import { Spinner } from "@material-tailwind/react";
 
 const AgentProfile = () => {
   const filePickerRef = useRef();
   const navigate = useNavigate();
+
+  // States
   const [toggle, setToggleState] = useState(1);
   const [imageFile, setImageFile] = useState(null);
-
-  // State for toggling the logout modal
+  const [imageFileUrl, setImageFileUrl] = useState(""); // For image preview
+  const [agentData, setAgentData] = useState({});
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [isSaveEnabled, setIsSaveEnabled] = useState(false); // Enable/Disable save button
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [loading, setIsLoading] = useState(false);
+  const apiUrl = import.meta.env.VITE_API_URL;
 
-  const toggleTab = (index) => {
-    setToggleState(index);
-  };
+  const toggleTab = (index) => setToggleState(index);
 
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
       setImageFile(file);
       setImageFileUrl(URL.createObjectURL(file));
+
+      // Automatically execute the handleProfileImageUpdate function
+      await handleProfileImageUpdate(file);
+    }
+  };
+
+  const handleInputChange = (e, field) => {
+    const value = e.target.value;
+    if (field === "phoneNumber") setPhoneNumber(value);
+    if (field === "firstName") setFirstName(value);
+    if (field === "lastName") setLastName(value);
+
+    // Enable Save Changes button when there's a change
+    const isChanged =
+      (field === "phoneNumber" && value !== agentData.phoneNumber) || imageFile;
+    setIsSaveEnabled(isChanged);
+  };
+
+  const handleSaveChanges = async () => {
+    try {
+      // Simulate API call for image upload and profile update
+      let uploadedImageUrl = agentData.profilePicLink;
+
+      if (imageFile) {
+        // Replace this block with actual image upload logic (e.g., cloud storage API)
+        uploadedImageUrl = URL.createObjectURL(imageFile);
+      }
+
+      const updatedData = {
+        ...agentData,
+        firstName: firstName || agentData.firstName,
+        lastName: lastName || agentData.lastName,
+        phoneNumber: phoneNumber || agentData.phoneNumber,
+        profilePicLink: uploadedImageUrl,
+      };
+
+      // Save updated data to localStorage
+      localStorage.setItem("agentData", JSON.stringify(updatedData));
+      setAgentData(updatedData);
+
+      setIsSaveEnabled(false);
+      alert("Profile updated successfully!");
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      alert("An error occurred while saving changes.");
     }
   };
 
   const handleLogout = () => {
-    // Clear tokens and account type from localStorage
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("accountType");
-
-    // Redirect to the login page
+    localStorage.clear();
     navigate("/agent/login");
-
-    // Reload the page to clean up any residual state
     window.location.reload();
   };
 
+  // handling profile image update
+  const handleProfileImageUpdate = async (imageFile) => {
+    if (!imageFile) return;
+    setIsLoading(true); // Enable loading state
+    const formData = new FormData();
+    formData.append("profile", imageFile);
+
+    try {
+      const response = await fetch(`${apiUrl}/api/v1/agents/profile-picture`, {
+        method: "POST",
+        body: formData,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        }
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log(result);
+
+        // Update profile picture URL
+        const updatedAgentData = {
+          ...agentData,
+          profilePicLink: result.profilePicLink,
+        };
+        localStorage.setItem("agentData", JSON.stringify(updatedAgentData));
+        setAgentData(updatedAgentData);
+
+        // Success toast
+        toast.success("Profile image updated successfully!", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      } else {
+        const error = await response.json();
+        toast.error(error.message || "Failed to update profile image", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      }
+    } catch (error) {
+      console.error("Profile Image Update Error:", error);
+      toast.error("Something went wrong. Please try again later.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    } finally {
+      setIsLoading(false); // Disable loading state
+    }
+  };
+
+  useEffect(() => {
+    const storedAgentData = localStorage.getItem("agentData");
+    if (storedAgentData) {
+      const parsedAgentData = JSON.parse(storedAgentData);
+      setAgentData(parsedAgentData);
+      setPhoneNumber(parsedAgentData.phoneNumber || "");
+      setFirstName(parsedAgentData.firstName || "");
+      setLastName(parsedAgentData.lastName || "");
+    }
+  }, []);
+
+  useEffect(() => {}, []);
   return (
-    <div className="flex flex-col lg:flex-row mt-[2rem] max-w-[1100px] w-[95%] mx-auto md:mx-16 gap-10  min-h-screen p-4">
+    <div className="flex flex-col lg:flex-row mt-[5rem] max-w-[1100px] w-[95%] mx-auto md:mx-16 gap-10  min-h-screen p-4">
       {/* Sidebar */}
       <div className="w-full lg:w-1/4 p-4 bg-white rounded-lg mb-4 lg:mb-0">
-        <div className="flex flex-col  items-center text-center">
+        <div className="flex flex-col items-center text-center">
           <input
             type="file"
             accept="image/*"
@@ -48,19 +170,33 @@ const AgentProfile = () => {
             ref={filePickerRef}
             hidden
           />
-          <div
-            className="relative  self-center cursor-pointer w-32 h-32 shadow-md overflow-hidden rounded-full"
-            onClick={() => filePickerRef.current.click()}
-          >
-            <img
-              src="https://media.istockphoto.com/id/1437816897/photo/business-woman-manager-or-human-resources-portrait-for-career-success-company-we-are-hiring.jpg?s=612x612&w=0&k=20&c=tyLvtzutRh22j9GqSGI33Z4HpIwv9vL_MZw_xOE19NQ="
-              alt="Profile"
-              className=" object-cover border-8 border-[lightgray] w-full h-full rounded-full"
-            />
+          <div className="relative">
+            <div
+              className="relative cursor-pointer w-32 h-32 shadow-md overflow-hidden rounded-full"
+              onClick={() => filePickerRef.current.click()}
+            >
+              <img
+                src={imageFileUrl || agentData.profilePicLink}
+                alt="Profile"
+                className="object-cover border-8 border-[lightgray] w-full h-full rounded-full"
+              />
+            </div>
+            <div
+              className="absolute right-0 bottom-0 cursor-pointer"
+              onClick={() => filePickerRef.current.click()}
+            >
+              {loading ? (
+                <Spinner className="text-primaryPurple w-5 h-5" />
+              ) : (
+                <IconEdit className="text-primaryPurple" size={20} />
+              )}
+            </div>
           </div>
 
-          <h2 className="mt-2 font-semibold text-lg">Adesina Adebayo</h2>
-          <p className="text-sm text-gray-500">adesinabayo@yahoo.com</p>
+          <h2 className="mt-2 font-semibold text-lg">
+            {agentData.lastName} {agentData.firstName}
+          </h2>
+          <p className="text-sm text-gray-500">{agentData.email}</p>
         </div>
         <div className="mt-6">
           <button
@@ -71,7 +207,7 @@ const AgentProfile = () => {
           </button>
           <button
             className="w-full py-2 bg-[#FEF3F2] text-[#B42318] rounded hover:text-white hover:bg-red-600 transition-all duration-300"
-            onClick={() => setIsLogoutModalOpen(true)} // Open the Logout Modal
+            onClick={() => setIsLogoutModalOpen(true)}
           >
             Logout
           </button>
@@ -161,7 +297,8 @@ const AgentProfile = () => {
                 </label>
                 <input
                   type="text"
-                  placeholder="Adesina"
+                  placeholder={agentData.firstname}
+                  disabled
                   className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
                 />
               </div>
@@ -171,7 +308,8 @@ const AgentProfile = () => {
                 </label>
                 <input
                   type="text"
-                  placeholder="Adebayo"
+                  placeholder={agentData.lastname}
+                  disabled
                   className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
                 />
               </div>
@@ -184,7 +322,8 @@ const AgentProfile = () => {
                 </label>
                 <input
                   type="email"
-                  placeholder="adesinabayo@yahoo.com"
+                  placeholder={agentData.email}
+                  disabled
                   className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
                 />
               </div>
@@ -194,7 +333,8 @@ const AgentProfile = () => {
                 </label>
                 <input
                   type="text"
-                  placeholder="08023242526"
+                  placeholder={agentData.phoneNumber}
+                  onChange={(e) => handleInputChange(e, "phoneNumber")}
                   className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
                 />
               </div>
@@ -224,7 +364,7 @@ const AgentProfile = () => {
                     className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
                   />
                 </div>
-                <div className="space-y-1" >
+                <div className="space-y-1">
                   <label className="block text-sm font-medium text-gray-600">
                     State
                   </label>
@@ -237,8 +377,14 @@ const AgentProfile = () => {
               </div>
             </div>
             <button
-              type="submit"
-              className="w-full py-3 text-white bg-purple-500 rounded hover:bg-purple-600"
+              type="button"
+              onClick={handleSaveChanges}
+              className={`w-full py-2 text-white rounded ${
+                isSaveEnabled
+                  ? "bg-primaryPurple"
+                  : "bg-gray-300 cursor-not-allowed"
+              }`}
+              disabled={!isSaveEnabled}
             >
               Save Changes
             </button>

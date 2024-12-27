@@ -36,9 +36,10 @@ const AgentLogin = () => {
 
       if (response.ok) {
         const result = await response.json();
-        console.log(result)
+        console.log(result);
         // Store tokens in localStorage
         localStorage.setItem("accessToken", result.payload.access_token);
+        localStorage.setItem("userId", result.payload.id);
         localStorage.setItem("refreshToken", result.payload.refresh_token);
         localStorage.setItem("accountType", result.payload.role[0]);
 
@@ -53,7 +54,13 @@ const AgentLogin = () => {
         });
 
         // Redirect to agent dashboard
-        navigate("/agent/dashboard");
+        if (result.payload?.isRegistrationComplete === true) {
+          navigate("/agent/dashboard");
+        } else {
+          navigate(
+            `/agent/agentregistration/${result.payload.registrationStep}`,
+          );
+        }
       } else {
         const error = await response.json();
         // Error toast

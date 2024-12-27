@@ -150,56 +150,61 @@ const AgentDashboard = () => {
   const closeShareModal = () => {
     setShare(false);
   };
-  const navigate = useNavigate();
   const [agentData, setAgentData] = useState(null); // Use null initially
-  const [accessToken, setAccessToken] = useState("");
   const [loading, setLoading] = useState(false);
+  const [agentId, setAgentId] = useState("");
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const fetchAgentDetails = async (token) => {
     try {
       setLoading(true); // Start loading
-      const response = await fetch(
-        "https://rent-it-api.onrender.com/api/v1/agents",
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`, // Pass token here
-          },
-        }
-      );
+
+      const response = await fetch(`${apiUrl}/api/v1/agents?${agentId}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`, // Pass token here
+        },
+      });
 
       const result = await response.json();
       console.log("API result:", result); // Log the full result for debugging
+
       if (response.ok) {
-        setAgentData(result);
-        console.log(agentData);
+        setAgentData(result); // Update state
+
+        localStorage.setItem("agentData", JSON.stringify(result.payload));
       } else {
-        console.log("Failed to fetch agent details");
+        console.log("Failed to fetch agent details:", response.statusText);
       }
     } catch (error) {
-      console.log("Error:", error);
+      console.log("Error fetching agent details:", error);
     } finally {
       setLoading(false); // End loading
     }
   };
 
+  // useEffect(() => {
+  //   console.log("Updated agentData:", agentData);
+  // }, [agentData]);
+
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
+    const agentId = localStorage.getItem("userId");
+    setAgentId(agentId);
     if (token) {
-      setAccessToken(token);
       fetchAgentDetails(token); // Fetch agent details only after token is set
     }
   }, []);
   return (
     <>
-      <Sidebar />
-      <div className={`content lg:ml-[25rem] xl:ml-[23rem] `}>
+      <Sidebar firstname={agentData ? agentData.payload.firstname : ""} />
+      <div className={`content lg:ml-[25rem] xl:ml-[23rem] mt-[5rem]`}>
         <div className="">
           {loading ? (
             <Loader />
           ) : (
-            <div className=" p-5 ">
-              <h2 className="font-bold text-lg">Dashboard - Listings</h2>
+            <div className=" px-5 ">
+              <h2 className="font-semibold text-lg">Dashboard - Listings</h2>
 
               <div className="grid xl:grid-cols-2 lg:grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-6 xl:px-10 px-4 w-full  mt-6 max-w-[950px] py-10">
                 {popularLocations.length > 0 ? (

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { IconSearch, IconUser, IconBell, IconMenu2, IconX } from "@tabler/icons-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -13,7 +13,7 @@ const Navbar = () => {
   };
 
   return (
-      <nav className="bg-white shadow px-4 py-3 md:px-8">
+      <nav className="bg-white shadow px-4 py-3 md:px-8 fixed top-0 w-full z-[2000]">
         <div className="container mx-auto flex items-center justify-between">
           {/* Logo */}
           <div className="text-purple-700 text-lg font-bold flex-shrink-0 flex items-center">
@@ -72,7 +72,7 @@ const Navbar = () => {
         <AnimatePresence>
           {isMenuOpen && (
               <motion.div
-                  className="absolute top-0 left-0 w-full h-screen bg-white shadow-lg z-50 flex flex-col items-center space-y-8 px-6 py-12"
+                  className="absolute top-0 left-0 w-full h-screen bg-white shadow-lg z-[2000] flex flex-col items-center space-y-8 px-6 py-12"
                   variants={menuVariants}
                   initial="hidden"
                   animate="visible"

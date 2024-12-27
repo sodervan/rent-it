@@ -92,8 +92,8 @@ const AgentProfile = () => {
                 href="#"
                 className={`${
                   toggle === 1
-                    ? "inline-flex gap-2 text-lg items-center justify-center p-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active dark:text-blue-500 dark:border-blue-500 group"
-                    : "inline-flex gap-2 text-lg items-center justify-center p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 group"
+                    ? "inline-flex gap-2 text-base items-center justify-center p-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active dark:text-blue-500 dark:border-blue-500 group"
+                    : "inline-flex gap-2 text-base items-center justify-center p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 group"
                 }  `}
               >
                 <svg
@@ -126,8 +126,8 @@ const AgentProfile = () => {
                 href="#"
                 className={`${
                   toggle === 2
-                    ? "inline-flex gap-2 text-lg items-center justify-center p-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active dark:text-blue-500 dark:border-blue-500 group"
-                    : "inline-flex gap-2 text-lg items-center justify-center p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 group"
+                    ? "inline-flex gap-2 text-base items-center justify-center p-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active dark:text-blue-500 dark:border-blue-500 group"
+                    : "inline-flex gap-2 text-base items-center justify-center p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 group"
                 }  `}
               >
                 <svg
@@ -155,7 +155,7 @@ const AgentProfile = () => {
           <form className="space-y-6">
             <div className="grid grid-cols-1  gap-4">
               <h2 className="my-2 font-semibold ">Basic Details</h2>
-              <div>
+              <div className="space-y-1">
                 <label className="block text-sm font-medium text-gray-600">
                   First Name
                 </label>
@@ -165,7 +165,7 @@ const AgentProfile = () => {
                   className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
                 />
               </div>
-              <div>
+              <div className="space-y-1">
                 <label className="block text-sm font-medium text-gray-600">
                   Last Name
                 </label>
@@ -178,7 +178,7 @@ const AgentProfile = () => {
             </div>
 
             <div className="grid grid-cols-1  gap-4">
-              <div>
+              <div className="space-y-1">
                 <label className="block text-sm font-medium text-gray-600">
                   Email
                 </label>
@@ -188,7 +188,7 @@ const AgentProfile = () => {
                   className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
                 />
               </div>
-              <div>
+              <div className="space-y-1">
                 <label className="block text-sm font-medium text-gray-600">
                   Mobile Number
                 </label>
@@ -204,7 +204,7 @@ const AgentProfile = () => {
             <div>
               <h2 className="text-base font-semibold mb-2">Office Address</h2>
               <div className="grid grid-cols-1  gap-4">
-                <div>
+                <div className="space-y-1">
                   <label className="block text-sm font-medium text-gray-600">
                     Address Line 1
                   </label>
@@ -214,7 +214,7 @@ const AgentProfile = () => {
                     className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
                   />
                 </div>
-                <div>
+                <div className="space-y-1">
                   <label className="block text-sm font-medium text-gray-600">
                     LGA
                   </label>
@@ -224,7 +224,7 @@ const AgentProfile = () => {
                     className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
                   />
                 </div>
-                <div>
+                <div className="space-y-1" >
                   <label className="block text-sm font-medium text-gray-600">
                     State
                   </label>
@@ -238,7 +238,7 @@ const AgentProfile = () => {
             </div>
             <button
               type="submit"
-              className="w-full py-2 text-white bg-purple-500 rounded hover:bg-purple-600"
+              className="w-full py-3 text-white bg-purple-500 rounded hover:bg-purple-600"
             >
               Save Changes
             </button>
@@ -251,7 +251,7 @@ const AgentProfile = () => {
           <form className="space-y-6">
             <div className="grid grid-cols-1  gap-4">
               <h2 className="text-base font-semibold my-2">Change Password</h2>
-              <div>
+              <div className="space-y-1">
                 <label className="block text-sm font-medium text-gray-600">
                   Change Password
                 </label>
@@ -261,7 +261,7 @@ const AgentProfile = () => {
                   className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
                 />
               </div>
-              <div>
+              <div className="space-y-1">
                 <label className="block text-sm font-medium text-gray-600">
                   New Password
                 </label>
@@ -272,7 +272,7 @@ const AgentProfile = () => {
                 />
               </div>
 
-              <div>
+              <div className="space-y-1">
                 <label className="block text-sm font-medium text-gray-600">
                   Confirm New Password
                 </label>
@@ -286,14 +286,14 @@ const AgentProfile = () => {
 
             <button
               type="submit"
-              className="w-full py-2 text-white bg-purple-500 rounded hover:bg-purple-600"
+              className="w-full py-3 text-white bg-purple-500 rounded hover:bg-purple-600"
             >
               Rest Password
             </button>
 
             <button
               type="submit"
-              className="w-full py-2 text-black bg-white rounded hover:bg-purple-600"
+              className="w-full py-3 text-gray-800 border hover:text-white bg-white rounded hover:bg-purple-600"
             >
               Forget Password
             </button>

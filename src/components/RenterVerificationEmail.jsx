@@ -55,7 +55,6 @@ const VerificationEmail = () => {
   }, [token, apiUrl]);
 
   const handleNavigation = () => {
-    localStorage.removeItem("role");
     if (role === "agent") {
       navigate("/agent/login");
     } else {
@@ -106,7 +105,9 @@ const VerificationEmail = () => {
             className="px-4 py-3 bg-secondaryPurple rounded-lg text-primaryPurple transition-all duration-200 hover:shadow-lg"
             onClick={() => {
               localStorage.removeItem("role")
+              localStorage.removeItem("accountType")
               navigate("/");
+              window.location.reload()
             }}
           >
             Go to Home

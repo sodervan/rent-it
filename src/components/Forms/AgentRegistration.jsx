@@ -7,6 +7,7 @@ import StepOne from "../StepOne.jsx";
 import StepFour from "../StepFour.jsx";
 
 const AgentRegistration = () => {
+  const apiUrl = import.meta.env.VITE_API_URL;
   const { step } = useParams();
   const navigate = useNavigate();
   const [userId, setUserId] = useState(null);
@@ -55,7 +56,7 @@ const AgentRegistration = () => {
       formData.append("profile", profileImage); // Append the file with the key "profile"
 
       const response = await fetch(
-        "https://rent-it-api.onrender.com/api/v1/agents/profile-picture",
+        `${apiUrl}/api/v1/agents/profile-picture`,
         {
           method: "POST",
           headers: {
@@ -92,7 +93,7 @@ const AgentRegistration = () => {
       setIsLoading(true);
 
       const response = await fetch(
-        "https://rent-it-api.onrender.com/api/v1/agents/verify-nin",
+        `${apiUrl}/api/v1/agents/verify-nin`,
         {
           method: "POST",
           headers: {

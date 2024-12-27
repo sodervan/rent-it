@@ -10,7 +10,9 @@ import AboutUs from "./components/NavLinksComponents/AboutUs";
 import Blog from "./components/NavLinksComponents/Blog";
 import ListingDetailsPage from "@/Pages/ListingDetailsPage";
 import AgentsLogin from "@/components/Forms/AgentsLogin";
-// import AgentDashboard from "@/components/AgentDashboard";
+import AgentDashboard from "@/components/AgentDashboard/AgentDashboard";
+import AgentProfile from "@/components/AgentDashboard/AgentProfile";
+
 // import SearchResultsPage from "./Pages/SearchResultsPage";
 
 function Routing() {
@@ -34,14 +36,9 @@ function Routing() {
             path="/listing-details-page/:id/:index"
             element={<ListingDetailsPage />}
           />
-          <Route
-              path="/agent/login"
-              element={<AgentsLogin />}
-          />
-          {/*<Route*/}
-          {/*    path="/agent/dashboard"*/}
-          {/*    element={<DashBoard />}*/}
-          {/*/>*/}
+          <Route path="/agent/login" element={<AgentsLogin />} />
+          <Route path="/agent/dashboard" element={<AgentDashboard />} />
+          <Route path="agent/dashboard/profile" element={<AgentProfile />} />
           {/* <Route
 						path="/search-results"
 						element={<SearchResultsPage />}

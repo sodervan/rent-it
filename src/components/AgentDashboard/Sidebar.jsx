@@ -16,7 +16,7 @@ const Sidebar = () => {
         <ul className="mt-10 flex flex-col space-y-6">
           <SidebarItem icon={icon} label="My Listings" link="#home" />
           <SidebarItem icon={icon1} label="Booking Requests" link="#services" />
-          <SidebarItem icon={icon2} label="Profile" link="#clients" />
+          <SidebarItem icon={icon2} label="Profile" link="/agent/dashboard/profile" />
         </ul>
       </nav>
     </div>

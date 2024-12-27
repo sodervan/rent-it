@@ -1,11 +1,15 @@
-import React from "react";
-import { useState } from "react";
-import { useRef } from "react";
+import { useState, useRef } from "react";
+import ConfirmationModal from "@/components/AgentDashboard/ConfirmationModal.tsx";
+import { useNavigate } from "react-router-dom";
 
 const AgentProfile = () => {
   const filePickerRef = useRef();
+  const navigate = useNavigate();
   const [toggle, setToggleState] = useState(1);
   const [imageFile, setImageFile] = useState(null);
+
+  // State for toggling the logout modal
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
   const toggleTab = (index) => {
     setToggleState(index);
@@ -18,8 +22,22 @@ const AgentProfile = () => {
       setImageFileUrl(URL.createObjectURL(file));
     }
   };
+
+  const handleLogout = () => {
+    // Clear tokens and account type from localStorage
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("accountType");
+
+    // Redirect to the login page
+    navigate("/agent/login");
+
+    // Reload the page to clean up any residual state
+    window.location.reload();
+  };
+
   return (
-    <div className="flex flex-col lg:flex-row mt-[5rem] max-w-[1100px] w-[95%] mx-auto md:mx-16 gap-10  min-h-screen p-4">
+    <div className="flex flex-col lg:flex-row mt-[2rem] max-w-[1100px] w-[95%] mx-auto md:mx-16 gap-10  min-h-screen p-4">
       {/* Sidebar */}
       <div className="w-full lg:w-1/4 p-4 bg-white rounded-lg mb-4 lg:mb-0">
         <div className="flex flex-col  items-center text-center">
@@ -45,10 +63,16 @@ const AgentProfile = () => {
           <p className="text-sm text-gray-500">adesinabayo@yahoo.com</p>
         </div>
         <div className="mt-6">
-          <button className="w-full py-2 mb-4 text-white bg-purple-500 rounded hover:bg-purple-600">
+          <button
+            className="w-full py-2 mb-4 text-white bg-purple-500 rounded hover:bg-purple-600"
+            onClick={() => navigate("/agent/dashboard")}
+          >
             Dashboard
           </button>
-          <button className="w-full py-2 bg-[#FEF3F2] text-[#B42318] rounded hover:text-white hover:bg-red-600">
+          <button
+            className="w-full py-2 bg-[#FEF3F2] text-[#B42318] rounded hover:text-white hover:bg-red-600 transition-all duration-300"
+            onClick={() => setIsLogoutModalOpen(true)} // Open the Logout Modal
+          >
             Logout
           </button>
         </div>
@@ -276,6 +300,15 @@ const AgentProfile = () => {
           </form>
         </div>
       </div>
+      {/* Logout Confirmation Modal */}
+      {isLogoutModalOpen && (
+        <ConfirmationModal
+          isOpen={isLogoutModalOpen}
+          onClose={() => setIsLogoutModalOpen(false)} // Close modal when Cancel or outside click
+          onConfirm={handleLogout} // Call the logout function when Confirm is clicked
+          message="Are you sure you want to log out? This action cannot be undone."
+        />
+      )}
     </div>
   );
 };

@@ -9,6 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 
 const RenterSignup = () => {
+  const apiUrl = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
   const [message, setMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -32,15 +33,12 @@ const RenterSignup = () => {
   const fetchRenterDetails = async (accessToken) => {
     try {
       setIsLoading(true); // Start loading
-      const response = await fetch(
-        "https://rent-it-api.onrender.com/api/v1/agents",
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
+      const response = await fetch(`${apiUrl}/api/v1/agents`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
         },
-      );
+      });
 
       const result = await response.json();
       if (response.ok) {
@@ -74,7 +72,7 @@ const RenterSignup = () => {
       setIsLoading(true);
       console.log(email, password);
       const response = await fetch(
-        "https://rent-it-api.onrender.com/api/v1/users/login",
+        `${apiUrl}/api/v1/users/login`,
         {
           method: "POST",
           headers: {

@@ -20,6 +20,7 @@
     "clsx": "^2.1.1",
     "embla-carousel-autoplay": "^7.1.0",
     "embla-carousel-react": "^7.1.0",
+    "framer-motion": "^11.15.0",
     "jotai": "^2.10.4",
     "lottie-react": "^2.4.0",
     "lucide-react": "^0.468.0",

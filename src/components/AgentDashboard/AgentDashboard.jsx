@@ -193,7 +193,7 @@ const AgentDashboard = () => {
   return (
     <>
       <Sidebar />
-      <div className={`content mt-20 lg:ml-[25rem] xl:ml-[23rem] `}>
+      <div className={`content lg:ml-[25rem] xl:ml-[23rem] `}>
         <div className="">
           {loading ? (
             <Loader />

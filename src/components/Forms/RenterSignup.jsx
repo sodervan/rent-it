@@ -6,6 +6,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const RenterSignup = () => {
+  const apiUrl = import.meta.env.VITE_API_URL;
   const [isStudent, setIsStudent] = useState(false);
   const [isTermsAndConditions, setIsTermsAndConditions] = useState(false);
   const [isPassword, setIsPassword] = useState("");
@@ -60,7 +61,7 @@ const RenterSignup = () => {
     setIsLoading(true); // Show loading state
     try {
       const response = await fetch(
-        "https://rent-it-api.onrender.com/api/v1/users/register",
+        `${apiUrl}/api/v1/users/register`,
         {
           method: "POST",
           headers: {

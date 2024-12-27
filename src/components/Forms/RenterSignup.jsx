@@ -93,6 +93,7 @@ const RenterSignup = () => {
         navigate("/renter/signup/verifyemail", {
           state: { email: formData.email },
         });
+        localStorage.setItem("role", "user")
       } else {
         toast.error(result.message || "Registration failed!", {
           position: "top-right",

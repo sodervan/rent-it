@@ -13,6 +13,9 @@ import AgentsLogin from "@/components/Forms/AgentsLogin";
 import AgentDashboard from "@/components/AgentDashboard/AgentDashboard";
 import AgentProfile from "@/components/AgentDashboard/AgentProfile";
 import AgentRegistration from "@/components/Forms/AgentRegistration";
+import AllSteps from "@/components/AddListings/AllSteps";
+import VerifyEmail from "@/components/VerifyEmail";
+import RenterVerificationEmail from "@/components/RenterVerificationEmail";
 
 // import SearchResultsPage from "./Pages/SearchResultsPage";
 
@@ -44,6 +47,13 @@ function Routing() {
             path="/agent/agentregistration/:step"
             element={<AgentRegistration />}
           />
+          <Route path="/agent/addlisting/:step" element={<AllSteps />} />
+          <Route path="/renter/signup/verifyemail" element={<VerifyEmail />} />
+          <Route path="/agent/signup/verifyemail" element={<VerifyEmail />} />
+          <Route
+            path="/user/verificationemail"
+            element={<RenterVerificationEmail />}
+          />
           {/* <Route
 						path="/search-results"
 						element={<SearchResultsPage />}
@@ -51,14 +61,8 @@ function Routing() {
           {/*
 
 
-					<Route
-						path="/renter/signup/verifyemail"
-						element={<VerifyEmail />}
-					/>
-					<Route
-						path="/agent/signup/verifyemail"
-						element={<VerifyEmail />}
-					/>
+
+
 					<Route
 						path="/agent/profile"
 						element={<AgentProfilePage />}
@@ -67,20 +71,14 @@ function Routing() {
 						path="/renter/profile"
 						element={<RenterProfilePage />}
 					/>
-					<Route
-						path="/agent/addlisting/:step"
-						element={<AllSteps />}
-					/>
+
 
 
 					<Route
 						path="/agent/agentdashboard"
 						element={<AgentDashboard />}
 					/>
-					<Route
-						path="/user/verificationemail"
-						element={<RenterVerificationEmail />}
-					/>
+
  */}
         </Route>
       </Routes>

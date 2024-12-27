@@ -1,5 +1,5 @@
 import { Button, Option, Select, Spinner } from "@material-tailwind/react";
-import { IoMdAdd, IoMdClose } from "react-icons/io";
+import {IconPlus, IconX} from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
@@ -178,7 +178,7 @@ const UploadListingImages = () => {
         }}
         onDragOver={(e) => e.preventDefault()}
       >
-        <IoMdAdd className="text-4xl text-primaryPurple" />
+        <IconPlus className="text-4xl text-primaryPurple" />
         <p className="text-gray-500 text-center">
           <span className="text-primaryPurple cursor-pointer hover:underline">
             Click to upload
@@ -213,7 +213,7 @@ const UploadListingImages = () => {
                   onClick={() => removeImage(selectedTag, image.id)}
                   className="absolute top-1 right-1 bg-gray-500 opacity-50 text-white rounded-full p-1"
                 >
-                  <IoMdClose size={16} />
+                  <IconX size={16} />
                 </button>
               </div>
             ))}

@@ -104,7 +104,10 @@ const VerificationEmail = () => {
           </button>
           <button
             className="px-4 py-3 bg-secondaryPurple rounded-lg text-primaryPurple transition-all duration-200 hover:shadow-lg"
-            onClick={() => navigate("/")}
+            onClick={() => {
+              localStorage.removeItem("role")
+              navigate("/");
+            }}
           >
             Go to Home
           </button>

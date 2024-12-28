@@ -9,6 +9,8 @@ const ReviewListing = () => {
   const [reviewDetails, setReviewDetails] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [isUploading, setIsUploading] = useState(false)
+  // const mapKey = import.meta.env.VITE_APP_MAP_KEY;
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: "AIzaSyBJYIthIF1IdQuGVe5bqpDGec2z6aKJ7lc",
@@ -20,7 +22,7 @@ const ReviewListing = () => {
     const storedDetails = JSON.parse(localStorage.getItem("basicDetails"));
     try {
       const response = await fetch(
-        `https://rent-it-api.onrender.com/api/v1/agents/listings/${storedDetails.listingId}/review?listingId=${storedDetails.listingId}`,
+        `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/review?listingId=${storedDetails.listingId}`,
         {
           method: "GET",
           headers: {
@@ -49,7 +51,7 @@ const ReviewListing = () => {
     const storedDetails = JSON.parse(localStorage.getItem("basicDetails"));
     try {
       const response = await fetch(
-        `https://rent-it-api.onrender.com/api/v1/agents/listings/${storedDetails.listingId}/publish?listingId=${storedDetails.listingId}`,
+        `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/publish?listingId=${storedDetails.listingId}`,
         {
           method: "GET",
           headers: {
@@ -87,7 +89,7 @@ const ReviewListing = () => {
     <>
       {!isLoading ? (
         <div>
-          <div className="mt-20 px-6 flex items-center justify-center">
+          <div className="px-6 flex items-center justify-center">
             <div className="flex flex-col h-[350px] rounded-lg shadow-lg w-[280px] min-w-full">
               {/* Image Section */}
               <div className="h-[60%] rounded-t-[15px] rounded-b-[20px] overflow-hidden relative">

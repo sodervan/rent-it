@@ -9,6 +9,7 @@ const UploadListingVideos = ({ listingId }) => {
   const navigate = useNavigate();
   const [videos, setVideos] = useState([]); // Stores uploaded videos
   const [isUploading, setIsUploading] = useState(false);
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const handleVideoUpload = (file) => {
     const totalSizeMB =
@@ -75,7 +76,7 @@ const UploadListingVideos = ({ listingId }) => {
 
     try {
       const response = await fetch(
-        `https://rent-it-api.onrender.com/api/v1/agents/listings/${storedDetails.listingId}/video?id=${storedDetails.listingId}`,
+        `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/video?id=${storedDetails.listingId}`,
         {
           method: "POST",
           body: formData,
@@ -103,7 +104,7 @@ const UploadListingVideos = ({ listingId }) => {
   };
 
   return (
-    <div className="mt-6">
+    <div>
       <div>
         <div className="flex items-center justify-between border-b border-gray-200 pb-4 px-6">
           <p className="text-xl font-medium">Add New Listing Videos</p>

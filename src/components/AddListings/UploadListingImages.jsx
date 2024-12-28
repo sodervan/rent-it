@@ -9,12 +9,13 @@ const UploadListingImages = () => {
   const [tags, setTags] = useState([]); // Store image tags
   const [selectedTag, setSelectedTag] = useState(null); // Current tag
   const [loading, setLoading] = useState(false);
+    const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     // Fetch image tags
     const token = localStorage.getItem("accessToken");
     fetch(
-      "https://rent-it-api.onrender.com/api/v1/agents/listings-attributes/imageTags",
+      `${apiUrl}/api/v1/agents/listings-attributes/imageTags`,
       {
         method: "GET",
         headers: {
@@ -91,7 +92,7 @@ const UploadListingImages = () => {
         });
 
         return fetch(
-          `https://rent-it-api.onrender.com/api/v1/agents/listings/${storedDetails.listingId}/image/${tagId}?id=${storedDetails.listingId}?tagId=${tagId}`,
+          `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/image/${tagId}?id=${storedDetails.listingId}?tagId=${tagId}`,
           {
             method: "POST",
             headers: {

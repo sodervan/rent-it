@@ -35,9 +35,9 @@ const AllSteps = () => {
   useEffect(() => {}, []);
   return (
     <>
-      <div className="mt-20 flex gap-5">
+      <div className="mt-24 flex gap-5">
         <SideBar activeStep={parseInt(step)} steps={steps} />
-        <div className="ml-[26%]">
+        <div className="md:ml-[26%] px-6 w-full max-w-[900px]">
           {step == 1 && <BasicDetails />}
           {step == 2 && <CostBreakdown />}
           {step == 3 && <CostBreakdownPreview />}

@@ -18,6 +18,7 @@ const CostBreakdown = () => {
   const [rentFeeDeposit, setRentFeeDeposit] = useState(0);
   const [basicDetails, setBasicDetails] = useState({});
   const [loading, setLoading] = useState(false);
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const handleRentFeeDeposit = (e) => {
     e.preventDefault();
@@ -69,7 +70,7 @@ const CostBreakdown = () => {
       };
 
       const response = await fetch(
-        `https://rent-it-api.onrender.com/api/v1/agents/listings/${storedDetails.listingId}/fees?id=${storedDetails.listingId}`,
+        `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/fees?id=${storedDetails.listingId}`,
         {
           method: "POST",
           headers: {
@@ -100,7 +101,7 @@ const CostBreakdown = () => {
   const getFeesTypes = async (token) => {
     try {
       const response = await fetch(
-        "https://rent-it-api.onrender.com/api/v1/agents/listings-attributes/feesTypes",
+        `${apiUrl}/api/v1/agents/listings-attributes/feesTypes`,
         {
           method: "GET",
           headers: { Authorization: `Bearer ${token}` },

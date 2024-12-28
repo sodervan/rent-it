@@ -71,7 +71,7 @@ const Navbar = () => {
             <a href="#" className="text-gray-700 hover:text-purple-600">
               Bookings
             </a>
-            <button className="text-gray-700 hover:text-purple-600">
+            <button className="text-gray-700 hover:text-purple-600" onClick={()=>{navigate("/agent/dashboard/profile")}}>
               <IconUser size={20} />
             </button>
             <button className="text-gray-700 hover:text-purple-600">

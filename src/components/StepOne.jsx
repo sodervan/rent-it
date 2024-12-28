@@ -23,11 +23,8 @@ const StepOne = ({
 
   return (
     <div>
-      <div className="mt-20 px-6">
+      <div className="mt-24 px-6 md:ml-[28%] md:w-[70%] max-w-[800px] sm:px-10">
         <div className="flex flex-col gap-4">
-          <div className="text-center text-lg font-semibold">
-            <p>Agent Registration</p>
-          </div>
           <div className="text-[14px]">
             <p className="text-gray-500">Step 2 of 5</p>
           </div>

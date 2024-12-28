@@ -13,7 +13,7 @@ const Description = () => {
   }, []);
 
   return (
-    <div className="mt-20">
+    <div>
       <div>
         <div className="flex items-center justify-between border-b border-gray-200 pb-4 px-6">
           <p className="text-xl font-medium">Add New Listing</p>

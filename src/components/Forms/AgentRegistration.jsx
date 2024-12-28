@@ -5,6 +5,8 @@ import StepTwo from "../StepTwo.jsx";
 import StepThree from "../StepThree.jsx";
 import StepOne from "../StepOne.jsx";
 import StepFour from "../StepFour.jsx";
+import AgentRegistrationSidebar from "@/components/AgentRegistrationSidebar.jsx";
+import {toast} from "react-toastify";
 
 const AgentRegistration = () => {
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -55,25 +57,22 @@ const AgentRegistration = () => {
       const formData = new FormData(); // Create a FormData object
       formData.append("profile", profileImage); // Append the file with the key "profile"
 
-      const response = await fetch(
-        `${apiUrl}/api/v1/agents/profile-picture`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-          body: formData, // Send the FormData object
+      const response = await fetch(`${apiUrl}/api/v1/agents/profile-picture`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
         },
-      );
+        body: formData, // Send the FormData object
+      });
 
       const result = await response.json();
       setStatus(result.statusCode);
 
       if (response.ok) {
-        setMessage("Profile picture uploaded successfully!");
+        toast.success("Successfully uploaded");
         timeOut();
       } else {
-        setMessage(result.message || "Failed to upload the profile picture.");
+        toast.error("Failed to upload");
         failedTimeout();
       }
     } catch (error) {
@@ -92,30 +91,27 @@ const AgentRegistration = () => {
     try {
       setIsLoading(true);
 
-      const response = await fetch(
-        `${apiUrl}/api/v1/agents/verify-nin`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-          body: nin,
+      const response = await fetch(`${apiUrl}/api/v1/agents/verify-nin`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
         },
-      );
+        body: nin,
+      });
 
       const result = await response.json();
       setStatus(result.statusCode);
 
       if (response.ok) {
-        setMessage("NIN updated successfully!");
+        toast.success("NIN updated successfully!")
         timeOut();
       } else {
-        setMessage(result.message || "Failed to update NIN.");
+        toast.error("Failed to update NIN.")
         failedTimeout();
       }
     } catch (error) {
       console.error("Error updating NIN:", error);
-      setMessage("An error occurred. Please try again.");
+      toast.error("An error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -142,6 +138,7 @@ const AgentRegistration = () => {
 
   return (
     <>
+      <AgentRegistrationSidebar activeStep={step}/>
       {step === "1" && (
         <StepOne
           triggerFileInput={triggerFileInput}
@@ -173,7 +170,7 @@ const AgentRegistration = () => {
           step={step}
         />
       )}
-      {step === "4" && <StepFour accessToken={accessToken} step={step}/>}
+      {step === "4" && <StepFour accessToken={accessToken} step={step} />}
     </>
   );
 };

@@ -13,13 +13,14 @@ const FurnishingState = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [loading, setLoading] = useState(false);
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const getBillsTags = async (page = 1) => {
     if (!accessToken) return; // Avoid fetching without a token
     try {
       setIsLoading(true);
       const response = await fetch(
-        `https://rent-it-api.onrender.com/api/v1/agents/listings-attributes/billsTags?page=${page}`,
+        `${apiUrl}/api/v1/agents/listings-attributes/billsTags?page=${page}`,
         {
           method: "GET",
           headers: {
@@ -40,13 +41,12 @@ const FurnishingState = () => {
       setIsLoading(false);
     }
   };
-  // zjoyfxsvk3k8z7ub46tfsp93
   const postBasicBills = async () => {
     const storedDetails = JSON.parse(localStorage.getItem("basicDetails"));
     setLoading(true);
     try {
       const response = await fetch(
-        `https://rent-it-api.onrender.com/api/v1/agents/listings/${storedDetails.listingId}/billTags?id=${storedDetails.listingId}`,
+        `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/billTags?id=${storedDetails.listingId}`,
         {
           method: "POST",
           headers: {
@@ -87,7 +87,7 @@ const FurnishingState = () => {
   }, [accessToken, currentPage]);
 
   return (
-    <div className="mt-20 bg-gray-50 p-6 rounded-lg shadow-md">
+    <div className="bg-gray-50 p-6 rounded-lg shadow-md">
       <div className="flex items-center justify-between pb-4">
         <h1 className="text-2xl font-semibold text-gray-800">
           Add New Listing

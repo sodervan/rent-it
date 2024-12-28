@@ -24,6 +24,7 @@ const BasicDetails = () => {
   const [lgas, setLgas] = useState("");
   const [currentLgas, setCurrentLgas] = useState("");
   const [loading, isLoading] = useState(false);
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const handleDescriptionChange = (e) => {
     setDescription(e.target.value);
@@ -51,7 +52,7 @@ const BasicDetails = () => {
   const getApartmentTypes = async (token) => {
     try {
       const response = await fetch(
-        "https://rent-it-api.onrender.com/api/v1/agents/listings-attributes/apartmentTypes",
+        `${apiUrl}/api/v1/agents/listings-attributes/apartmentTypes`,
         {
           method: "GET",
           headers: { Authorization: `Bearer ${token}` },
@@ -72,7 +73,7 @@ const BasicDetails = () => {
   const getStates = async (token) => {
     try {
       const response = await fetch(
-        "https://rent-it-api.onrender.com/api/v1/agents/listings-attributes/location/states?country_id=1",
+        `${apiUrl}/api/v1/agents/listings-attributes/location/states?country_id=1`,
         {
           method: "GET",
           headers: { Authorization: `Bearer ${token}` },
@@ -93,7 +94,7 @@ const BasicDetails = () => {
     isLoading(true);
     try {
       const response = await fetch(
-        `https://rent-it-api.onrender.com/api/v1/agents/listings/basic-details`,
+        `${apiUrl}/api/v1/agents/listings/basic-details`,
         {
           method: "POST",
           headers: {
@@ -133,7 +134,7 @@ const BasicDetails = () => {
   const getCities = async (stateId, token) => {
     try {
       const response = await fetch(
-        `https://rent-it-api.onrender.com/api/v1/agents/listings-attributes/location/cities?state_id=${stateId}`,
+        `${apiUrl}/api/v1/agents/listings-attributes/location/cities?state_id=${stateId}`,
         {
           method: "GET",
           headers: { Authorization: `Bearer ${token}` },
@@ -153,7 +154,7 @@ const BasicDetails = () => {
   const getLgas = async (stateId, token) => {
     try {
       const response = await fetch(
-        `https://rent-it-api.onrender.com/api/v1/agents/listings-attributes/location/lgas?state_id=${stateId}`,
+        `${apiUrl}/api/v1/agents/listings-attributes/location/lgas?state_id=${stateId}`,
         {
           method: "GET",
           headers: { Authorization: `Bearer ${token}` },

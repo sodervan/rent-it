@@ -10,6 +10,7 @@ const StepThree = ({ accessToken, step }) => {
   const [licenseNumber, setLicenseNumber] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [profileImage, setProfileImage] = useState("");
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   // Handle file selection
   const handleFile = (file) => {
@@ -52,7 +53,7 @@ const StepThree = ({ accessToken, step }) => {
 
       // Make API request
       const response = await fetch(
-        "https://rent-it-api.onrender.com/api/v1/agents/certificationAndLicense",
+        `${apiUrl}/api/v1/agents/certificationAndLicense`,
         {
           method: "POST",
           headers: {
@@ -94,11 +95,8 @@ const StepThree = ({ accessToken, step }) => {
 
   return (
     <div>
-      <div className="mt-20 px-6">
+      <div className="mt-24 px-6 md:ml-[28%] md:w-[70%] max-w-[800px] sm:px-10">
         <div className="flex flex-col gap-4">
-          <div className="text-center text-lg font-semibold">
-            <p>Agent Registration</p>
-          </div>
           <div className="text-[14px]">
             <p className="text-gray-500">Step 4 of 5</p>
           </div>
@@ -205,30 +203,22 @@ const StepThree = ({ accessToken, step }) => {
 
             <button
               className={`${
-                isOrg.length > 1 &&
-                licenseNumber.length > 1 &&
-                !isLoading &&
-                profileImage !== ""
+                !isLoading
                   ? "bg-primaryPurple px-4 py-3 text-white rounded-lg hover:shadow-lg transition-all duration-300"
                   : "bg-gray-200 px-4 py-3 text-gray-500 rounded-lg"
               }`}
               onClick={handleOrgAndLic}
-              disabled={
-                isLoading ||
-                isOrg.length < 1 ||
-                licenseNumber.length < 1 ||
-                !profileImage
-              }
+              disabled={isLoading}
             >
               Proceed
             </button>
 
-            <button
-              className="px-4 py-3 rounded-lg bg-red-100 text-red-500"
-              onClick={skipStep}
-            >
-              Skip
-            </button>
+            {/*<button*/}
+            {/*    className="px-4 py-3 rounded-lg bg-red-100 text-red-500"*/}
+            {/*    onClick={skipStep}*/}
+            {/*>*/}
+            {/*  Skip*/}
+            {/*</button>*/}
           </div>
         </div>
       </div>

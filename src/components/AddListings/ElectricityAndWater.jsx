@@ -16,6 +16,7 @@ const ElectricityAndWater = () => {
   const [waterSupply, setWaterSupply] = useState([]);
   const [furnishingState, setFurnishingState] = useState("");
   const [loading, setLoading] = useState(false);
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const handleWaterSupplyChange = (label) => {
     setWaterSupply((prev) =>
@@ -47,7 +48,7 @@ const ElectricityAndWater = () => {
       };
       console.log(data);
       const response = await fetch(
-        `https://rent-it-api.onrender.com/api/v1/agents/listings/${storedDetails.listingId}/features?id=${storedDetails.listingId}`,
+        `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/features?id=${storedDetails.listingId}`,
         {
           method: "POST",
           headers: {
@@ -73,7 +74,7 @@ const ElectricityAndWater = () => {
   };
   return (
     <>
-      <div className="mt-20">
+      <div>
         <div>
           <div className="flex items-center justify-between border-b border-gray-200 pb-4 px-6">
             <p className="text-xl font-medium">Add New Listing</p>

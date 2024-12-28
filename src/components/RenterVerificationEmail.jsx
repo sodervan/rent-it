@@ -25,9 +25,9 @@ const VerificationEmail = () => {
         // Simple POST request with just the token
         const response = await fetch(`${apiUrl}/api/v1/users/verify/${token}`, {
           method: "POST",
-          // headers: {
-          //   "Content-Type": "application/json",
-          // },
+          headers: {
+            "Content-Type": "application/json",
+          },
         });
 
         const result = await response.json();

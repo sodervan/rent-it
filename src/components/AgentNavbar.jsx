@@ -8,6 +8,7 @@ import {
 } from "@tabler/icons-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -65,13 +66,21 @@ const Navbar = () => {
             >
               Add Listing
             </button>
-            <a href="/agent/dashboard" className="text-gray-700 hover:text-purple-600">
+            <a
+              href="/agent/dashboard"
+              className="text-gray-700 hover:text-purple-600"
+            >
               Dashboard
             </a>
             <a href="#" className="text-gray-700 hover:text-purple-600">
               Bookings
             </a>
-            <button className="text-gray-700 hover:text-purple-600" onClick={()=>{navigate("/agent/dashboard/profile")}}>
+            <button
+              className="text-gray-700 hover:text-purple-600"
+              onClick={() => {
+                navigate("/agent/dashboard/profile");
+              }}
+            >
               <IconUser size={20} />
             </button>
             <button className="text-gray-700 hover:text-purple-600">
@@ -121,28 +130,32 @@ const Navbar = () => {
             </div>
 
             {/* Navigation Links */}
-            <div className="flex flex-col space-y-6 w-full max-w-sm items-center">
-              <button className="w-full px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700">
+            <div className="flex flex-col w-full max-w-sm items-center">
+              <button className="w-full px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 mb-2">
                 Add Listing
               </button>
-              <a
-                href="#"
-                className="w-full text-center text-gray-700 hover:text-purple-600"
-              >
-                Dashboard
-              </a>
-              <a
-                href="#"
-                className="w-full text-center text-gray-700 hover:text-purple-600"
-              >
-                Bookings
-              </a>
-              <button className="text-gray-700 hover:text-purple-600 flex items-center justify-center">
-                <IconUser size={20} />
-              </button>
-              <button className="text-gray-700 hover:text-purple-600 flex items-center justify-center">
-                <IconBell size={20} />
-              </button>
+
+              {[
+                { name: "Dashboard", path: "/agent/dashboard" },
+                { name: "Bookings", path: "/bookings" },
+                { name: "Profile", path: "/agent/dashboard/profile" },
+                { name: "Notification", path: "/notifications" },
+              ].map((link) => (
+                <NavLink
+                  key={link.name}
+                  to={link.path}
+                  className={({ isActive }) =>
+                    `w-full text-center py-2 text-gray-700 ${
+                      isActive
+                        ? "text-purple-600 border-b-2 border-purple-600"
+                        : "hover:text-purple-600 border-b border-gray-200"
+                    }`
+                  }
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {link.name}
+                </NavLink>
+              ))}
             </div>
           </motion.div>
         )}

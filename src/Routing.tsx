@@ -13,6 +13,7 @@ import AgentsLogin from "@/components/Forms/AgentsLogin";
 import AgentDashboard from "@/components/AgentDashboard/AgentDashboard";
 import AgentProfile from "@/components/AgentDashboard/AgentProfile";
 import AgentRegistration from "@/components/Forms/AgentRegistration";
+import BookingListing from "./components/AgentDashboard/BookingListing";
 
 // import SearchResultsPage from "./Pages/SearchResultsPage";
 
@@ -40,6 +41,7 @@ function Routing() {
           <Route path="/agent/login" element={<AgentsLogin />} />
           <Route path="/agent/dashboard" element={<AgentDashboard />} />
           <Route path="agent/dashboard/profile" element={<AgentProfile />} />
+          <Route path="agent/dashboard/booking" element={<BookingListing />} />
           <Route
             path="/agent/agentregistration/:step"
             element={<AgentRegistration />}

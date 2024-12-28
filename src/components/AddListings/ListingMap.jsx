@@ -18,9 +18,10 @@ const ListingLocation = ({ listingId }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: "AIzaSyBJYIthIF1IdQuGVe5bqpDGec2z6aKJ7lc", // Replace with your actual API key
+    googleMapsApiKey: "AIzaSyBJYIthIF1IdQuGVe5bqpDGec2z6aKJ7lc",
   });
 
   useEffect(() => {
@@ -32,7 +33,7 @@ const ListingLocation = ({ listingId }) => {
 
       try {
         const response = await fetch(
-          `https://rent-it-api.onrender.com/api/v1/agents/listings/${storedDetails.listingId}/location?listingId=${storedDetails.listingId}`,
+          `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/location?listingId=${storedDetails.listingId}`,
             {
               method: "GET",
               headers: { Authorization: `Bearer ${token}` },

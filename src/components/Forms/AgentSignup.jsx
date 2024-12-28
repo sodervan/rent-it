@@ -84,9 +84,10 @@ const AgentSignup = () => {
           draggable: true,
         });
 
-        navigate("/renter/signup/verifyemail", {
+        navigate("/agent/signup/verifyemail", {
           state: { email: formData.email },
         });
+        localStorage.setItem("role", "agent")
       } else {
         console.error("Registration Failed:", result.message);
         toast.error(result.message || "Registration failed!", {

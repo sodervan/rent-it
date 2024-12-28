@@ -3,25 +3,39 @@ import { useLocation } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import AgentNavbar from "@/components/AgentNavbar";
 import { Outlet } from "react-router-dom";
+import AgentRegistrationNavBar from "@/components/AgentRegistrationNavBar.jsx";
 
 const MainLayout = () => {
-  const [accountType, setAccountType] = useState(null); // State to hold the account type (agent or other)
-  const location = useLocation(); // React Router hook to detect route changes
+  const [accountType, setAccountType] = useState(null);
+  const location = useLocation();
+
+  // Check if current path matches specific conditions
+  const isVerificationPage = location.pathname.includes(
+      "/user/verificationemail"
+  );
+  const isAgentRegistration = location.pathname.includes(
+      "/agent/agentregistration"
+  );
 
   useEffect(() => {
-    // Fetch account type from localStorage on every route change
-    const accountTypeFromStorage = localStorage.getItem("accountType"); // e.g., "agent" or "user"
+    const accountTypeFromStorage = localStorage.getItem("accountType");
     setAccountType(accountTypeFromStorage);
-  }, [location.pathname]); // Trigger on route change
+  }, [location.pathname]);
 
   return (
-    <>
-      {/* Conditionally render Navbar based on account type */}
-      {accountType === "agent" ? <AgentNavbar /> : <Navbar />}
-
-      {/* Render all nested/child routes */}
-      <Outlet />
-    </>
+      <>
+        {/* Render the appropriate navbar */}
+        {!isVerificationPage && (
+            isAgentRegistration ? (
+                <AgentRegistrationNavBar />
+            ) : accountType === "agent" ? (
+                <AgentNavbar />
+            ) : (
+                <Navbar />
+            )
+        )}
+        <Outlet />
+      </>
   );
 };
 

@@ -6,6 +6,7 @@ const UploadTenancyAgreement = () => {
   const [file, setFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const navigate = useNavigate();
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const handleFileUpload = (file) => {
     const newFile = {
@@ -42,10 +43,10 @@ const UploadTenancyAgreement = () => {
   const uploadFile = async () => {
     const storedDetails = JSON.parse(localStorage.getItem("basicDetails"));
     const token = localStorage.getItem("accessToken");
-    if (!file || !file.file) {
-      alert("Please upload a file before saving.");
-      return;
-    }
+    // if (!file || !file.file) {
+    //   alert("Please upload a file before saving.");
+    //   return;
+    // }
 
     setIsUploading(true);
     const formData = new FormData();
@@ -53,7 +54,7 @@ const UploadTenancyAgreement = () => {
 
     try {
       const response = await fetch(
-        `rent-it-api.onrender.com/api/v1/agents/listings/${storedDetails.listingId}/tenancy-agreement?listingId=${storedDetails.listingId}`,
+        `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/tenancy-agreement?listingId=${storedDetails.listingId}`,
         {
           method: "POST",
           body: formData,
@@ -78,7 +79,7 @@ const UploadTenancyAgreement = () => {
   };
 
   return (
-    <div className="mt-6">
+    <div>
       <div>
         <div className="flex items-center justify-between border-b border-gray-200 pb-4 px-6">
           <p className="text-xl font-medium">
@@ -177,6 +178,13 @@ const UploadTenancyAgreement = () => {
             disabled={isUploading}
           >
             {isUploading ? <Spinner className="w-5 h-5"/> : "Proceed"}
+          </Button>
+          <Button
+              className="font-poppins bg-red-400 text-white w-full flex justify-center items-center"
+              onClick={()=>{navigate("/agent/addlisting/13")}}
+              disabled={isUploading}
+          >
+            Skip
           </Button>
         </div>
       </div>

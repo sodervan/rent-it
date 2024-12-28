@@ -1,5 +1,5 @@
 import { Button, Option, Select, Spinner } from "@material-tailwind/react";
-import { IoMdAdd, IoMdClose } from "react-icons/io";
+import {IconPlus, IconX} from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
@@ -9,12 +9,13 @@ const UploadListingImages = () => {
   const [tags, setTags] = useState([]); // Store image tags
   const [selectedTag, setSelectedTag] = useState(null); // Current tag
   const [loading, setLoading] = useState(false);
+    const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     // Fetch image tags
     const token = localStorage.getItem("accessToken");
     fetch(
-      "https://rent-it-api.onrender.com/api/v1/agents/listings-attributes/imageTags",
+      `${apiUrl}/api/v1/agents/listings-attributes/imageTags`,
       {
         method: "GET",
         headers: {
@@ -91,7 +92,7 @@ const UploadListingImages = () => {
         });
 
         return fetch(
-          `https://rent-it-api.onrender.com/api/v1/agents/listings/${storedDetails.listingId}/image/${tagId}?id=${storedDetails.listingId}?tagId=${tagId}`,
+          `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/image/${tagId}?id=${storedDetails.listingId}?tagId=${tagId}`,
           {
             method: "POST",
             headers: {
@@ -178,7 +179,7 @@ const UploadListingImages = () => {
         }}
         onDragOver={(e) => e.preventDefault()}
       >
-        <IoMdAdd className="text-4xl text-primaryPurple" />
+        <IconPlus className="text-4xl text-primaryPurple" />
         <p className="text-gray-500 text-center">
           <span className="text-primaryPurple cursor-pointer hover:underline">
             Click to upload
@@ -213,7 +214,7 @@ const UploadListingImages = () => {
                   onClick={() => removeImage(selectedTag, image.id)}
                   className="absolute top-1 right-1 bg-gray-500 opacity-50 text-white rounded-full p-1"
                 >
-                  <IoMdClose size={16} />
+                  <IconX size={16} />
                 </button>
               </div>
             ))}

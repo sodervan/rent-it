@@ -9,7 +9,7 @@ import {
 const Loader = () => {
   return (
     <div>
-      <div className="mt-6 w-full animate-pulse">
+      <div className="w-full animate-pulse">
         <CardHeader
           shadow={false}
           floated={false}

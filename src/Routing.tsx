@@ -13,13 +13,10 @@ import AgentsLogin from "@/components/Forms/AgentsLogin";
 import AgentDashboard from "@/components/AgentDashboard/AgentDashboard";
 import AgentProfile from "@/components/AgentDashboard/AgentProfile";
 import AgentRegistration from "@/components/Forms/AgentRegistration";
-<<<<<<< HEAD
 import BookingListing from "./components/AgentDashboard/BookingListing";
-=======
 import AllSteps from "@/components/AddListings/AllSteps";
 import VerifyEmail from "@/components/VerifyEmail";
 import RenterVerificationEmail from "@/components/RenterVerificationEmail";
->>>>>>> edc6cc64f29ec5cb42bb5f3cd2976b7ca51f75fe
 
 // import SearchResultsPage from "./Pages/SearchResultsPage";
 

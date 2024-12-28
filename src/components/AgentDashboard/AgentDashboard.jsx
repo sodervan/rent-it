@@ -197,7 +197,7 @@ const AgentDashboard = () => {
   }, []);
   return (
     <>
-      <Sidebar firstname={agentData ? agentData.payload.firstname : ""} />
+      <Sidebar firstname={agentData ? agentData.payload.firstname : ""} loading={loading}/>
       <div className={`content lg:ml-[25rem] xl:ml-[23rem] mt-[5rem]`}>
         <div className="">
           {loading ? (

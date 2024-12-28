@@ -2,9 +2,30 @@ import React from "react";
 import Loader from "../Loaders/Loader";
 import Sidebar from "./Sidebar";
 import { useState } from "react";
+import AcceptModal from "./AcceptModal";
+import DeclineModal from "./DeclineModal";
 
 const BookingListing = () => {
   const [loading, setLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentRequest, setCurrentRequest] = useState(null);
+  const [actionType, setActionType] = useState("");
+
+  const handleAction = (requestId, action) => {
+    // Handle the action (accept/decline)
+  };
+
+  const openModal = (request, action) => {
+    setCurrentRequest(request);
+    setActionType(action);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setCurrentRequest(null);
+    setActionType("");
+  };
   const data = [
     {
       title: "3 Roommates (male) needed near FUTA",
@@ -66,7 +87,7 @@ const BookingListing = () => {
                     </div>
                     <div className="flex items-center gap-2">
                       <button
-                        onClick={() => handleAction(request.id, "accept")}
+                        onClick={() => openModal(request, "accept")}
                         className={`px-3 py-2 rounded-lg text-sm font-medium ${
                           request.status === "accepted"
                             ? "bg-purple-500 text-white cursor-not-allowed"
@@ -77,7 +98,7 @@ const BookingListing = () => {
                         {request.status === "accepted" ? "Accepted" : "Accept"}
                       </button>
                       <button
-                        onClick={() => handleAction(request.id, "decline")}
+                        onClick={() => openModal(request, "decline")}
                         className="px-3 py-2 bg-red-100 text-sm  hover:bg-red-200 text-red-500 rounded-lg font-medium"
                       >
                         Decline
@@ -90,6 +111,21 @@ const BookingListing = () => {
           ))}
         </div>
       </div>
+
+      {isModalOpen && actionType === "accept" && (
+        <AcceptModal
+          request={currentRequest}
+          onClose={closeModal}
+          onConfirm={() => handleAction(currentRequest.id, actionType)}
+        />
+      )}
+      {isModalOpen && actionType === "decline" && (
+        <DeclineModal
+          request={currentRequest}
+          onClose={closeModal}
+          onConfirm={() => handleAction(currentRequest.id, actionType)}
+        />
+      )}
     </>
   );
 };

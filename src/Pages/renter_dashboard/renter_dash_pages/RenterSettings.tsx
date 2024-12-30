@@ -9,6 +9,7 @@ import {
 } from "@tabler/icons-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import RenterBookings from "../renter_dash_comps/RenterBookings";
 
 const RenterSettings = () => {
 	const [activeTab, setActiveTab] = useState<string | null>("first");
@@ -31,7 +32,7 @@ const RenterSettings = () => {
 			</div>
 
 			<div className="p-2 flex gap-4 ">
-				<div className="max-w-[200px] w-full flex flex-col gap-1 bg-red-400  items-center pt-2 h-fit">
+				<div className="max-w-[200px] w-full flex flex-col gap-1 sticky top-0 bg-red-400  items-center pt-2 h-fit">
 					<div className="h-24 w-24 rounded-full bg-red-200"></div>
 					<div>Name</div>
 					<div>Emails</div>
@@ -98,7 +99,9 @@ const RenterSettings = () => {
 									</div>
 								</div>
 							</Tabs.Panel>
-							<Tabs.Panel value="second">Second panel</Tabs.Panel>
+							<Tabs.Panel value="second">
+								<RenterBookings />
+							</Tabs.Panel>
 							<Tabs.Panel value="third">
 								<h2 className="mt-4">Change Password</h2>
 								<div className="mt-4 flex flex-col gap-4">

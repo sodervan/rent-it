@@ -1,8 +1,7 @@
-import { Input, Notification, Tabs } from "@mantine/core";
+import { Input, Tabs } from "@mantine/core";
 import {
 	IconBell,
 	IconBookmark,
-	IconBrandMastercard,
 	IconEdit,
 	IconLock,
 	IconSearch,

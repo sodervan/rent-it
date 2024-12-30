@@ -1,4 +1,12 @@
-import { AppShell, Box, Burger, Container, Divider, Stack, Title } from "@mantine/core";
+import {
+	AppShell,
+	Box,
+	Burger,
+	Container,
+	Divider,
+	Stack,
+	Title,
+} from "@mantine/core";
 import { Route, Routes } from "react-router-dom";
 import NavBarItems from "./renter_dash_comps/NavBarItems";
 import { useDisclosure } from "@mantine/hooks";
@@ -7,6 +15,7 @@ import Popular from "./renter_dash_pages/Popular";
 import { useAtom } from "jotai";
 import { sideBarAtom } from "@/store/store";
 import RenterSettings from "./renter_dash_pages/RenterSettings";
+import TransactionHistory from "./renter_dash_pages/TransactionHistory";
 
 function RenterDashPage() {
 	// const [opened, setOpened] = useDisclosure();
@@ -52,6 +61,10 @@ function RenterDashPage() {
 					<Route
 						path="/settings"
 						element={<RenterSettings />}
+					/>
+					<Route
+						path="/transactions"
+						element={<TransactionHistory/>}
 					/>
 				</Routes>
 			</AppShell.Main>

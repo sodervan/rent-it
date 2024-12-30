@@ -1,5 +1,5 @@
 import { Button, Center, Group, NavLink, Stack, Text } from "@mantine/core";
-import { NavLink as Link } from "react-router-dom";
+import { NavLink as Link, useNavigate } from "react-router-dom";
 import {
 	IconHeart,
 	IconHistory,
@@ -28,6 +28,8 @@ const links = [
 	},
 ];
 function NavBarItems() {
+
+	let navigate = useNavigate()
 	return (
 		<div className="flex flex-col  h-full py-2 gap-2 px-2">
 			{links.map(({ name, path, icon: Icon }) => {
@@ -56,7 +58,11 @@ function NavBarItems() {
 						/>
 					</div>
 					<Text lineClamp={1} className="!text-sm">Jon Doe</Text>
-					<Button p={0} variant="transparent" className="!w-fit  ml-auto">
+					<Button p={0} variant="transparent" className="!w-fit  ml-auto" onClick={
+	()=>{
+		navigate("/renter/dashboard/settings")
+	}
+					}>
 						<IconSettings  size={18} />
 					</Button>
 				</div>

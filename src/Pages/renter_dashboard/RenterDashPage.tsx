@@ -6,6 +6,7 @@ import SearchPage from "./renter_dash_pages/SearchPage";
 import Popular from "./renter_dash_pages/Popular";
 import { useAtom } from "jotai";
 import { sideBarAtom } from "@/store/store";
+import RenterSettings from "./renter_dash_pages/RenterSettings";
 
 function RenterDashPage() {
 	// const [opened, setOpened] = useDisclosure();
@@ -47,6 +48,10 @@ function RenterDashPage() {
 					<Route
 						path="/popular"
 						element={<Popular />}
+					/>
+					<Route
+						path="/settings"
+						element={<RenterSettings />}
 					/>
 				</Routes>
 			</AppShell.Main>

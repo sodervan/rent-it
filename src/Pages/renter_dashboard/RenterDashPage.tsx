@@ -1,27 +1,39 @@
-import { AppShell, Box, Container, Divider, Stack, Title } from "@mantine/core";
+import { AppShell, Box, Burger, Container, Divider, Stack, Title } from "@mantine/core";
 import { Route, Routes } from "react-router-dom";
 import NavBarItems from "./renter_dash_comps/NavBarItems";
 import { useDisclosure } from "@mantine/hooks";
 import SearchPage from "./renter_dash_pages/SearchPage";
+import Popular from "./renter_dash_pages/Popular";
+import { useAtom } from "jotai";
+import { sideBarAtom } from "@/store/store";
 
 function RenterDashPage() {
-	const [opened, setOpened] = useDisclosure();
+	// const [opened, setOpened] = useDisclosure();
+	const [opened, setOpened] = useAtom(sideBarAtom);
 	return (
 		<AppShell
 			navbar={{
-				width: 300,
+				width: 200,
 				breakpoint: "sm",
 				collapsed: { mobile: !opened },
 			}}
 		>
 			<AppShell.Navbar className="">
-				<div className="flex flex-col ">
+				<div className="flex items-center ">
 					<Title
 						order={1}
 						className="text-purple-600 h-20 flex items-center px-2"
 					>
 						Rentit
 					</Title>
+					<div className="ml-auto mr-2 md:hidden">
+						<Burger
+							opened={opened}
+							onClick={() => {
+								setOpened(!opened);
+							}}
+						/>
+					</div>
 				</div>
 				<Divider />
 				<NavBarItems />
@@ -31,6 +43,10 @@ function RenterDashPage() {
 					<Route
 						path="/home"
 						element={<SearchPage />}
+					/>
+					<Route
+						path="/popular"
+						element={<Popular />}
 					/>
 				</Routes>
 			</AppShell.Main>

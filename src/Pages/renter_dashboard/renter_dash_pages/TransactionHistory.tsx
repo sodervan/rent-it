@@ -1,15 +1,24 @@
-import { Button, Input, InputBase } from "@mantine/core";
+import { Button, Input, InputBase, Modal } from "@mantine/core";
 import {
 	IconArrowNarrowDown,
 	IconCalendar,
+	IconCaretDown,
 	IconClearAll,
 	IconCurrencyNaira,
 	IconFilter,
 	IconFilterCancel,
 } from "@tabler/icons-react";
 import RenterTable from "../renter_dash_comps/RenterTable";
+import { useAtom, Atom, atom } from "jotai";
+import { useDisclosure } from "@mantine/hooks";
+import { DateInput } from "@mantine/dates";
+import "@mantine/dates/styles.css";
+const fromDate = atom<Date | null>();
+const toDate = atom<Date | null>();
 
 const TransactionHistory = () => {
+	const [from, setFrom] = useAtom(fromDate);
+	const [to, setTo] = useAtom(toDate);
 	return (
 		<div className="">
 			<div className="p-2">
@@ -25,7 +34,7 @@ const TransactionHistory = () => {
 
 					<InputBase
 						component="select"
-						rightSection={<IconArrowNarrowDown />}
+						rightSection={<IconCaretDown />}
 					>
 						<option value="react">React</option>
 						<option value="react">Angular</option>
@@ -51,28 +60,33 @@ const TransactionHistory = () => {
 				</div>
 				<div className=" ">
 					<p className="text-gray-500">From</p>
-					<Input
-						rightSection={<IconCalendar />}
-						placeholder="Search by apartment name,ref id ...."
+					<DateInput
+						value={from}
+						onChange={setFrom}
+						placeholder="Date input"
 					/>
 				</div>
 				<div className=" ">
 					<p className="text-gray-500">To</p>
-					<Input
-						rightSection={<IconCalendar />}
-						placeholder="Search by apartment name,ref id ...."
+					<DateInput
+						value={to}
+						onChange={setTo}
+						placeholder="Date input"
 					/>
 				</div>
 			</div>
 			<div className="p-2 flex items-center gap-2">
-				<Button leftSection={<IconFilterCancel />} variant="outline">
+				<Button
+					leftSection={<IconFilterCancel />}
+					variant="outline"
+				>
 					Clear Filters
 				</Button>
 				<Button leftSection={<IconFilter />}>Appy Filters</Button>
 			</div>
-            <div className="p-2">
-                <RenterTable/>
-            </div>
+			<div className="p-2">
+				<RenterTable />
+			</div>
 		</div>
 	);
 };

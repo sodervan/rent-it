@@ -1,4 +1,4 @@
-import { Input, Tabs } from "@mantine/core";
+import { Button, Input, Tabs } from "@mantine/core";
 import {
 	IconBell,
 	IconBookmark,
@@ -95,6 +95,9 @@ const RenterSettings = () => {
 											</p>
 											<Input placeholder="Mobile Number" />
 										</div>
+										<Button className="!w-full">
+											Save Changes
+										</Button>
 									</div>
 								</div>
 							</Tabs.Panel>
@@ -121,6 +124,11 @@ const RenterSettings = () => {
 											Confirm Password
 										</p>
 										<Input placeholder="Confirm  Password" />
+									</div>
+									<div>
+										<Button className="!w-full">
+											Save Changes
+										</Button>
 									</div>
 								</div>
 							</Tabs.Panel>

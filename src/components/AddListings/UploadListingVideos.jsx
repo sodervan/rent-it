@@ -1,6 +1,7 @@
 import { Button, Spinner } from "@material-tailwind/react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {toast} from "react-toastify";
 
 const MAX_TOTAL_SIZE_MB = 8;
 const MAX_VIDEO_COUNT = 2;
@@ -12,9 +13,10 @@ const UploadListingVideos = ({ listingId }) => {
   const apiUrl = import.meta.env.VITE_API_URL;
 
   const handleVideoUpload = (file) => {
+    const fileSizeMB = file.size / (1024 * 1024);
     const totalSizeMB =
       videos.reduce((acc, video) => acc + video.file.size, 0) / (1024 * 1024) +
-      file.size / (1024 * 1024);
+      fileSizeMB;
 
     if (videos.length >= MAX_VIDEO_COUNT) {
       alert(`You can upload a maximum of ${MAX_VIDEO_COUNT} videos.`);
@@ -43,6 +45,11 @@ const UploadListingVideos = ({ listingId }) => {
   const handleFileInput = (event) => {
     const file = event.target.files[0];
     if (file) {
+      const isValidType = ["video/mp4", "video/avi"].includes(file.type);
+      if (!isValidType) {
+        alert("Only MP4 and AVI formats are supported.");
+        return;
+      }
       handleVideoUpload(file);
     }
   };
@@ -55,13 +62,20 @@ const UploadListingVideos = ({ listingId }) => {
     event.preventDefault();
     const file = event.dataTransfer.files[0];
     if (file) {
+      const isValidType = ["video/mp4", "video/avi"].includes(file.type);
+      if (!isValidType) {
+        alert("Only MP4 and AVI formats are supported.");
+        return;
+      }
       handleVideoUpload(file);
     }
   };
 
   const uploadVideos = async () => {
     const storedDetails = JSON.parse(localStorage.getItem("basicDetails"));
-    const token = localStorage.getItem("accessToken")
+    const token = localStorage.getItem("accessToken");
+    console.log(token, storedDetails);
+
     if (videos.length === 0) {
       alert("Please upload at least one video before saving.");
       return;
@@ -71,7 +85,7 @@ const UploadListingVideos = ({ listingId }) => {
     const formData = new FormData();
 
     videos.forEach((video, index) => {
-      formData.append(`video_${index}`, video.file);
+      formData.append(`video`, video.file);
     });
 
     try {
@@ -85,19 +99,19 @@ const UploadListingVideos = ({ listingId }) => {
           },
         },
       );
-
       if (response.ok) {
-        alert("Videos uploaded successfully!");
+        toast.success("Videos uploaded successfully!");
         setVideos([]);
         setTimeout(() => {
           navigate("/agent/addlisting/11");
         }, 500);
       } else {
         const errorData = await response.json();
-        alert(`Upload failed: ${errorData.message}`);
+        toast.error(`Upload failed: ${errorData.message}`);
       }
     } catch (error) {
       console.error("Error uploading videos:", error);
+      toast.error("An error occurred while uploading videos.");
     } finally {
       setIsUploading(false);
     }
@@ -143,7 +157,6 @@ const UploadListingVideos = ({ listingId }) => {
               </p>
             </div>
 
-            {/* Hidden file input */}
             <input
               id="videoInput"
               type="file"
@@ -153,7 +166,6 @@ const UploadListingVideos = ({ listingId }) => {
             />
           </div>
 
-          {/* Display Uploaded Videos */}
           <div className="mt-6 grid grid-cols-1 gap-4">
             {videos.map((video, index) => (
               <div
@@ -165,7 +177,6 @@ const UploadListingVideos = ({ listingId }) => {
                   className="w-full h-full object-cover"
                   controls
                 ></video>
-                {/* Remove button */}
                 <button
                   className="absolute top-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded-md opacity-100 md:opacity-0 group-hover:opacity-100 transition duration-300"
                   onClick={() => removeVideo(index)}

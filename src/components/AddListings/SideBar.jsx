@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 
 const Sidebar = ({ activeStep, steps, onStepClick }) => {
   return (
-    <aside className="sm:hidden md:block w-1/4 bg-[#F4EBFF] rounded-r-lg h-full flex flex-col fixed pb-20">
+    <aside className="hidden md:block w-1/4 bg-[#F4EBFF] rounded-r-lg h-full flex flex-col fixed pb-20">
       <nav className="flex-1 overflow-y-auto rounded-r-lg h-full">
         <ul>
           {steps.map((step, index) => (

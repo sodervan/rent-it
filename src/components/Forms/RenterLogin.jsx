@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import { ToastContainer } from "react-toastify";
+import AuthService from "../../../authService.js";
 
 const RenterSignup = () => {
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -87,7 +88,7 @@ const RenterSignup = () => {
         localStorage.setItem("accessToken", result.payload.access_token);
         localStorage.setItem("refreshToken", result.payload.refresh_token);
         localStorage.setItem("accountType", result.payload.role[0]);
-        setMessage(result.message || "Login Successful");
+        AuthService.startRefreshTimer();
         toast.success(result.message || "Login Successful!", {
           position: "top-right",
           autoClose: 5000,

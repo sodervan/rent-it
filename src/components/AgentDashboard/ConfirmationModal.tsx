@@ -31,7 +31,9 @@ const ConfirmationModal: React.FC<ModalProps> = ({
         onClick={(e) => e.stopPropagation()} // Prevent closing the modal when clicking inside the modal content
       >
         {/* Modal Content */}
-        <h2 className="text-xl font-medium text-center text-gray-800 mb-4">Confirmation</h2>
+        <h2 className="text-xl font-medium text-center text-gray-800 mb-4">
+          Confirmation
+        </h2>
         <p className="text-gray-600 mb-6 text-center">{message}</p>
 
         {/* Buttons */}
@@ -42,12 +44,11 @@ const ConfirmationModal: React.FC<ModalProps> = ({
           >
             Cancel
           </button>
-          <button
-            onClick={onConfirm}
-            className="py-2 px-4 flex-1 bg-primaryPurple text-white rounded-md  transition"
-          >
-            Confirm
-          </button>
+          <a href="/agent/login" onClick={onConfirm} className=" flex-1 justify-center items-center py-2 px-4 bg-primaryPurple text-white rounded-md  transition">
+            <button className="w-full flex justify-center">
+              Confirm
+            </button>
+          </a>
         </div>
       </motion.div>
     </div>

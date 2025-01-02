@@ -2,7 +2,7 @@ import { Typography } from "@material-tailwind/react";
 
 export function LoaderThree() {
   return (
-    <div className="max-w-full animate-pulse">
+    <div className="animate-pulse ml-2">
       <Typography
         as="div"
         variant="h1"

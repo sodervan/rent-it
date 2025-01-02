@@ -8,6 +8,7 @@ import {
 import { useEffect, useState } from "react";
 import {IconPlus, IconX} from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
+import {toast} from "react-toastify";
 
 const BasicDetails = () => {
   const navigate = useNavigate();
@@ -114,7 +115,7 @@ const BasicDetails = () => {
       );
       if (response.ok) {
         const result = await response.json();
-        console.log(result);
+        toast.success("Success")
         if (result) {
           localStorage.setItem("basicDetails", JSON.stringify(result.payload));
         }
@@ -125,7 +126,7 @@ const BasicDetails = () => {
         console.log("Failed to update");
       }
     } catch (error) {
-      console.log("Error updating listing:", error);
+      toast.error("Error updating listing:", error);
     } finally {
       isLoading(false);
     }

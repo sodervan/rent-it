@@ -7,6 +7,7 @@ import {
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {toast} from "react-toastify";
 
 const CostBreakdown = () => {
   const navigate = useNavigate();
@@ -83,7 +84,7 @@ const CostBreakdown = () => {
 
       if (response.ok) {
         const result = await response.json();
-        console.log("Success:", result);
+        toast.success("Success:", result);
         localStorage.setItem("feesDetails", JSON.stringify(result.payload));
 
         setTimeout(() => {
@@ -91,7 +92,7 @@ const CostBreakdown = () => {
         }, 500);
       }
     } catch (error) {
-      console.error("Error:", error);
+      toast.error("Error:", error);
     } finally {
       setLoading(false);
     }

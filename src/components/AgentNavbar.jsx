@@ -58,14 +58,16 @@ const Navbar = () => {
 
           {/* Navigation Links */}
           <div className="flex items-center space-x-4">
-            <button
-              className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
-              onClick={() => {
-                navigate("/agent/addlisting/1");
-              }}
-            >
-              Add Listing
-            </button>
+            <a href="/agent/addlisting/1">
+              <button
+                className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
+                // onClick={() => {
+                //   navigate("/agent/addlisting/1");
+                // }}
+              >
+                Add Listing
+              </button>
+            </a>
             <a
               href="/agent/dashboard"
               className="text-gray-700 hover:text-purple-600"
@@ -75,14 +77,12 @@ const Navbar = () => {
             <a href="#" className="text-gray-700 hover:text-purple-600">
               Bookings
             </a>
-            <button
+            <a
+              href="/agent/dashboard/profile"
               className="text-gray-700 hover:text-purple-600"
-              onClick={() => {
-                navigate("/agent/dashboard/profile");
-              }}
             >
               <IconUser size={20} />
-            </button>
+            </a>
             <button className="text-gray-700 hover:text-purple-600">
               <IconBell size={20} />
             </button>

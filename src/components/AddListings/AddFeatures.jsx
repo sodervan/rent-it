@@ -33,7 +33,7 @@ const FurnishingState = () => {
         const result = await response.json();
         setTags(result?.payload?.data || []);
       } else {
-        console.error("Failed to fetch tags");
+        console.log(response);
       }
     } catch (error) {
       console.error("Error fetching tags:", error);

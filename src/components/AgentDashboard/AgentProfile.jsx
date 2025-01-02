@@ -79,8 +79,6 @@ const AgentProfile = () => {
 
   const handleLogout = () => {
     localStorage.clear();
-    navigate("/agent/login");
-    window.location.reload();
   };
 
   // handling profile image update

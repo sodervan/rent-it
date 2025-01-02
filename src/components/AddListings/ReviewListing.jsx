@@ -1,14 +1,25 @@
 import { useEffect, useState } from "react";
 import Loader from "../Loaders/Loader.jsx";
 import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
+import {
+  IconVideo,
+  IconPhoto,
+  IconBath,
+  IconHome,
+  IconPower,
+  IconPool,
+} from "@tabler/icons-react";
 import { Button, Spinner } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
+import MapReview from "./MapReview";
+import { IconSchool, IconAmbulance, IconBus } from "@tabler/icons-react";
+import axios from "axios";
 
 const ReviewListing = () => {
   const navigate = useNavigate();
   const [reviewDetails, setReviewDetails] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const [isUploading, setIsUploading] = useState(false)
+  const [isUploading, setIsUploading] = useState(false);
   // const mapKey = import.meta.env.VITE_APP_MAP_KEY;
   const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -33,6 +44,7 @@ const ReviewListing = () => {
       );
       if (response.ok) {
         const result = await response.json();
+        console.log(result);
         setReviewDetails(result.payload);
         console.log(reviewDetails);
       } else {
@@ -49,25 +61,47 @@ const ReviewListing = () => {
     setIsUploading(true);
     const token = localStorage.getItem("accessToken");
     const storedDetails = JSON.parse(localStorage.getItem("basicDetails"));
+
+    console.log("Publishing listing with details:", {
+      listingId: storedDetails.listingId,
+      token: token ? "Token exists" : "No token found"
+    });
+
     try {
-      const response = await fetch(
-        `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/publish?listingId=${storedDetails.listingId}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-      if (response.ok) {
-        const result = await response.json();
-        console.log(result)
-      } else {
-        console.error("Failed to publish listing");
-      }
+      const response = await axios({
+        method: 'get',
+        url: `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/publish`,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      console.log("Publish listing success:", {
+        status: response.status,
+        statusText: response.statusText,
+        data: response.data
+      });
+
+      setTimeout(() => {
+        navigate("/agent/dashboard");
+      }, 500);
+
     } catch (error) {
-      console.error("Error publishing listing:", error);
+      if (error.response) {
+        // Server responded with a status code outside of 2xx range
+        console.error("Publish listing failed:", {
+          status: error.response.status,
+          statusText: error.response.statusText,
+          data: error.response.data
+        });
+      } else if (error.request) {
+        // Request was made but no response received
+        console.error("No response received:", error.request);
+      } else {
+        // Error in setting up the request
+        console.error("Error setting up request:", error.message);
+      }
     } finally {
       setIsUploading(false);
     }
@@ -76,90 +110,107 @@ const ReviewListing = () => {
   useEffect(() => {
     getData();
   }, []);
-  const mapContainerStyle = {
-    width: "100%",
-    height: "400px",
-  };
 
-  const center = {
-    lat: reviewDetails?.location?.coordinates?.lat || 6.5244, // Default to Lagos coordinates
-    lng: reviewDetails?.location?.coordinates?.lng || 3.3792,
-  };
   return (
     <>
       {!isLoading ? (
         <div>
           <div className="px-6 flex items-center justify-center">
-            <div className="flex flex-col h-[350px] rounded-lg shadow-lg w-[280px] min-w-full">
-              {/* Image Section */}
-              <div className="h-[60%] rounded-t-[15px] rounded-b-[20px] overflow-hidden relative">
-                <div className="flex items-center justify-between absolute top-2 left-3 w-full z-[100]">
-                  <div className="bg-[#F4EBFF] p-2 rounded-xl">
-                    <p className="text-[12px] font-[600] text-[#1D2939]">
-                      {reviewDetails?.apartmentType?.name || "Apartment Type"}
-                    </p>
-                  </div>
-                  <div className="flex gap-1 mr-5">
-                    <div className="h-8 w-8 bg-[#F4EBFF] rounded-full flex items-center justify-center">
-                      <i className="fi fi-rr-heart text-[12px]"></i>
-                    </div>
-                    <div className="h-8 w-8 bg-[#F4EBFF] rounded-full flex items-center justify-center">
-                      <i className="fi fi-rr-share text-[12px]"></i>
+            <div className="flex flex-col md:flex-row items-center md:items-start gap-5 w-full">
+              {/* Left Section (Image and Details) */}
+              <div className="flex flex-col h-[350px] rounded-lg shadow-lg w-full md:w-[600px]">
+                {/* Image Section */}
+                <div className="h-[60%] rounded-t-[15px] rounded-b-[20px] overflow-hidden relative">
+                  <div className="flex items-center justify-between absolute top-2 left-3 w-full z-[100]">
+                    <div className="bg-[#F4EBFF] p-2 rounded-xl">
+                      <p className="text-[12px] font-[600] text-[#1D2939]">
+                        {reviewDetails?.apartmentType?.name || "Apartment Type"}
+                      </p>
                     </div>
                   </div>
+                  <div className="bg-[#F4EBFF] px-2 py-1 rounded-full mx-auto absolute z-[100] bottom-2 left-1/2 transform -translate-x-1/2 flex items-center justify-center">
+                    <div>
+                      <p className="text-[12px] text-primaryPurple whitespace-nowrap">
+                        {" "}
+                        Created at{" "}
+                        <span className="text-sm font-semibold">
+                          {new Date(
+                            reviewDetails?.createdAt,
+                          ).toLocaleDateString() || "N/A"}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                  <img
+                    src={
+                      reviewDetails?.pictures?.[0]?.photoLink ||
+                      "/placeholder.jpg"
+                    }
+                    alt="Listing"
+                    className="w-full h-full object-cover transition-transform duration-500"
+                  />
                 </div>
-                <div className="bg-[#F4EBFF] px-2 py-1 rounded-full mx-auto absolute z-[100] bottom-2 left-1/2 transform -translate-x-1/2 flex items-center justify-center">
-                  <div>
-                    <p className="text-[12px] text-primaryPurple whitespace-nowrap"> Created at{" "}
-                      <span className="text-sm font-semibold">
-                        {new Date(
-                          reviewDetails?.createdAt,
-                        ).toLocaleDateString() || "N/A"}
-                      </span>
+
+                {/* Details Section */}
+                <div className="h-[40%] p-2 flex flex-col gap-2 justify-center">
+                  <p className="text-sm font-bold">
+                    {reviewDetails?.title || "Title"}
+                  </p>
+                  <div className="flex gap-1 items-center">
+                    <p className="text-[15px] text-gray-600">
+                      {`${reviewDetails?.currency?.symbol || "₦"} ${
+                        parseFloat(reviewDetails?.baseCost).toLocaleString() ||
+                        "0"
+                      }`}
+                    </p>
+                    <p className="text-xs bg-[#D7D6FD] font-light px-2 rounded-full">
+                      {reviewDetails?.paymentDuration || "Payment Duration"}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <i className="fi fi-rr-text-box text-[#FF3D3D]"></i>
+                    <p className="text-xs">
+                      Units Available: {reviewDetails?.unitsLeft || "0"}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <i className="fi fi-rr-marker text-[#FF3D3D]"></i>
+                    <p className="text-xs">
+                      {reviewDetails?.location?.streetAddress ||
+                        "Location not available"}
                     </p>
                   </div>
                 </div>
-                <img
-                  src={
-                    reviewDetails?.pictures?.[0]?.photoLink ||
-                    "/placeholder.jpg"
-                  }
-                  alt="Listing"
-                  className="w-full h-full object-cover transition-transform duration-500"
-                />
               </div>
 
-              {/* Details Section */}
-              <div className="h-[40%] p-2 flex flex-col gap-2 justify-center">
-                <p className="text-sm font-bold">
-                  {reviewDetails?.title || "Title"}
-                </p>
-                <div className="flex gap-1 items-center">
-                  <p className="text-[15px] text-gray-600">
-                    {`${reviewDetails?.currency?.symbol || "₦"} ${
-                      parseFloat(reviewDetails?.baseCost).toLocaleString() ||
-                      "0"
-                    }`}
-                  </p>
-                  <p className="text-xs bg-[#D7D6FD] font-light px-2 rounded-full">
-                    {reviewDetails?.paymentDuration || "Payment Duration"}
-                  </p>
-                </div>
-                <div className="flex items-center gap-1">
-                  <i className="fi fi-rr-text-box text-[#FF3D3D]"></i>
-                  <p className="text-xs">
-                    Units Available: {reviewDetails?.unitsLeft || "0"}
-                  </p>
-                </div>
-                <div className="flex items-center gap-1">
-                  <i className="fi fi-rr-marker text-[#FF3D3D]"></i>
-                  <p className="text-xs">
-                    {reviewDetails?.location?.streetAddress ||
-                      "Location not available"}
-                  </p>
-                </div>
+              {/* Right Section (Video) */}
+              <div className="w-full md:w-[600px] flex justify-center items-center">
+                {reviewDetails?.video &&
+                reviewDetails.video.length > 0 &&
+                reviewDetails.video[0]?.videoLink ? (
+                  <video
+                    src={reviewDetails.video[0].videoLink}
+                    controls
+                    className="rounded-lg shadow-lg w-full h-[350px] max-w-[600px]"
+                  >
+                    Your browser does not support the video tag.
+                  </video>
+                ) : (
+                  <p>No video available</p>
+                )}
               </div>
             </div>
+          </div>
+          {/*IMAGE AND VIDEO BUTTONS*/}
+          <div className="px-6 flex gap-3 mt-3">
+            <button className="bg-secondaryPurple border border-primaryPurple text-primaryPurple p-2 rounded-lg my-3 text-sm flex items-center">
+              <IconPhoto size={16} className="mr-2" />
+              View all images
+            </button>
+            <button className="bg-secondaryPurple border border-primaryPurple text-primaryPurple p-2 rounded-lg my-3 text-sm flex items-center">
+              <IconVideo size={16} className="mr-2" />
+              View all videos
+            </button>
           </div>
 
           {/* Remaining sections */}
@@ -228,8 +279,8 @@ const ReviewListing = () => {
             </div>
 
             {/* Features */}
-            <div className="px-6 my-8 bg-[#E9D7FE] py-4">
-              <h3 className="font-medium text-lg mb-2">Features</h3>
+            <div className="px-6 my-8 bg-[#E9D7FE] py-4 rounded-lg">
+              <h3 className="font-medium text-lg mb-4">Features</h3>
               <ul className="flex gap-3 whitespace-nowrap flex-wrap">
                 {reviewDetails?.featureTags?.length > 0
                   ? reviewDetails.featureTags.map((feature, index) => (
@@ -252,8 +303,8 @@ const ReviewListing = () => {
             </div>
 
             {/* Bills */}
-            <div className="px-6 my-8 bg-[#E9D7FE] py-4">
-              <h3 className="font-medium text-lg mb-2">Bills</h3>
+            <div className="px-6 my-8 bg-[#E9D7FE] py-4 rounded-lg">
+              <h3 className="font-medium text-lg mb-4">Bills</h3>
               <ul className="flex gap-3 whitespace-nowrap flex-wrap">
                 {reviewDetails?.billsTags?.length > 0
                   ? reviewDetails.billsTags.map((bill, index) => (
@@ -271,16 +322,177 @@ const ReviewListing = () => {
                   : "No bills available."}
               </ul>
             </div>
+            {/*LISTING FEATRUES*/}
+            <div className="px-6 my-8 bg-[#E9D7FE] py-4 rounded-lg">
+              {reviewDetails?.listingFeatures && (
+                <div>
+                  <h3 className="font-medium text-lg mb-4">Listing Features</h3>
+
+                  <div className="flex flex-wrap gap-4">
+                    {/* Electricity Payment Type */}
+                    <div className="flex items-center gap-2 py-2 px-3 border border-gray-300 rounded-full bg-white">
+                      <IconPower size={16} className="text-primaryPurple" />
+                      <span className="text-sm text-gray-600 font-semibold">
+                        Electricity Payment Type:{" "}
+                        <span className="font-normal">
+                          {
+                            reviewDetails.listingFeatures
+                              ?.electricityPaymentType
+                          }
+                        </span>
+                      </span>
+                    </div>
+
+                    {/* Electricity Access Type */}
+                    <div className="flex items-center gap-2 py-2 px-3 border border-gray-300 rounded-full bg-white">
+                      <IconPower size={16} className="text-primaryPurple" />
+                      <span className="text-sm text-gray-600 font-semibold">
+                        Electricity Access Type:{" "}
+                        <span className="font-normal">
+                          {reviewDetails.listingFeatures?.electricityAccessType}
+                        </span>
+                      </span>
+                    </div>
+
+                    {/* Furnishing State */}
+                    <div className="flex items-center gap-2 py-2 px-3 border border-gray-300 rounded-full bg-white">
+                      <IconHome size={16} className="text-primaryPurple" />
+                      <span className="text-sm text-gray-600 font-semibold">
+                        Furnishing State:{" "}
+                        <span className="font-normal">
+                          {reviewDetails.listingFeatures?.furnishingState}
+                        </span>
+                      </span>
+                    </div>
+
+                    {reviewDetails.listingFeatures.inHouseRunningWater && (
+                      <div className="flex items-center gap-2 py-2 px-3 border border-gray-300 rounded-full bg-white">
+                        <IconBath size={16} className="text-primaryPurple" />
+                        <span className="text-sm text-gray-600 font-semibold">
+                          In house running water
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Water from External Source */}
+                    {reviewDetails.listingFeatures.waterFromExternalSource && (
+                      <div className="flex items-center gap-2 py-2 px-3 border border-gray-300 rounded-full bg-white">
+                        <IconBath size={16} className="text-primaryPurple" />
+                        <span className="text-sm text-gray-600 font-semibold">
+                          Water from external source
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Outdoor Water Taps */}
+                    {reviewDetails.listingFeatures.outDoorWaterTaps && (
+                      <div className="flex items-center gap-2 py-2 px-3 border border-gray-300 rounded-full bg-white">
+                        <IconPool size={16} className="text-primaryPurple" />
+                        <span className="text-sm text-gray-600 font-semibold">
+                          Outdoor water taps
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+            {/*LANDMARKS*/}
+            <p className="text-center font-semibold text-gray-700">LANDMARKS</p>
+            <div className="px-6 mb-8 mt-4 bg-[#E9D7FE] py-4 rounded-lg">
+              <h3 className="font-medium text-lg mb-4">
+                Educational Institutions
+              </h3>
+              <ul className="flex gap-3 whitespace-nowrap flex-wrap">
+                {reviewDetails?.location?.educationalInstitutions?.length >
+                0 ? (
+                  reviewDetails.location.educationalInstitutions.map(
+                    (institution, index) => (
+                      <div
+                        key={index}
+                        className="flex gap-2 items-center py-2 px-3 border border-gray-300 rounded-full bg-white"
+                      >
+                        <IconSchool size={16} className="text-primaryPurple" />
+                        <div>
+                          <p className="text-sm text-gray-600">
+                            {institution || "Institution Name"}
+                          </p>
+                        </div>
+                      </div>
+                    ),
+                  )
+                ) : (
+                  <p className="text-sm text-gray-600">
+                    No educational institutions available.
+                  </p>
+                )}
+              </ul>
+            </div>
+
+            {/* Healthcare Facilities */}
+            <div className="px-6 my-8 bg-[#E9D7FE] py-4 rounded-lg">
+              <h3 className="font-medium text-lg mb-4">
+                Healthcare Facilities
+              </h3>
+              <ul className="flex gap-3 whitespace-nowrap flex-wrap">
+                {reviewDetails?.location?.healthFacilities?.length > 0 ? (
+                  reviewDetails.location.healthFacilities.map(
+                    (facility, index) => (
+                      <div
+                        key={index}
+                        className="flex gap-2 items-center py-2 px-3 border border-gray-300 rounded-full bg-white"
+                      >
+                        <IconAmbulance
+                          size={16}
+                          className="text-primaryPurple"
+                        />
+                        <div>
+                          <p className="text-sm text-gray-600">
+                            {facility || "Facility Name"}
+                          </p>
+                        </div>
+                      </div>
+                    ),
+                  )
+                ) : (
+                  <p className="text-sm text-gray-600">
+                    No healthcare facilities available.
+                  </p>
+                )}
+              </ul>
+            </div>
+
+            {/* Transportation */}
+            <div className="px-6 my-8 bg-[#E9D7FE] py-4 rounded-lg">
+              <h3 className="font-medium text-lg mb-4">Transportation</h3>
+              <ul className="flex gap-3 whitespace-nowrap flex-wrap">
+                {reviewDetails?.location?.transportation?.length > 0 ? (
+                  reviewDetails.location.transportation.map(
+                    (transport, index) => (
+                      <div
+                        key={index}
+                        className="flex gap-2 items-center py-2 px-3 border border-gray-300 rounded-full bg-white"
+                      >
+                        <IconBus size={16} className="text-primaryPurple" />
+                        <div>
+                          <p className="text-sm text-gray-600">
+                            {transport || "Transport Option"}
+                          </p>
+                        </div>
+                      </div>
+                    ),
+                  )
+                ) : (
+                  <p className="text-sm text-gray-600">
+                    No transportation options available.
+                  </p>
+                )}
+              </ul>
+            </div>
+
             <div className="mt-10 px-6">
-              <h3 className="font-medium text-lg mb-4">Map</h3>
               {isLoaded ? (
-                <GoogleMap
-                  mapContainerStyle={mapContainerStyle}
-                  center={center}
-                  zoom={15}
-                >
-                  <Marker position={center} />
-                </GoogleMap>
+                <MapReview locationData={reviewDetails?.location} />
               ) : (
                 <p>Loading Map...</p>
               )}

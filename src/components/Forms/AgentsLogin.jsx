@@ -6,6 +6,7 @@ import Lottie from "lottie-react"; // Lottie animations
 import loginAnimation from "../../../public/assets/signup-animation.json"; // Animation path
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import AuthService from "../../../authService.js";
 
 const AgentLogin = () => {
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -42,6 +43,8 @@ const AgentLogin = () => {
         localStorage.setItem("userId", result.payload.id);
         localStorage.setItem("refreshToken", result.payload.refresh_token);
         localStorage.setItem("accountType", result.payload.role[0]);
+
+        AuthService.startRefreshTimer();
 
         // Success toast
         toast.success("Login successful!", {

@@ -1,4 +1,4 @@
-import { Button, Spinner, Textarea } from "@material-tailwind/react";
+import { Button } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
@@ -8,7 +8,7 @@ const Description = () => {
 
   useEffect(() => {
     setDescriptionDetails(
-      JSON.parse(localStorage.getItem("descriptionDetails")),
+      localStorage.getItem("descriptionDetails"),
     );
   }, []);
 
@@ -29,9 +29,8 @@ const Description = () => {
             <p className="text-gray-500 mb-2">Preview Description</p>
             <div className="w-full">
               <div className="border border-gray-200 rounded-lg p-4">
-                {descriptionDetails.length > 0 &&
-                descriptionDetails[0]?.title ? (
-                  <p>{descriptionDetails[0].title}</p>
+                {descriptionDetails ?(
+                  <p>{descriptionDetails}</p>
                 ) : (
                   <p>No description available</p>
                 )}

@@ -1,134 +1,161 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { Spinner } from "@material-tailwind/react";
+import axios from "axios";
 
 const VerificationEmail = () => {
   const [status, setStatus] = useState("loading");
   const [message, setMessage] = useState("");
   const [searchParams] = useSearchParams();
-  const token = searchParams.get("token");
-  const [role, setRole] = useState(null);
   const navigate = useNavigate();
+  const token = searchParams.get("token");
+  const role = localStorage.getItem("role");
   const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
-    setRole(localStorage.getItem("role"));
-
     if (!token) {
       setStatus("error");
-      setMessage("No token found in the URL.");
+      setMessage("No verification token found. Please check your email link.");
       return;
     }
 
     const verifyEmail = async () => {
       try {
-        // Simple POST request with just the token
-        const response = await fetch(`${apiUrl}/api/v1/users/verify/${token}`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await axios.post(
+          `${apiUrl}/api/v1/users/verify/${token}`,
+        );
 
-        const result = await response.json();
+        console.log("Verification successful:", response.data);
+        setStatus("success");
+        setMessage("Your email has been successfully verified!");
+      } catch (error) {
+        console.error(
+          "Verification error:",
+          error.response?.data || error.message,
+        );
 
-        if (response.ok) {
-          setStatus("success");
-          setMessage("Email successfully verified!");
-        } else if (result.message === "Token expired") {
+        if (
+          error.response?.status === 403 &&
+          error.response?.data?.message === "Token expired"
+        ) {
           setStatus("expired");
           setMessage(
-            "The verification token has expired. Please request a new one.",
+            "Your verification link has expired. Please request a new one.",
           );
         } else {
           setStatus("error");
-          setMessage(result.message || "Verification failed.");
+          setMessage(
+            error.response?.data?.message ||
+              "Verification failed. Please try again.",
+          );
         }
-      } catch (error) {
-        console.error("Verification error:", error);
-        setStatus("error");
-        setMessage("An error occurred during verification. Please try again.");
       }
     };
 
     verifyEmail();
   }, [token, apiUrl]);
 
-  const handleNavigation = () => {
-    if (role === "agent") {
-      navigate("/agent/login");
-    } else {
-      navigate("/renter/login");
+  const handleLogout = () => {
+    localStorage.removeItem("role");
+    localStorage.removeItem("accountType");
+    navigate("/");
+    window.location.reload();
+  };
+
+  const renderContent = () => {
+    switch (status) {
+      case "loading":
+        return (
+          <div className="flex items-center justify-center space-x-2">
+            <div className="w-8 h-8 border-4 border-primaryPurple border-t-transparent rounded-full animate-spin" />
+            <p className="text-lg text-gray-600">Verifying your email...</p>
+          </div>
+        );
+
+      case "success":
+        return (
+          <div className="text-center space-y-4">
+            <div className="w-16 h-16 mx-auto bg-green-100 rounded-full flex items-center justify-center">
+              <svg
+                className="w-8 h-8 text-green-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+            </div>
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+              <h3 className="text-green-800 font-semibold">Success!</h3>
+              <p className="text-green-700">{message}</p>
+            </div>
+            <button
+              onClick={() =>
+                navigate(role === "agent" ? "/agent/login" : "/renter/login")
+              }
+              className="w-full px-6 py-3 text-white bg-primaryPurple rounded-lg hover:bg-opacity-90 transition-all duration-200"
+            >
+              Proceed to Login
+            </button>
+          </div>
+        );
+
+      case "error":
+        return (
+          <div className="text-center space-y-4">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <h3 className="text-red-800 font-semibold">
+                Verification Failed
+              </h3>
+              <p className="text-red-700">{message}</p>
+            </div>
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={() => navigate("/")}
+                className="px-6 py-3 text-white bg-primaryPurple rounded-lg hover:bg-opacity-90 transition-all"
+              >
+                Request New Verification
+              </button>
+              <button
+                onClick={handleLogout}
+                className="px-6 py-3 text-primaryPurple bg-secondaryPurple rounded-lg hover:bg-opacity-90 transition-all"
+              >
+                Return Home
+              </button>
+            </div>
+          </div>
+        );
+
+      case "expired":
+        return (
+          <div className="text-center space-y-4">
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <h3 className="text-yellow-800 font-semibold">Link Expired</h3>
+              <p className="text-yellow-700">{message}</p>
+            </div>
+            <button
+              onClick={() => navigate("/resend-verification")}
+              className="w-full px-6 py-3 text-white bg-yellow-600 rounded-lg hover:bg-yellow-700 transition-all"
+            >
+              Request New Link
+            </button>
+          </div>
+        );
+
+      default:
+        return null;
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      {status === "loading" && (
-        <div className="flex flex-col items-center justify-center">
-          <div className="flex gap-2 items-center justify-center">
-            <Spinner />
-            <p className="mt-4 text-gray-500 animate-fadeIn">
-              Verifying your email, please wait...
-            </p>
-          </div>
-        </div>
-      )}
-
-      {status === "success" && (
-        <div className="flex flex-col gap-3 items-center justify-center">
-          <img
-            src="https://res.cloudinary.com/dmlgns85e/image/upload/v1728146702/vector-2_vfbd1n.png"
-            alt="#"
-          />
-          <p className="animate-fadeIn text-xl font-semibold">Email Verified</p>
-          <button
-            className="px-4 text-secondaryPurple py-3 bg-primaryPurple rounded-lg transition-all duration-200 hover:bg-shadow-lg"
-            onClick={handleNavigation}
-          >
-            Go to Login
-          </button>
-        </div>
-      )}
-
-      {status === "error" && (
-        <div className="flex flex-col items-center justify-center gap-3">
-          <h2 className="text-xl font-bold text-primaryPurple">Oops!</h2>
-          <p className="mt-2 text-xl font-semibold">{message}</p>
-          <button
-            className="px-4 py-3 bg-primaryPurple rounded-lg text-white transition-all duration-200 hover:shadow-lg"
-            onClick={() => navigate("/")}
-          >
-            Request another Link
-          </button>
-          <button
-            className="px-4 py-3 bg-secondaryPurple rounded-lg text-primaryPurple transition-all duration-200 hover:shadow-lg"
-            onClick={() => {
-              localStorage.removeItem("role")
-              localStorage.removeItem("accountType")
-              navigate("/");
-              window.location.reload()
-            }}
-          >
-            Go to Home
-          </button>
-        </div>
-      )}
-
-      {status === "expired" && (
-        <div className="text-center">
-          <h2 className="text-3xl font-extrabold text-yellow-600">
-            Token Expired
-          </h2>
-          <p className="mt-2 text-gray-700">{message}</p>
-          <button
-            className="mt-6 px-6 py-3 bg-yellow-600 text-white rounded-lg shadow-md transition-all duration-200 hover:bg-yellow-700"
-            onClick={() => navigate("/resend-verification")}
-          >
-            Resend Verification
-          </button>
-        </div>
-      )}
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
+        {renderContent()}
+      </div>
     </div>
   );
 };

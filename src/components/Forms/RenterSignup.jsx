@@ -43,6 +43,7 @@ const RenterSignup = () => {
 
   // Signup Handler
   const handleSignup = async (e) => {
+    console.log(formData.password)
     e.preventDefault();
 
     if (!isAccurate) {
@@ -69,7 +70,7 @@ const RenterSignup = () => {
           },
           body: JSON.stringify({
             email: formData.email,
-            password: formData.password,
+            password: isPassword,
             phoneNumber: formData.phoneNumber,
             school: isStudent ? formData.institution : "none",
             firstname: formData.firstName,

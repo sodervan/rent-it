@@ -1,11 +1,11 @@
 import {
-	AppShell,
-	Box,
-	Burger,
-	Container,
-	Divider,
-	Stack,
-	Title,
+  AppShell,
+  Box,
+  Burger,
+  Container,
+  Divider,
+  Stack,
+  Title,
 } from "@mantine/core";
 import { Route, Routes } from "react-router-dom";
 import NavBarItems from "./renter_dash_comps/NavBarItems";
@@ -18,58 +18,46 @@ import RenterSettings from "./renter_dash_pages/RenterSettings";
 import TransactionHistory from "./renter_dash_pages/TransactionHistory";
 
 function RenterDashPage() {
-	// const [opened, setOpened] = useDisclosure();
-	const [opened, setOpened] = useAtom(sideBarAtom);
-	return (
-		<AppShell
-			navbar={{
-				width: 200,
-				breakpoint: "sm",
-				collapsed: { mobile: !opened },
-			}}
-		>
-			<AppShell.Navbar className="">
-				<div className="flex items-center ">
-					<Title
-						order={1}
-						className="text-purple-600 h-20 flex items-center px-2"
-					>
-						Rentit
-					</Title>
-					<div className="ml-auto mr-2 md:hidden">
-						<Burger
-							opened={opened}
-							onClick={() => {
-								setOpened(!opened);
-							}}
-						/>
-					</div>
-				</div>
-				<Divider />
-				<NavBarItems />
-			</AppShell.Navbar>
-			<AppShell.Main className="">
-				<Routes>
-					<Route
-						path="/home"
-						element={<SearchPage />}
-					/>
-					<Route
-						path="/popular"
-						element={<Popular />}
-					/>
-					<Route
-						path="/settings"
-						element={<RenterSettings />}
-					/>
-					<Route
-						path="/transactions"
-						element={<TransactionHistory/>}
-					/>
-				</Routes>
-			</AppShell.Main>
-		</AppShell>
-	);
+  // const [opened, setOpened] = useDisclosure();
+  const [opened, setOpened] = useAtom(sideBarAtom);
+  return (
+    <AppShell
+      navbar={{
+        width: 200,
+        breakpoint: "sm",
+        collapsed: { mobile: !opened },
+      }}
+    >
+      <AppShell.Navbar className="">
+        <div className="flex items-center ">
+          <Title
+            order={1}
+            className="text-purple-600 h-20 flex items-center px-2"
+          >
+            Rentit
+          </Title>
+          <div className="ml-auto mr-2 md:hidden">
+            <Burger
+              opened={opened}
+              onClick={() => {
+                setOpened(!opened);
+              }}
+            />
+          </div>
+        </div>
+        <Divider />
+        <NavBarItems />
+      </AppShell.Navbar>
+      <AppShell.Main className="">
+        <Routes>
+          <Route path="/home" element={<SearchPage />} />
+          <Route path="/popular" element={<Popular />} />
+          <Route path="/settings" element={<RenterSettings />} />
+          <Route path="/transactions" element={<TransactionHistory />} />
+        </Routes>
+      </AppShell.Main>
+    </AppShell>
+  );
 }
 
 export default RenterDashPage;

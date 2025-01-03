@@ -99,11 +99,7 @@ const RenterSignup = () => {
           progress: undefined,
         });
         await fetchRenterDetails();
-        if (result.payload.accountType[0] === "user") {
-          navigate("/renter/dashboard");
-        } else {
-          navigate("/agent/dashboard");
-        }
+        navigate("/renter/dashboard");
 
         window.history.replaceState(null, "", "/");
         console.log(result);
@@ -142,7 +138,6 @@ const RenterSignup = () => {
 
   return (
     <>
-
       <div className="flex items-center justify-center h-screen px-4 md:px-10 lg:px-20">
         <div className="w-full max-w-screen-md bg-white rounded-lg p-6 md:p-10">
           <div className="flex flex-col gap-6">

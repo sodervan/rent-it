@@ -93,14 +93,11 @@ const VerificationEmail = () => {
               <h3 className="text-green-800 font-semibold">Success!</h3>
               <p className="text-green-700">{message}</p>
             </div>
-            <button
-              onClick={() =>
-                navigate(role === "agent" ? "/agent/login" : "/renter/login")
-              }
+            <a href={role === "agent" ? "/agent/login" : "/renter/login"}
               className="w-full px-6 py-3 text-white bg-primaryPurple rounded-lg hover:bg-opacity-90 transition-all duration-200"
             >
               Proceed to Login
-            </button>
+            </a>
           </div>
         );
 

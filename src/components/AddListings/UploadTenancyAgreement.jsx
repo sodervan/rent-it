@@ -177,13 +177,13 @@ const UploadTenancyAgreement = () => {
             >
               {isUploading ? <Spinner className="w-5 h-5"/> : "Proceed"}
             </Button>
-            <Button
-                className="font-poppins bg-red-400 text-white w-full flex justify-center items-center"
-                onClick={()=>{navigate("/agent/addlisting/13")}}
-                disabled={isUploading}
-            >
-              Skip
-            </Button>
+            {/*<Button*/}
+            {/*    className="font-poppins bg-red-400 text-white w-full flex justify-center items-center"*/}
+            {/*    onClick={()=>{navigate("/agent/addlisting/13")}}*/}
+            {/*    disabled={isUploading}*/}
+            {/*>*/}
+            {/*  Skip*/}
+            {/*</Button>*/}
           </div>
         </div>
       </div>

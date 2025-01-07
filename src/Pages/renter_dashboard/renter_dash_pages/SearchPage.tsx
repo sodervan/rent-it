@@ -1,5 +1,6 @@
 import {
 	Badge,
+	Burger,
 	Button,
 	Card,
 	Divider,
@@ -12,10 +13,16 @@ import {
 	Text,
 	TextInput,
 } from "@mantine/core";
-import { IconFilter, IconSearch } from "@tabler/icons-react";
+import {
+	IconFilter,
+	IconSearch,
+	IconUserSquareRounded,
+} from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 
 import { Input as IP } from "@material-tailwind/react";
+import { sideBarAtom } from "@/store/store";
+import { useAtom } from "jotai";
 type category = {
 	id: number;
 	title: string;
@@ -39,11 +46,20 @@ function SearchPage() {
 		queryKey: ["test"],
 		queryFn: async () => await get_joke(),
 	});
+	const [opened, setOpened] = useAtom(sideBarAtom);
 
 	return (
 		<div className="isolate">
 			<div className="h-20 sticky top-0 z-10 bg-white">
 				<Flex className=" px-2 gap-2  h-full items-center">
+					<div className=" md:hidden">
+						<Burger
+							opened={opened}
+							onClick={() => {
+								setOpened(!opened);
+							}}
+						/>
+					</div>
 					<TextInput
 						leftSection={<IconSearch />}
 						className="w-full"
@@ -61,7 +77,7 @@ function SearchPage() {
 					<SearchCard key={"card+_" + i} />
 				))} */}
 				{/* <p>{JSON.stringify(data)}</p> */}
-			
+
 				{isFetching ? (
 					<div className="w-full flex items-center justify-center h-[calc(100dvh-100px)] bg-red-200">
 						<Loader />

@@ -205,13 +205,12 @@ const ListingLocation = () => {
 
     return (
       <div className="mb-4">
-        <p className="text-sm font-medium mb-2">{label}</p>
         <div className="flex gap-2 mb-2">
           <Input
             type="text"
+            label={label}
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            placeholder={placeholder}
             className="flex-1"
           />
           <Button
@@ -383,13 +382,13 @@ const ListingLocation = () => {
               Loading Google Map...
             </p>
           )}
-
           {/* Landmark Forms */}
-          <div className="mt-6 bg-white rounded-lg shadow-sm p-4">
+          <p className="text-center mt-7 font-medium text-gray-700">Please Fill in Nearby LandMarks</p>
+          <div className="mt-2 bg-white rounded-lg shadow-sm p-4">
             <div className="mb-4">
-              <label className="text-sm font-medium">Postal Code</label>
               <Input
                 type="text"
+                label="Postal Code"
                 value={formData.postalCode}
                 onChange={(e) =>
                   setFormData((prev) => ({
@@ -397,7 +396,6 @@ const ListingLocation = () => {
                     postalCode: e.target.value,
                   }))
                 }
-                placeholder="Enter postal code"
               />
             </div>
 

@@ -14,12 +14,14 @@ import { useNavigate } from "react-router-dom";
 import MapReview from "./MapReview";
 import { IconSchool, IconAmbulance, IconBus } from "@tabler/icons-react";
 import axios from "axios";
+import CompletedModal from "@/components/AddListings/CompletedModal.jsx";
 
 const ReviewListing = () => {
   const navigate = useNavigate();
   const [reviewDetails, setReviewDetails] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   // const mapKey = import.meta.env.VITE_APP_MAP_KEY;
   const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -83,9 +85,7 @@ const ReviewListing = () => {
         data: response.data
       });
 
-      setTimeout(() => {
-        navigate("/agent/dashboard");
-      }, 500);
+      setShowSuccessModal(true);
 
     } catch (error) {
       if (error.response) {
@@ -518,6 +518,11 @@ const ReviewListing = () => {
       ) : (
         <Loader />
       )}
+      {/* ... existing JSX ... */}
+      <CompletedModal
+          isOpen={showSuccessModal}
+          onClose={() => setShowSuccessModal(false)}
+      />
     </>
   );
 };

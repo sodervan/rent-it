@@ -2,4 +2,6 @@ import { atom } from "jotai";
 
 const countAtom = atom<number>(0);
 
-export { countAtom };
+
+const sideBarAtom = atom<boolean>(false)
+export { countAtom ,sideBarAtom};

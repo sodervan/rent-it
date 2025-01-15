@@ -1,16 +1,7 @@
-import { Button, Input, InputBase, Modal } from "@mantine/core";
-import {
-	IconArrowNarrowDown,
-	IconCalendar,
-	IconCaretDown,
-	IconClearAll,
-	IconCurrencyNaira,
-	IconFilter,
-	IconFilterCancel,
-} from "@tabler/icons-react";
+import { Button, Input, InputBase } from "@mantine/core";
+import { IconCaretDown, IconCurrencyNaira, IconFilter, IconFilterCancel } from "@tabler/icons-react";
 import RenterTable from "../renter_dash_comps/RenterTable";
-import { useAtom, Atom, atom } from "jotai";
-import { useDisclosure } from "@mantine/hooks";
+import { useAtom, atom } from "jotai";
 import { DateInput } from "@mantine/dates";
 import "@mantine/dates/styles.css";
 const fromDate = atom<Date | null>();

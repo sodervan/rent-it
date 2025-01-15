@@ -12,9 +12,10 @@ import { sideBarAtom } from "@/store/store";
 import { useAtom } from "jotai";
 import { get_listings, PayLoadType } from "@/page_data/api";
 import SearchCard from "../renter_dash_comps/SearchCard";
+import { useNavigate } from "react-router-dom";
 
 const arr = new Array(10).fill(10);
-function SearchPage() {
+function RenterHome() {
 	const { data, isFetching, refetch } = useQuery<PayLoadType>({
 		queryKey: ["test"],
 		queryFn: async () => await get_listings(),
@@ -22,10 +23,23 @@ function SearchPage() {
 	});
 	const [opened, setOpened] = useAtom(sideBarAtom);
 
+	let nav = useNavigate();
+	let onSubmit = (e) => {
+		e.preventDefault();
+		let form = new FormData(e.target as HTMLFormElement);
+		let path = "/renter/dashboard/search";
+		let searchParam = form.get("search");
+		nav(`${path}?query=${searchParam}`);
+	};
+
 	return (
 		<div className="isolate">
 			<div className="h-20 sticky top-0 z-10 bg-white">
-				<Flex className=" px-2 gap-2  h-full items-center">
+				<Flex
+					onSubmit={onSubmit}
+					component="form"
+					className=" px-2 gap-2  h-full items-center"
+				>
 					<div className=" md:hidden">
 						<Burger
 							opened={opened}
@@ -35,6 +49,7 @@ function SearchPage() {
 						/>
 					</div>
 					<TextInput
+						name="search"
 						leftSection={<IconSearch />}
 						className="w-full"
 						placeholder="Seacrch here.."
@@ -70,4 +85,4 @@ function SearchPage() {
 	);
 }
 
-export default SearchPage;
+export default RenterHome;

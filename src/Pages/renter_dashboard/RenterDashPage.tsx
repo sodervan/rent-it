@@ -1,24 +1,20 @@
-import {
-	AppShell,
-	Burger,
-	Divider,
-	Title,
-} from "@mantine/core";
+import { AppShell, Burger, Divider, Title } from "@mantine/core";
 import { Route, Routes } from "react-router-dom";
 import NavBarItems from "./renter_dash_comps/NavBarItems";
-import SearchPage from "./renter_dash_pages/SearchPage";
 import Popular from "./renter_dash_pages/Popular";
 import { useAtom } from "jotai";
 import { sideBarAtom } from "@/store/store";
 import RenterSettings from "./renter_dash_pages/RenterSettings";
 import TransactionHistory from "./renter_dash_pages/TransactionHistory";
 import { useEffect } from "react";
+import RenterHome from "./renter_dash_pages/RenterHome";
+import RenterSearch from "./renter_dash_pages/RenterSearch";
 
 function RenterDashPage() {
 	// const [opened, setOpened] = useDisclosure();
-	useEffect(()=>{
-		document.title="Renter Dashboard"
-	},[])
+	useEffect(() => {
+		document.title = "Renter Dashboard";
+	}, []);
 	const [opened, setOpened] = useAtom(sideBarAtom);
 	return (
 		<AppShell
@@ -52,7 +48,11 @@ function RenterDashPage() {
 				<Routes>
 					<Route
 						path="/home"
-						element={<SearchPage />}
+						element={<RenterHome />}
+					/>
+					<Route
+						path="/search"
+						element={<RenterSearch />}
 					/>
 					<Route
 						path="/popular"

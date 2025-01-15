@@ -3,41 +3,46 @@
 @tailwind utilities;
 
 @layer base {
-    * {
-        font-family: "Poppins", sans-serif;
-    }
+	* {
+		font-family: "Poppins", sans-serif;
+	}
 
-    .loader {
-        border-top-color: transparent;
-    }
+	.loader {
+		border-top-color: transparent;
+	}
 
-    .button {
-        font-family: "Poppins", sans-serif;
-    }
+	.button {
+		font-family: "Poppins", sans-serif;
+	}
 
-    h1 {
-        font-family: "Poppins", sans-serif;
-    }
+	h1 {
+		font-family: "Poppins", sans-serif;
+	}
 
-    a,
-    p {
-        font-family: "Poppins", sans-serif;
-    }
-  :root {
-        --radius: 0.5rem;
-    }
+	a,
+	p {
+		font-family: "Poppins", sans-serif;
+	}
+	:root {
+		--radius: 0.5rem;
+	}
 }
 
 @layer utilities {
-    /* Hide scrollbar for Chrome, Safari and Opera */
-    .no-scrollbar::-webkit-scrollbar {
-        display: none;
-    }
+	/* Hide scrollbar for Chrome, Safari and Opera */
+	.no-scrollbar::-webkit-scrollbar {
+		display: none;
+	}
 
-    /* Hide scrollbar for IE, Edge and Firefox */
-    .no-scrollbar {
-        -ms-overflow-style: none; /* IE and Edge */
-        scrollbar-width: none; /* Firefox */
-    }
+	/* Hide scrollbar for IE, Edge and Firefox */
+	.no-scrollbar {
+		-ms-overflow-style: none; /* IE and Edge */
+		scrollbar-width: none; /* Firefox */
+	}
 }
 
+@layer components {
+	.btn-primary {
+		@apply p-2 bg-blue-gray-100 text-blue-gray-700 font-semibold rounded-full  hover:bg-blue-gray-500  focus:ring-opacity-75;
+	}
+}

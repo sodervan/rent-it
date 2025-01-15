@@ -1,50 +1,24 @@
 import {
-	Badge,
 	Burger,
 	Button,
-	Card,
 	Divider,
 	Flex,
-	Group,
-	Image,
 	Loader,
-	LoadingOverlay,
-	Stack,
-	Text,
 	TextInput,
 } from "@mantine/core";
-import {
-	IconFilter,
-	IconSearch,
-	IconUserSquareRounded,
-} from "@tabler/icons-react";
+import { IconFilter, IconSearch } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
-
-import { Input as IP } from "@material-tailwind/react";
 import { sideBarAtom } from "@/store/store";
 import { useAtom } from "jotai";
-type category = {
-	id: number;
-	title: string;
-	price: string;
-	description: string;
-	image: string;
-	rating: any;
-};
-const url = "https://fakestoreapi.com/products/category/jewelery";
-const get_joke = async () => {
-	try {
-		let resp = await fetch(url);
-		return resp.json();
-	} catch (err) {
-		throw new Error(err as string);
-	}
-};
+import { get_listings, PayLoadType } from "@/page_data/api";
+import SearchCard from "../renter_dash_comps/SearchCard";
+
 const arr = new Array(10).fill(10);
 function SearchPage() {
-	const { data, isFetching, refetch } = useQuery<category[]>({
+	const { data, isFetching, refetch } = useQuery<PayLoadType>({
 		queryKey: ["test"],
-		queryFn: async () => await get_joke(),
+		queryFn: async () => await get_listings(),
+		refetchOnWindowFocus: false,
 	});
 	const [opened, setOpened] = useAtom(sideBarAtom);
 
@@ -83,47 +57,11 @@ function SearchPage() {
 						<Loader />
 					</div>
 				) : (
-					data?.map((e) => {
-						return (
-							<Card
-								key={e.id}
-								withBorder
-								className="w-[252px] p-2 gap-2"
-							>
-								<Card.Section className="h-[160px]">
-									<img
-										className="h-full w-full object-contain"
-										src={e.image}
-										height={160}
-										alt="Norway"
-									/>
-								</Card.Section>
-								<Text
-									lineClamp={1}
-									size="sm"
-								>
-									{e.title}
-								</Text>
-								<Badge color="pink">On Sale</Badge>
-								<Text
-									lineClamp={4}
-									size="sm"
-									c="dimmed"
-								>
-									{e.description}
-								</Text>
-								<Button
-									className="mt-auto"
-									color="blue"
-									fullWidth
-									radius="md"
-								>
-									Order Now
-								</Button>
-							</Card>
-						);
-						LoadingOverlay;
-					})
+					<>
+						{data.payload.data.map((e) => {
+							return <SearchCard {...e} />;
+						})}
+					</>
 				)}
 
 				{/* <div className="text-wrap bg-rd-200">{JSON.stringify(data)}</div> */}

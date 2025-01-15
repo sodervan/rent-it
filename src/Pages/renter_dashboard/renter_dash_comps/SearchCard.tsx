@@ -1,5 +1,5 @@
 import { CardType } from "@/lib/types";
-import { Button, Text } from "@mantine/core";
+import { Text } from "@mantine/core";
 import {
 	IconCurrencyNaira,
 	IconHeart,
@@ -40,7 +40,7 @@ function SearchCard(e: CardType) {
 				/>
 			</div>
 			<div className="flex flex-col gap-2 px-2 ">
-				<h2 className="font-bold">{e.title}</h2>
+				<h2 className="">{e.title}</h2>
 				<div className="flex gap-2 items-center">
 					<span className=" flex items-center text-gray-500 text-sm">
 						<IconCurrencyNaira size={18} />

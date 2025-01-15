@@ -146,6 +146,7 @@ function Navbar() {
           {nav_routes.map(({ name, to }) => (
             <li key={name} className="w-full">
               <NavLink
+              key={name}
                 to={to}
                 onClick={closeMenu} // Close the menu after clicking a link
                 className={({ isActive }) =>

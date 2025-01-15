@@ -66,7 +66,12 @@ const Popular = () => {
 				) : (
 					<>
 						{data.payload.data.map((e) => {
-							return <SearchCard {...e} />;
+							return (
+								<SearchCard
+									{...e}
+									key={e.id}
+								/>
+							);
 						})}
 					</>
 				)}

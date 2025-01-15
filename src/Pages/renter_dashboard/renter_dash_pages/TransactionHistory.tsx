@@ -1,5 +1,10 @@
 import { Button, Input, InputBase } from "@mantine/core";
-import { IconCaretDown, IconCurrencyNaira, IconFilter, IconFilterCancel } from "@tabler/icons-react";
+import {
+	IconCaretDown,
+	IconCurrencyNaira,
+	IconFilter,
+	IconFilterCancel,
+} from "@tabler/icons-react";
 import RenterTable from "../renter_dash_comps/RenterTable";
 import { useAtom, atom } from "jotai";
 import { DateInput } from "@mantine/dates";
@@ -37,16 +42,17 @@ const TransactionHistory = () => {
 				<div className=" ">
 					<p className="text-gray-500">Min.</p>
 					<Input
-						type="Number"
-						placeholder=""
+						type="number"
+						placeholder="999999"
 						leftSection={<IconCurrencyNaira />}
 					/>
 				</div>
 				<div className=" ">
 					<p className="text-gray-500">Max.</p>
 					<Input
+						type="number"
 						leftSection={<IconCurrencyNaira />}
-						placeholder="Search by apartment name,ref id ...."
+						placeholder="999999"
 					/>
 				</div>
 				<div className=" ">

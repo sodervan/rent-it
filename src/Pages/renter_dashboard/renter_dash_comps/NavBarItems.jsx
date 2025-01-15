@@ -1,14 +1,6 @@
-import { Button, Center, Group, NavLink, Stack, Text } from "@mantine/core";
+import { Button, Text } from "@mantine/core";
 import { NavLink as Link, useNavigate } from "react-router-dom";
-import {
-	IconHeart,
-	IconHistory,
-	IconHome,
-	IconLocationBolt,
-	IconSettings,
-	IconUser,
-} from "@tabler/icons-react";
-import React from "react";
+import { IconHistory, IconHome, IconLocationBolt, IconSettings, IconUser } from "@tabler/icons-react";
 
 const links = [
 	{
@@ -36,6 +28,7 @@ function NavBarItems() {
 				return (
 					<Link
 						to={path}
+						key={name}
 						className={({ isActive }) => {
 							return `flex gap-1 text-md duration-200 items-center p-2 rounded-md ${
 								isActive

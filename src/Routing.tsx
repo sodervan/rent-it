@@ -45,7 +45,7 @@ const AgentRoute = ({ children }) => (
 );
 
 const RenterRoute = ({ children }) => (
-  <ProtectedRoute allowedRoles={["renter"]} redirectPath="/renter/login">
+  <ProtectedRoute allowedRoles={["user"]} redirectPath="/renter/login">
     {children}
   </ProtectedRoute>
 );

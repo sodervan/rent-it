@@ -37,34 +37,39 @@ const RenterSignup = () => {
   const fetchRenterDetails = async (accessToken) => {
     try {
       setIsLoading(true);
-      const response = await fetch(`${apiUrl}/api/v1/agents`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-        credentials: "include", // Add this to include cookies
+      const response = await axios.get(`${apiUrl}/api/v1/agents`, {
+        withCredentials: true, // Add this to include cookies
       });
 
-      const result = await response.json();
-      if (response.ok) {
+      const result = response.data;
+      if (response.status === 200) {
         console.log(result);
       } else {
         console.log("Failed to fetch agent details");
         toast.error(
-          result.message || "An error occurred while fetching agent details.",
-          {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          },
+            result.message || "An error occurred while fetching agent details.",
+            {
+              position: "top-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+            },
         );
       }
     } catch (error) {
       console.log("Error:", error);
+      toast.error(error.message || "An error occurred while fetching agent details.", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -77,23 +82,20 @@ const RenterSignup = () => {
       console.log("Attempting login with:", { email, password });
 
       const response = await axios.post(
-        `${apiUrl}/api/v1/users/login`,
-        {
-          email: email,
-          password: password,
-        },
-        {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "application/json",
+          `${apiUrl}/api/v1/users/login`,
+          {
+            email: email,
+            password: password,
           },
-        },
+          {
+            withCredentials: true,
+          },
       );
 
       console.log("Server response:", response.data);
 
       const expiryTime = Math.floor(
-        new Date(response.data.payload.session_expiry_time).getTime() / 1000,
+          new Date(response.data.payload.session_expiry_time).getTime() / 1000,
       );
 
       const payload = {
@@ -105,14 +107,14 @@ const RenterSignup = () => {
 
       // Create JWT token using jose
       const token = await new SignJWT(payload)
-        .setProtectedHeader({ alg: "HS256" })
-        .setIssuedAt()
-        .setExpirationTime(payload.exp)
-        .sign(new TextEncoder().encode(SECRET_KEY));
+          .setProtectedHeader({ alg: "HS256" })
+          .setIssuedAt()
+          .setExpirationTime(payload.exp)
+          .sign(new TextEncoder().encode(SECRET_KEY));
 
       console.log("JWT token created successfully");
 
-      document.cookie = `the_token=${token}; path=/; expires=${new Date(expiryTime * 1000).toUTCString()} secure; SameSite=Strict`;
+      document.cookie = `the_token=${token}; path=/; expires=${new Date(expiryTime * 1000).toUTCString()}; secure; SameSite=Strict`;
 
       toast.success(response.data.message || "Login Successful!", {
         position: "top-right",
@@ -127,7 +129,7 @@ const RenterSignup = () => {
       await fetchRenterDetails(response.data.payload.accessToken);
 
       setTimeout(() => {
-        navigate("/renter/dashboard");
+        window.location.href = "/renter/dashboard";
       }, 500);
 
       window.history.replaceState(null, "", "/");
@@ -139,8 +141,9 @@ const RenterSignup = () => {
       });
 
       const errorMessage =
-        error.response?.data?.message ||
-        "Something went wrong, please try again later.";
+          error.response?.data?.message ||
+          error.message ||
+          "Something went wrong, please try again later.";
 
       setMessage(errorMessage);
       toast.error(errorMessage, {

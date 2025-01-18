@@ -18,6 +18,8 @@ const MainLayout = () => {
     "/agent/agentregistration",
   );
 
+  const isInRenterDash = location.pathname.includes("/renter/dashboard");
+
   // Show loading or default navbar while token is being verified
   if (isLoading) {
     return (
@@ -42,7 +44,7 @@ const MainLayout = () => {
 
   return (
     <>
-      {navbar}
+      {tokenData?.role ==="agent" ? navbar : ""}
       <Outlet />
     </>
   );

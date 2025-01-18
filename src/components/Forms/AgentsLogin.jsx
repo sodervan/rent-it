@@ -84,7 +84,7 @@ const AgentLogin = () => {
 
         // Use window.location instead of navigate
         window.location.href = targetRoute;
-      }, 1500); // Match the toast duration
+      }, 1000); // Match the toast duration
 
     } catch (error) {
       console.error("Login Error:", error);

@@ -31,7 +31,7 @@ const ProtectedRoute = ({ children, allowedRoles, redirectPath }) => {
     return <div>Loading...</div>;
   }
 
-  if (!tokenData || !allowedRoles.includes(tokenData.role)) {
+  if (!tokenData || !allowedRoles.includes(tokenData?.role)) {
     return <Navigate to={redirectPath} replace />;
   }
 

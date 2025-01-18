@@ -46,14 +46,14 @@ const FurnishingState = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-          `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/billTags?id=${storedDetails.listingId}`,
+          `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/billTags`,
           { billTagsIds: selectedTags },
           { withCredentials: true }, // Include cookies in the request
       );
 
       console.log("Post Bills Response:", response); // Log the full response
 
-      if (response.status === 200) {
+      if (response.data.status === "success") {
         console.log("Success:", response.data);
         toast.success("Bills saved successfully!"); // Success toast
         setTimeout(() => navigate("/agent/addlisting/9"), 500);

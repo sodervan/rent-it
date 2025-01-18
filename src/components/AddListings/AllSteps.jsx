@@ -37,7 +37,7 @@ const AllSteps = () => {
     <>
       <div className="mt-24 flex gap-5">
         <SideBar activeStep={parseInt(step)} steps={steps} />
-        <div className="md:ml-[26%] px-6 w-full max-w-[900px]">
+        <div className="md:ml-[26%] w-full max-w-[900px]">
           {step == 1 && <BasicDetails />}
           {step == 2 && <CostBreakdown />}
           {step == 3 && <CostBreakdownPreview />}

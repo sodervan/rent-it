@@ -44,7 +44,7 @@ const MainLayout = () => {
 
   return (
     <>
-      {tokenData?.role ==="agent" ? navbar : ""}
+      {!isInRenterDash ? navbar : ""}
       <Outlet />
     </>
   );

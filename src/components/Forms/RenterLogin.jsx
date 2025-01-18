@@ -126,8 +126,6 @@ const RenterSignup = () => {
         progress: undefined,
       });
 
-      await fetchRenterDetails(response.data.payload.accessToken);
-
       setTimeout(() => {
         window.location.href = "/renter/dashboard";
       }, 500);

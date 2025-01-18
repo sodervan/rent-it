@@ -243,7 +243,7 @@ const BasicDetails = () => {
               onChange={handleAddressChange}
             />
 
-            {/*SELECT STATE*/}u
+            {/*SELECT STATE*/}
             <div className="relative w-full mt-4">
               <p className="mb-2 text-gray-700">State</p>
               <Select

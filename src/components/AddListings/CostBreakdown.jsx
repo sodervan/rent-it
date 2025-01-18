@@ -14,28 +14,33 @@ const CostBreakdown = () => {
   const navigate = useNavigate();
   const [feesTypes, setFeesTypes] = useState([]);
   const [selectedFeeType, setSelectedFeeType] = useState("");
-  const [baseRentFee, setBaseRentFee] = useState(0);
-  const [agentFee, setAgentFee] = useState(0);
-  const [legalFee, setLegalFee] = useState(0);
-  const [rentFeeDeposit, setRentFeeDeposit] = useState(0);
-  const [basicDetails, setBasicDetails] = useState({});
+  const [baseRentFee, setBaseRentFee] = useState("");
+  const [agentFee, setAgentFee] = useState("0");
+  const [legalFee, setLegalFee] = useState("0");
+  const [rentFeeDeposit, setRentFeeDeposit] = useState("");
   const [loading, setLoading] = useState(false);
   const apiUrl = import.meta.env.VITE_API_URL;
+
+  // Calculate Agent Fee (10% of Base Rent Fee) and Legal Fee (12.5% of Base Rent Fee)
+  useEffect(() => {
+    if (baseRentFee > 0) {
+      const agentFeeValue = baseRentFee * 0.1; // 10% of Base Rent Fee
+      const legalFeeValue = baseRentFee * 0.125; // 12.5% of Base Rent Fee
+      setAgentFee(agentFeeValue);
+      setLegalFee(legalFeeValue);
+    } else {
+      setAgentFee(0);
+      setLegalFee(0);
+    }
+  }, [baseRentFee]);
 
   const handleRentFeeDeposit = (e) => {
     setRentFeeDeposit(e.target.value);
   };
 
-  const handleLegalFee = (e) => {
-    setLegalFee(e.target.value);
-  };
-
-  const handleAgentFee = (e) => {
-    setAgentFee(e.target.value);
-  };
-
   const handleBaseRentFee = (e) => {
-    setBaseRentFee(e.target.value);
+    const value = parseFloat(e.target.value) || 0;
+    setBaseRentFee(value);
   };
 
   // SEND FEES DETAILS TO THE API
@@ -47,25 +52,27 @@ const CostBreakdown = () => {
       if (!storedDetails || !storedDetails.listingId) {
         throw new Error("Invalid basicDetails or listingId missing.");
       }
+
+      // Convert numeric values to strings
       const data = {
-        baseCost: baseRentFee,
-        minBaseCostDeposit: rentFeeDeposit,
+        baseCost: String(baseRentFee), // Convert to string
+        minBaseCostDeposit: String(rentFeeDeposit), // Convert to string
         fees: [
           {
             feesTypeId: 1,
-            amount: agentFee,
+            amount: String(agentFee), // Convert to string
           },
           {
             feesTypeId: 2,
-            amount: legalFee,
+            amount: String(legalFee), // Convert to string
           },
         ],
       };
 
       const response = await axios.post(
-        `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/fees`,
-        data,
-        { withCredentials: true },
+          `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/fees`,
+          data,
+          { withCredentials: true },
       );
 
       console.log("API Response:", response); // Log the full response
@@ -73,8 +80,8 @@ const CostBreakdown = () => {
       if (response.data.status === "success") {
         toast.success("Fees details saved successfully!");
         localStorage.setItem(
-          "feesDetails",
-          JSON.stringify(response.data.payload),
+            "feesDetails",
+            JSON.stringify(response.data.payload),
         );
 
         setTimeout(() => {
@@ -85,7 +92,7 @@ const CostBreakdown = () => {
       console.error("API Error:", error); // Log the full error object
       console.error("Error Response Data:", error.response?.data); // Log the error response data
       toast.error(
-        error.response?.data?.message ||
+          error.response?.data?.message ||
           "An error occurred while saving fees details.",
       );
     } finally {
@@ -143,7 +150,9 @@ const CostBreakdown = () => {
             <Input
               label="NGN"
               className="mb-2"
-              onChange={(e) => handleBaseRentFee(e)}
+              type="number"
+              value={baseRentFee}
+              onChange={handleBaseRentFee}
             />
             <div className="relative w-full mt-2">
               <Select
@@ -161,19 +170,33 @@ const CostBreakdown = () => {
           {/*AGENT FEE*/}
           <div className="my-3">
             <p className="text-gray-700 mb-2">Agent Fee</p>
-            <Input label="NGN" onChange={handleAgentFee} />
+            <Input
+              label="NGN"
+              value={`N ${agentFee.toLocaleString()}`} // Display as formatted string
+              disabled // Disable the input field
+            />
             <p className="text-gray-700 text-sm">10% of annual rent fee</p>
           </div>
+
           {/*LEGAL FEE*/}
           <div className="my-3">
             <p className="text-gray-700 mb-2">Legal Fee</p>
-            <Input label="NGN" onChange={handleLegalFee} />
+            <Input
+              label="NGN"
+              value={`N ${legalFee.toLocaleString()}`} // Display as formatted string
+              disabled // Disable the input field
+            />
             <p className="text-gray-700 text-sm">12.5% of annual rent fee</p>
           </div>
           {/*RENT FEE DEPOSIT*/}
           <div className="my-3">
-            <p className="text-gray-700 mb-2">Rent Fee Deposit(Optional)</p>
-            <Input label="NGN" onChange={handleRentFeeDeposit} />
+            <p className="text-gray-700 mb-2">Rent Fee Deposit (Optional)</p>
+            <Input
+              label="NGN"
+              type="number"
+              value={rentFeeDeposit}
+              onChange={handleRentFeeDeposit}
+            />
             <p className="text-gray-700 text-sm">
               This is the minimum amount to secure the apartment
             </p>

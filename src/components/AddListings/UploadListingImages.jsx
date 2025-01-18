@@ -153,17 +153,10 @@ const UploadListingImages = () => {
       <div className="mt-22 px-6">
         <div className="flex items-center justify-between border-b border-gray-200 pb-4">
           <p className="text-xl font-medium">Add New Listing</p>
-          <Button
-              className="bg-secondaryPurple text-primaryPurple font-medium"
-              onClick={uploadImages}
-              disabled={loading}
-          >
-            {loading ? <Spinner className="h-4 w-4"/> : "Upload All"}
-          </Button>
         </div>
 
         <p className="mt-4 text-lg font-medium">Upload Listing Images</p>
-        <p className="mt-4 text-lg font-medium">At least 4 images in total</p>
+        <p className="mb-2 mt-4 text-md text-gray-700 font-medium">** At least 4 images in total</p>
         <p className="text-sm text-gray-500 mb-4">
           Organize images under tags. Drag to rearrange or place cover image on
           top.

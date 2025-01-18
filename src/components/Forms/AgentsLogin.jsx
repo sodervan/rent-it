@@ -78,12 +78,10 @@ const AgentLogin = () => {
       // Wait for toast to be visible
       setTimeout(() => {
         // Store the target route in sessionStorage
-        const targetRoute = result.payload?.isRegistrationComplete
+        window.location.href = result.payload?.isRegistrationComplete
             ? "/agent/dashboard"
             : `/agent/agentregistration/${result.payload.registrationStep}`;
 
-        // Use window.location instead of navigate
-        window.location.href = targetRoute;
       }, 1000); // Match the toast duration
 
     } catch (error) {

@@ -29,6 +29,7 @@ function RenterDashPage() {
       navigate("/renter/login");
     }
     console.log(tokenData);
+    navigate("/renter/dashboard/home", { replace: true });
   }, [tokenData, isLoading, navigate]);
 
   const [opened, setOpened] = useAtom(sideBarAtom);
@@ -36,8 +37,7 @@ function RenterDashPage() {
   // Updated logout function
   const handleLogout = () => {
     clearToken(); // Call the clearToken function to clear the token and cookie
-    window.history.replaceState(null, "", "/renter/login");
-    navigate("/renter/login");
+    window.location.href = "/renter/login";
   };
 
   return (

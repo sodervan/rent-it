@@ -1,6 +1,9 @@
 import { Button, Spinner, Textarea } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import axios from "axios"; // Import Axios
+import { toast } from "react-toastify"; // Optional: For toast notifications
+import Cookies from "js-cookie"; // Optional: For working with cookies
 
 const Description = () => {
   const navigate = useNavigate();
@@ -9,7 +12,6 @@ const Description = () => {
   const apiUrl = import.meta.env.VITE_API_URL;
 
   const handleDescription = (e) => {
-    e.preventDefault();
     setDescription(e.target.value);
   };
 
@@ -17,42 +19,42 @@ const Description = () => {
   const postDescription = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("accessToken");
-      const storedDetails = JSON.parse(localStorage.getItem("basicDetails"));
+      const storedDetails = JSON.parse(localStorage.getItem("basicDetails")); // Get data from cookies
 
       if (!storedDetails || !storedDetails.listingId) {
         throw new Error("Invalid basicDetails or listingId missing.");
       }
+
       const data = {
         description: description,
       };
 
-      const response = await fetch(
-        `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/description?id=${storedDetails.listingId}`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        },
+      const response = await axios.post(
+        `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/description`,
+        data,
+        { withCredentials: true }, // Include cookies in the request
       );
 
-      if (response.ok) {
-        const result = await response.json();
-        console.log("Success:", result);
-        localStorage.setItem("descriptionDetails", description);
+      if (response.data.status === "success") {
+        console.log("Success:", response.data);
+        localStorage.setItem("descriptionDetails", description); // Store description in cookies (optional)
+        toast.success("Description saved successfully!"); // Optional: Show success toast
+
         setTimeout(() => {
           navigate("/agent/addlisting/5");
         }, 500);
       }
     } catch (error) {
       console.error("Error:", error);
+      toast.error(
+        error.response?.data?.message ||
+          "An error occurred while saving the description.",
+      ); // Optional: Show error toast
     } finally {
       setLoading(false);
     }
   };
+
   return (
     <>
       <div>
@@ -98,9 +100,7 @@ const Description = () => {
                     : "bg-primaryPurple text-white w-full text-[15px] font-poppins flex justify-center items-center"
                 }`}
                 disabled={loading}
-                onClick={() => {
-                  postDescription()
-                }}
+                onClick={postDescription}
               >
                 {loading ? <Spinner className="h-4 w-4" /> : "Proceed"}
               </Button>

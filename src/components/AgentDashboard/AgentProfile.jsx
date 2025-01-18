@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { IconEdit } from "@tabler/icons-react";
 import { toast } from "react-toastify";
 import { Spinner } from "@material-tailwind/react";
+import useTokenData from "../../../TokenHook.js";
 
 const AgentProfile = () => {
   const filePickerRef = useRef();
@@ -20,6 +21,7 @@ const AgentProfile = () => {
   const [isSaveEnabled, setIsSaveEnabled] = useState(false); // Enable/Disable save button
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [loading, setIsLoading] = useState(false);
+  const { clearToken } = useTokenData();
   const apiUrl = import.meta.env.VITE_API_URL;
 
   const toggleTab = (index) => setToggleState(index);
@@ -78,7 +80,7 @@ const AgentProfile = () => {
   };
 
   const handleLogout = () => {
-    localStorage.clear();
+    clearToken()
   };
 
   // handling profile image update

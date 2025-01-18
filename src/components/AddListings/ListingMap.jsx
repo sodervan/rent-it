@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
 import { Button, Spinner, Input } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import axios from 'axios';
+import { toast } from "react-toastify"; // For toast notifications
+import axios from "axios"; // Import Axios
 
 const containerStyle = {
   width: "100%",
@@ -42,10 +42,9 @@ const ListingLocation = () => {
   useEffect(() => {
     const fetchLocationData = async () => {
       const storedDetails = JSON.parse(localStorage.getItem("basicDetails"));
-      const token = localStorage.getItem("accessToken");
 
-      if (!storedDetails?.listingId || !token) {
-        setError("Missing listing details or authentication");
+      if (!storedDetails?.listingId) {
+        setError("Missing listing details");
         return;
       }
 
@@ -53,25 +52,14 @@ const ListingLocation = () => {
       setError(null);
 
       try {
-        const response = await fetch(
+        const response = await axios.get(
           `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/location`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          },
+          { withCredentials: true }, // Include cookies in the request
         );
 
-        if (!response.ok) {
-          throw new Error(
-            `Failed to fetch location data: ${response.statusText}`,
-          );
-        }
+        console.log("Location Data Response:", response); // Log the full response
 
-        const data = await response.json();
-        console.log(data);
+        const data = response.data;
 
         if (
           !data.payload ||
@@ -122,8 +110,10 @@ const ListingLocation = () => {
           await fetchLandmarks(geocodedLocation.lat, geocodedLocation.lng);
         }
       } catch (err) {
-        console.error("Error fetching location data:", err);
+        console.error("Error fetching location data:", err); // Log the full error object
+        console.error("Error Response Data:", err.response?.data); // Log the error response data
         setError(err.message || "Failed to fetch location data");
+        toast.error("Failed to fetch location data. Please try again."); // Error toast
       } finally {
         setIsLoading(false);
       }
@@ -246,58 +236,41 @@ const ListingLocation = () => {
 
   const handleSubmit = async () => {
     setIsSaving(true);
-    const token = localStorage.getItem("accessToken");
     const storedDetails = JSON.parse(localStorage.getItem("basicDetails"));
-    console.log(token, "token token", storedDetails.listingId);
-    console.log(formData.transportation);
 
     try {
       const response = await axios.put(
-          `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/location`,
-          {
-            streetAddress: locationData.streetAddress || "",
-            localGovernmentAreaId: locationData.localGovernmentArea?.id,
-            stateId: locationData.state?.id,
-            cityId: locationData.city?.id,
-            countryId: locationData.country?.id,
-            coordinates: {
-              x: locationData.lng,
-              y: locationData.lat,
-            },
-            postalCode: formData.postalCode,
-            transportation: formData.transportation,
-            healthFacilities: formData.healthFacilities,
-            educationalInstitutions: formData.educationalInstitutions,
+        `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/location`,
+        {
+          streetAddress: locationData.streetAddress || "",
+          localGovernmentAreaId: locationData.localGovernmentArea?.id,
+          stateId: locationData.state?.id,
+          cityId: locationData.city?.id,
+          countryId: locationData.country?.id,
+          coordinates: {
+            x: locationData.lng,
+            y: locationData.lat,
           },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
+          postalCode: formData.postalCode,
+          transportation: formData.transportation,
+          healthFacilities: formData.healthFacilities,
+          educationalInstitutions: formData.educationalInstitutions,
+        },
+        { withCredentials: true }, // Include cookies in the request
       );
 
-      // Success logging
-      console.log("Success Response:", response.data);
-      console.log("Status Code:", response.status);
-      console.log("Status Text:", response.statusText);
-      console.log("Full Response:", response);
-
-      toast.success("Success");
+      console.log("Success Response:", response.data); // Log the full response
+      toast.success("Location data saved successfully!"); // Success toast
       setTimeout(() => {
         navigate("/agent/addlisting/12");
       }, 500);
     } catch (err) {
-      // Error logging
-      console.log("Error Response:", err.response?.data);
-      console.log("Error Status:", err.response?.status);
-      console.log("Error Message:", err.message);
-      console.log("Full Error:", err);
-
-      // Show the specific validation error message from the API
-      const errorMessage = err.response?.data?.message || "An error occurred";
-      setError(errorMessage);
-      toast.error(errorMessage);
+      console.error("Error saving location data:", err); // Log the full error object
+      console.error("Error Response Data:", err.response?.data); // Log the error response data
+      toast.error(
+        err.response?.data?.message ||
+          "An error occurred while saving location data.",
+      ); // Error toast
     } finally {
       setIsSaving(false);
     }
@@ -382,8 +355,11 @@ const ListingLocation = () => {
               Loading Google Map...
             </p>
           )}
+
           {/* Landmark Forms */}
-          <p className="text-center mt-7 font-medium text-gray-700">Please Fill in Nearby LandMarks</p>
+          <p className="text-center mt-7 font-medium text-gray-700">
+            Please Fill in Nearby Landmarks
+          </p>
           <div className="mt-2 bg-white rounded-lg shadow-sm p-4">
             <div className="mb-4">
               <Input

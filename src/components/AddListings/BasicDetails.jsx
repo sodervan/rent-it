@@ -6,9 +6,10 @@ import {
   Spinner,
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
-import {IconPlus, IconX} from "@tabler/icons-react";
+import { IconPlus, IconX } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 const BasicDetails = () => {
   const navigate = useNavigate();
@@ -18,24 +19,21 @@ const BasicDetails = () => {
   const [selectedState, setSelectedState] = useState("");
   const [cities, setCities] = useState([]);
   const [selectedCity, setSelectedCity] = useState("");
-  const [accessToken, setAccessToken] = useState("");
   const [units, setUnits] = useState(1);
   const [description, setDescription] = useState("");
   const [address, setAddress] = useState("");
-  const [lgas, setLgas] = useState("");
+  const [lgas, setLgas] = useState([]);
   const [currentLgas, setCurrentLgas] = useState("");
   const [loading, isLoading] = useState(false);
   const apiUrl = import.meta.env.VITE_API_URL;
 
   const handleDescriptionChange = (e) => {
     setDescription(e.target.value);
-    console.log(description);
   };
 
   const handleAddressChange = (e) => {
     e.preventDefault();
     setAddress(e.target.value);
-    console.log(address);
   };
 
   const handleUnitsChange = (e) => {
@@ -50,142 +48,105 @@ const BasicDetails = () => {
     setUnits((prevUnits) => Math.max(1, prevUnits - 1));
   };
 
-  const getApartmentTypes = async (token) => {
+  const getApartmentTypes = async () => {
     try {
-      const response = await fetch(
+      const response = await axios.get(
         `${apiUrl}/api/v1/agents/listings-attributes/apartmentTypes`,
-        {
-          method: "GET",
-          headers: { Authorization: `Bearer ${token}` },
-        },
+        { withCredentials: true },
       );
-      if (response.ok) {
-        const result = await response.json();
-        console.log(result);
-        setAppTypes(result.payload?.data || []);
-      } else {
-        console.log("Failed to fetch apartment types");
-      }
+      setAppTypes(response.data.payload?.data || []);
     } catch (error) {
-      console.log("Error fetching apartment types:", error);
+      console.error("Error fetching apartment types:", error);
+      toast.error("Failed to fetch apartment types");
     }
   };
 
-  const getStates = async (token) => {
+  const getStates = async () => {
     try {
-      const response = await fetch(
+      const response = await axios.get(
         `${apiUrl}/api/v1/agents/listings-attributes/location/states?country_id=1`,
-        {
-          method: "GET",
-          headers: { Authorization: `Bearer ${token}` },
-        },
+        { withCredentials: true },
       );
-      if (response.ok) {
-        const result = await response.json();
-        setStates(result.payload || []);
-      } else {
-        console.log("Failed to fetch states");
-      }
+      setStates(response.data.payload || []);
     } catch (error) {
-      console.log("Error fetching states:", error);
+      console.error("Error fetching states:", error);
+      toast.error("Failed to fetch states");
     }
   };
-  // POST BASIC DETAILS
+
   const postBasicDetails = async () => {
     isLoading(true);
     try {
-      const response = await fetch(
+      const response = await axios.post(
         `${apiUrl}/api/v1/agents/listings/basic-details`,
         {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
-          body: JSON.stringify({
-            title: description,
-            apartmentTypeId: parseInt(selectedAppType),
-            streetAddress: address,
-            cityId: selectedCity,
-            localGovernmentAreaId: parseInt(currentLgas),
-            stateId: parseInt(selectedState),
-            units: units,
-          }),
+          title: description,
+          apartmentTypeId: parseInt(selectedAppType),
+          streetAddress: address,
+          cityId: selectedCity,
+          localGovernmentAreaId: parseInt(currentLgas),
+          stateId: parseInt(selectedState),
+          units: units,
+        },
+        {
+          withCredentials: true,
+          headers: { "Content-Type": "application/json" },
         },
       );
-      if (response.ok) {
-        const result = await response.json();
-        toast.success("Success")
-        if (result) {
-          localStorage.setItem("basicDetails", JSON.stringify(result.payload));
-        }
-        setTimeout(() => {
-          navigate("/agent/addlisting/2");
-        }, 500);
-      } else {
-        console.log("Failed to update");
+
+      toast.success("Success");
+      if (response.data) {
+        localStorage.setItem(
+          "basicDetails",
+          JSON.stringify(response.data.payload),
+        );
       }
+      setTimeout(() => {
+        navigate("/agent/addlisting/2");
+      }, 500);
     } catch (error) {
-      toast.error("Error updating listing:", error);
+      console.error("Error updating listing:", error);
+      toast.error(error.response?.data?.message || "Error updating listing");
     } finally {
       isLoading(false);
     }
   };
-// GET CITIES
-  const getCities = async (stateId, token) => {
+
+  const getCities = async (stateId) => {
     try {
-      const response = await fetch(
+      const response = await axios.get(
         `${apiUrl}/api/v1/agents/listings-attributes/location/cities?state_id=${stateId}`,
-        {
-          method: "GET",
-          headers: { Authorization: `Bearer ${token}` },
-        },
+        { withCredentials: true },
       );
-      if (response.ok) {
-        const result = await response.json();
-        setCities(result.payload || []);
-      } else {
-        console.log("Failed to fetch cities");
-      }
+      setCities(response.data.payload || []);
     } catch (error) {
-      console.log("Error fetching cities:", error);
+      console.error("Error fetching cities:", error);
+      toast.error("Failed to fetch cities");
     }
   };
 
-  const getLgas = async (stateId, token) => {
+  const getLgas = async (stateId) => {
     try {
-      const response = await fetch(
+      const response = await axios.get(
         `${apiUrl}/api/v1/agents/listings-attributes/location/lgas?state_id=${stateId}`,
-        {
-          method: "GET",
-          headers: { Authorization: `Bearer ${token}` },
-        },
+        { withCredentials: true },
       );
-      if (response.ok) {
-        const result = await response.json();
-        setLgas(result.payload || []);
-      } else {
-        console.log("Failed to fetch cities");
-      }
+      setLgas(response.data.payload || []);
     } catch (error) {
-      console.log("Error fetching cities:", error);
+      console.error("Error fetching LGAs:", error);
+      toast.error("Failed to fetch LGAs");
     }
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-    setAccessToken(token);
-    if (token) {
-      getApartmentTypes(token);
-      getStates(token);
-    }
+    getApartmentTypes();
+    getStates();
   }, []);
 
   const handleStateChange = (stateId) => {
     setSelectedState(stateId);
-    const token = localStorage.getItem("accessToken");
-    getCities(stateId, token);
-    getLgas(stateId, token);
+    getCities(stateId);
+    getLgas(stateId);
   };
 
   return (
@@ -202,7 +163,7 @@ const BasicDetails = () => {
             <p className="text-gray-500 mt-2 font-medium">Step 1 of 15</p>
             <p className="mt-2 text-lg">Basic Details</p>
           </div>
-          {/*LISTING TIT  LE*/}
+          {/*LISTING TITLE*/}
           <div className="mt-6">
             <p className="mb-2 text-gray-700">Listing Title</p>
             <Input
@@ -221,16 +182,12 @@ const BasicDetails = () => {
             </p>
           </div>
 
-          {/*SET APPARTMENT TYPE*/}
-
+          {/*SET APARTMENT TYPE*/}
           <div className="my-5">
             <p className="mb-1 text-gray-700">Apartment Type</p>
             <div className="relative w-full">
               <Select
-                onChange={(e) => {
-                  setSelectedAppType(e);
-                  console.log(e);
-                }}
+                onChange={(e) => setSelectedAppType(e)}
                 label="Select Type"
               >
                 {appTypes.length > 0 ? (
@@ -247,7 +204,6 @@ const BasicDetails = () => {
           </div>
 
           {/*SET UNITS*/}
-
           <div>
             <p className="text-gray-700 mb-2">Units Available</p>
             <div className="relative flex w-full items-center gap-2">
@@ -266,21 +222,20 @@ const BasicDetails = () => {
                   className="rounded bg-secondaryPurple text-primaryPurple shadow-none"
                   onClick={handleUnitsAdd}
                 >
-                  <IconPlus size={15}/>
+                  <IconPlus size={15} />
                 </Button>
                 <Button
                   size="sm"
                   className="rounded bg-secondaryPurple text-primaryPurple shadow-none"
                   onClick={handleUnitsSubtract}
                 >
-                  <IconX size={15}/>
+                  <IconX size={15} />
                 </Button>
               </div>
             </div>
           </div>
 
           {/*ADDRESS*/}
-
           <div className="mt-5">
             <p className="mb-2 text-gray-700">Address</p>
             <Input
@@ -288,16 +243,12 @@ const BasicDetails = () => {
               onChange={handleAddressChange}
             />
 
-            {/*SELECT STATE*/}
-
+            {/*SELECT STATE*/}u
             <div className="relative w-full mt-4">
               <p className="mb-2 text-gray-700">State</p>
               <Select
                 label="Select State"
-                onChange={(e) => {
-                  handleStateChange(parseInt(e));
-                  console.log(e);
-                }}
+                onChange={(e) => handleStateChange(parseInt(e))}
               >
                 {states.length > 0 ? (
                   states.map((state) => (
@@ -312,16 +263,9 @@ const BasicDetails = () => {
             </div>
 
             {/*SELECT LGAS*/}
-
             <div className="relative w-full mt-4">
               <p className="mb-2 text-gray-700">LGA</p>
-              <Select
-                label="Select LGA"
-                onChange={(e) => {
-                  setCurrentLgas(e);
-                  console.log(e);
-                }}
-              >
+              <Select label="Select LGA" onChange={(e) => setCurrentLgas(e)}>
                 {lgas.length > 0 ? (
                   lgas.map((lga) => (
                     <Option key={lga.id} value={String(lga.id)}>
@@ -329,13 +273,12 @@ const BasicDetails = () => {
                     </Option>
                   ))
                 ) : (
-                  <Option disabled>No LGAS available</Option>
+                  <Option disabled>No LGAs available</Option>
                 )}
               </Select>
             </div>
 
             {/*SELECT CITY*/}
-
             <div className="relative w-full mt-4">
               <p className="my-2 text-gray-700">City</p>
               <Select onChange={(e) => setSelectedCity(e)} label="Select City">
@@ -350,6 +293,7 @@ const BasicDetails = () => {
                 )}
               </Select>
             </div>
+
             <div className="my-8">
               <Button
                 className={`${
@@ -358,9 +302,7 @@ const BasicDetails = () => {
                     : "bg-primaryPurple text-white w-full text-[15px] font-poppins flex justify-center items-center"
                 }`}
                 disabled={loading}
-                onClick={() => {
-                  postBasicDetails();
-                }}
+                onClick={postBasicDetails}
               >
                 {loading ? <Spinner className="h-4 w-4" /> : "Proceed"}
               </Button>

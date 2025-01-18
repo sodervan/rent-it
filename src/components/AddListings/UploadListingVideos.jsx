@@ -1,7 +1,8 @@
 import { Button, Spinner } from "@material-tailwind/react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify"; // For toast notifications
+import axios from "axios"; // Import Axios
 
 const MAX_TOTAL_SIZE_MB = 8;
 const MAX_VIDEO_COUNT = 2;
@@ -19,12 +20,12 @@ const UploadListingVideos = ({ listingId }) => {
       fileSizeMB;
 
     if (videos.length >= MAX_VIDEO_COUNT) {
-      alert(`You can upload a maximum of ${MAX_VIDEO_COUNT} videos.`);
+      toast.error(`You can upload a maximum of ${MAX_VIDEO_COUNT} videos.`);
       return;
     }
 
     if (totalSizeMB > MAX_TOTAL_SIZE_MB) {
-      alert(
+      toast.error(
         `The total size of uploaded videos must not exceed ${MAX_TOTAL_SIZE_MB} MB.`,
       );
       return;
@@ -47,7 +48,7 @@ const UploadListingVideos = ({ listingId }) => {
     if (file) {
       const isValidType = ["video/mp4", "video/avi"].includes(file.type);
       if (!isValidType) {
-        alert("Only MP4 and AVI formats are supported.");
+        toast.error("Only MP4 and AVI formats are supported.");
         return;
       }
       handleVideoUpload(file);
@@ -64,7 +65,7 @@ const UploadListingVideos = ({ listingId }) => {
     if (file) {
       const isValidType = ["video/mp4", "video/avi"].includes(file.type);
       if (!isValidType) {
-        alert("Only MP4 and AVI formats are supported.");
+        toast.error("Only MP4 and AVI formats are supported.");
         return;
       }
       handleVideoUpload(file);
@@ -72,12 +73,10 @@ const UploadListingVideos = ({ listingId }) => {
   };
 
   const uploadVideos = async () => {
-    const storedDetails = JSON.parse(localStorage.getItem("basicDetails"));
-    const token = localStorage.getItem("accessToken");
-    console.log(token, storedDetails);
+    const storedDetails = JSON.parse(localStorage.getItem("basicDetails")); // Keep localStorage for storedDetails
 
     if (videos.length === 0) {
-      alert("Please upload at least one video before saving.");
+      toast.error("Please upload at least one video before saving.");
       return;
     }
 
@@ -89,29 +88,35 @@ const UploadListingVideos = ({ listingId }) => {
     });
 
     try {
-      const response = await fetch(
-        `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/video?id=${storedDetails.listingId}`,
+      const response = await axios.post(
+        `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/video`,
+        formData,
         {
-          method: "POST",
-          body: formData,
+          withCredentials: true, // Include cookies in the request
           headers: {
-            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
           },
         },
       );
-      if (response.ok) {
+
+      console.log("Upload Response:", response); // Log the full response
+
+      if (response.data.status === "success") {
         toast.success("Videos uploaded successfully!");
         setVideos([]);
         setTimeout(() => {
           navigate("/agent/addlisting/11");
         }, 500);
       } else {
-        const errorData = await response.json();
-        toast.error(`Upload failed: ${errorData.message}`);
+        toast.error(`Upload failed: ${response.data.message}`);
       }
     } catch (error) {
-      console.error("Error uploading videos:", error);
-      toast.error("An error occurred while uploading videos.");
+      console.error("Error uploading videos:", error); // Log the full error object
+      console.error("Error Response Data:", error.response?.data); // Log the error response data
+      toast.error(
+        error.response?.data?.message ||
+          "An error occurred while uploading videos.",
+      );
     } finally {
       setIsUploading(false);
     }

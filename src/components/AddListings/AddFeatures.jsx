@@ -1,13 +1,12 @@
 import { Button, Spinner } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import axios from "axios"; // Import Axios
+import { toast } from "react-toastify"; // For toast notifications
 import LoaderTwo from "../Loaders/LoaderTwo.jsx";
 
 const FurnishingState = () => {
   const navigate = useNavigate();
-  const [accessToken, setAccessToken] = useState(
-    localStorage.getItem("accessToken") || "",
-  );
   const [tags, setTags] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -15,64 +14,59 @@ const FurnishingState = () => {
   const [loading, setLoading] = useState(false);
   const apiUrl = import.meta.env.VITE_API_URL;
 
+  // GET FEATURES TAGS FROM THE API
   const getFeaturesTags = async (page = 1) => {
-    if (!accessToken) return; // Avoid fetching without a token
     try {
       setIsLoading(true);
-      const response = await fetch(
+      const response = await axios.get(
         `${apiUrl}/api/v1/agents/listings-attributes/featuresTags?page=${page}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-        },
+        { withCredentials: true }, // Include cookies in the request
       );
-      if (response.ok) {
-        const result = await response.json();
-        setTags(result?.payload?.data || []);
+
+      if (response.status === 200) {
+        setTags(response.data?.payload?.data || []);
       } else {
-        console.log(response);
+        console.log("Failed to fetch tags:", response.data);
       }
     } catch (error) {
       console.error("Error fetching tags:", error);
+      toast.error("Failed to fetch tags. Please try again."); // Error toast
     } finally {
       setIsLoading(false);
     }
   };
-  // dtyfez7dk0hw0mocmkobchck
+
+  // POST BASIC FEATURES TO THE API
   const postBasicFeatures = async () => {
-    const storedDetails = JSON.parse(localStorage.getItem("basicDetails"));
+    const storedDetails = JSON.parse(localStorage.getItem("basicDetails")); // Keep localStorage for storedDetails
     setLoading(true);
     try {
-      const response = await fetch(
-        `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/featureTags?id=${storedDetails.listingId}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
-          body: JSON.stringify({
-            featureTagsIds: selectedTags,
-          }),
-        },
+      const response = await axios.post(
+        `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/featureTags`,
+        { featureTagsIds: selectedTags },
+        { withCredentials: true }, // Include cookies in the request
       );
-      if (response.ok) {
-        const result = await response.json();
-        console.log(result);
+      console.log(response)
+      if (response.data.status === "success") {
+        console.log("Success:", response.data);
+        toast.success("Features saved successfully!"); // Success toast
         setTimeout(() => navigate("/agent/addlisting/8"), 500);
       } else {
         console.error("Failed to post featureTags");
+        toast.error("Failed to save features. Please try again."); // Error toast
       }
     } catch (error) {
       console.error("Error posting featureTags:", error);
+      toast.error(
+        error.response?.data?.message ||
+          "An error occurred while saving features.",
+      ); // Error toast
     } finally {
       setLoading(false);
     }
   };
 
+  // TOGGLE TAG SELECTION
   const toggleTagSelection = (tagId) => {
     setSelectedTags((prev) =>
       prev.includes(tagId)
@@ -81,9 +75,10 @@ const FurnishingState = () => {
     );
   };
 
+  // FETCH TAGS ON COMPONENT MOUNT AND PAGE CHANGE
   useEffect(() => {
-    if (accessToken) getFeaturesTags(currentPage);
-  }, [accessToken, currentPage]);
+    getFeaturesTags(currentPage);
+  }, [currentPage]);
 
   return (
     <div className="bg-gray-50 p-6 rounded-lg shadow-md">

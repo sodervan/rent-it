@@ -4,38 +4,47 @@ import Navbar from "@/components/Navbar";
 import AgentNavbar from "@/components/AgentNavbar";
 import { Outlet } from "react-router-dom";
 import AgentRegistrationNavBar from "@/components/AgentRegistrationNavBar.jsx";
+import useTokenData from "../../TokenHook.js";
 
 const MainLayout = () => {
-  const [accountType, setAccountType] = useState(null);
   const location = useLocation();
+  const { tokenData, isLoading } = useTokenData();
 
   // Check if current path matches specific conditions
   const isVerificationPage = location.pathname.includes(
-      "/user/verificationemail"
+    "/user/verificationemail",
   );
   const isAgentRegistration = location.pathname.includes(
-      "/agent/agentregistration"
+    "/agent/agentregistration",
   );
 
-  useEffect(() => {
-    const accountTypeFromStorage = localStorage.getItem("accountType");
-    setAccountType(accountTypeFromStorage);
-  }, [location.pathname]);
-
-  return (
+  // Show loading or default navbar while token is being verified
+  if (isLoading) {
+    return (
       <>
-        {/* Render the appropriate navbar */}
-        {!isVerificationPage && (
-            isAgentRegistration ? (
-                <AgentRegistrationNavBar />
-            ) : accountType === "agent" ? (
-                <AgentNavbar />
-            ) : (
-                <Navbar />
-            )
-        )}
+        {!isVerificationPage && <Navbar />}
         <Outlet />
       </>
+    );
+  }
+
+  // Determine which navbar to render based on verified token and path
+  let navbar = null;
+  if (!isVerificationPage) {
+    if (isAgentRegistration) {
+      navbar = <AgentRegistrationNavBar />;
+    } else if (tokenData?.role === "agent") {
+      navbar = <AgentNavbar />;
+    } else {
+      navbar = <Navbar />;
+    }
+  }
+
+  return (
+    <>
+      {navbar}
+      <Outlet />
+    </>
   );
 };
 

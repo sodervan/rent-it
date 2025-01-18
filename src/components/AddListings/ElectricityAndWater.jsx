@@ -8,6 +8,9 @@ import {
 } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import axios from "axios"; // Import Axios
+import { toast } from "react-toastify"; // For toast notifications
+import Cookies from "js-cookie"; // For working with cookies
 
 const ElectricityAndWater = () => {
   const navigate = useNavigate();
@@ -25,17 +28,17 @@ const ElectricityAndWater = () => {
         : [...prev, label],
     );
   };
+
   // POST ELECTRICITY AND WATER DETAILS TO THE API
   const postElecAndWater = async () => {
     setLoading(true);
-    console.log(paymentType, accessType, waterSupply, furnishingState);
     try {
-      const token = localStorage.getItem("accessToken");
-      const storedDetails = JSON.parse(localStorage.getItem("basicDetails"));
+      const storedDetails = JSON.parse(localStorage.getItem("basicDetails")); // Get data from cookies
 
       if (!storedDetails || !storedDetails.listingId) {
         throw new Error("Invalid basicDetails or listingId missing.");
       }
+
       const data = {
         electricityPaymentType: paymentType.toLowerCase(),
         electricityAccessType: accessType.toLowerCase(),
@@ -46,32 +49,31 @@ const ElectricityAndWater = () => {
         ),
         furnishingState: furnishingState.toLowerCase(),
       };
-      console.log(data);
-      const response = await fetch(
-        `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/features?id=${storedDetails.listingId}`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        },
+
+      const response = await axios.post(
+        `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/features`,
+        data,
+        { withCredentials: true }, // Include cookies in the request
       );
 
-      if (response.ok) {
-        const result = await response.json();
-        console.log("Success:", result);
+      if (response.data.status === "success") {
+        console.log("Success:", response.data);
+        toast.success("Electricity and water details saved successfully!"); // Success toast
         setTimeout(() => {
           navigate("/agent/addlisting/7");
         }, 500);
       }
     } catch (error) {
       console.error("Error:", error);
+      toast.error(
+        error.response?.data?.message ||
+          "An error occurred while saving details.",
+      ); // Error toast
     } finally {
       setLoading(false);
     }
   };
+
   return (
     <>
       <div>
@@ -190,9 +192,7 @@ const ElectricityAndWater = () => {
                     : "bg-primaryPurple text-white w-full text-[15px] font-poppins flex justify-center items-center"
                 }`}
                 disabled={loading}
-                onClick={() => {
-                  postElecAndWater();
-                }}
+                onClick={postElecAndWater}
               >
                 {loading ? <Spinner className="h-4 w-4" /> : "Proceed"}
               </Button>

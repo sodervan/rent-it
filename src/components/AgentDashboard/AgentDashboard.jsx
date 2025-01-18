@@ -10,6 +10,7 @@ import love from "../../../public/assets/tdesign_heart-filled.svg";
 import { Carousel } from "@material-tailwind/react";
 import Sidebar from "./Sidebar.jsx";
 import ShareModal from "../Modals/ShareModal.jsx";
+import useTokenData from "../../../TokenHook.js";
 // import { Pagination } from "./Components/AgentDashboard/Pagination.jsx";
 // import Sidebar from "./AgentDashboard/Sidebar.jsx";
 
@@ -143,6 +144,7 @@ const AgentDashboard = () => {
   const id = popularLocations?.id;
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [share, setShare] = useState(null);
+  const { tokenData } = useTokenData();
 
   const updateShareState = () => {
     setShare(true);
@@ -152,18 +154,14 @@ const AgentDashboard = () => {
   };
   const [agentData, setAgentData] = useState(null); // Use null initially
   const [loading, setLoading] = useState(false);
-  const [agentId, setAgentId] = useState("");
   const apiUrl = import.meta.env.VITE_API_URL;
 
-  const fetchAgentDetails = async (token) => {
+  const fetchAgentDetails = async () => {
     try {
       setLoading(true); // Start loading
 
-      const response = await fetch(`${apiUrl}/api/v1/agents?${agentId}`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`, // Pass token here
-        },
+      const response = await fetch(`${apiUrl}/api/v1/agents`, {
+        credentials: "include",
       });
 
       const result = await response.json();
@@ -183,21 +181,15 @@ const AgentDashboard = () => {
     }
   };
 
-  // useEffect(() => {
-  //   console.log("Updated agentData:", agentData);
-  // }, [agentData]);
-
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-    const agentId = localStorage.getItem("userId");
-    setAgentId(agentId);
-    if (token) {
-      fetchAgentDetails(token); // Fetch agent details only after token is set
-    }
+    fetchAgentDetails();
   }, []);
   return (
     <>
-      <Sidebar firstname={agentData ? agentData.payload.firstname : ""} loading={loading}/>
+      <Sidebar
+        firstname={agentData ? agentData.payload.firstname : ""}
+        loading={loading}
+      />
       <div className={`content lg:ml-[25rem] xl:ml-[23rem] mt-[5rem]`}>
         <div className="">
           {loading ? (

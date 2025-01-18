@@ -1,3 +1,7 @@
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import axios from "axios";
 import {
   Button,
   Input,
@@ -5,9 +9,6 @@ import {
   Select,
   Spinner,
 } from "@material-tailwind/react";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import {toast} from "react-toastify";
 
 const CostBreakdown = () => {
   const navigate = useNavigate();
@@ -22,34 +23,25 @@ const CostBreakdown = () => {
   const apiUrl = import.meta.env.VITE_API_URL;
 
   const handleRentFeeDeposit = (e) => {
-    e.preventDefault();
     setRentFeeDeposit(e.target.value);
-    console.log(rentFeeDeposit);
   };
 
   const handleLegalFee = (e) => {
-    e.preventDefault();
     setLegalFee(e.target.value);
-    console.log(legalFee);
   };
 
   const handleAgentFee = (e) => {
-    e.preventDefault();
     setAgentFee(e.target.value);
-    console.log(agentFee);
   };
 
   const handleBaseRentFee = (e) => {
-    e.preventDefault();
     setBaseRentFee(e.target.value);
-    console.log(baseRentFee);
   };
 
   // SEND FEES DETAILS TO THE API
   const postFeesDetails = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("accessToken");
       const storedDetails = JSON.parse(localStorage.getItem("basicDetails"));
 
       if (!storedDetails || !storedDetails.listingId) {
@@ -70,60 +62,65 @@ const CostBreakdown = () => {
         ],
       };
 
-      const response = await fetch(
-        `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/fees?id=${storedDetails.listingId}`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        },
+      const response = await axios.post(
+        `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/fees`,
+        data,
+        { withCredentials: true },
       );
 
-      if (response.ok) {
-        const result = await response.json();
-        toast.success("Success:", result);
-        localStorage.setItem("feesDetails", JSON.stringify(result.payload));
+      console.log("API Response:", response); // Log the full response
+
+      if (response.data.status === "success") {
+        toast.success("Fees details saved successfully!");
+        localStorage.setItem(
+          "feesDetails",
+          JSON.stringify(response.data.payload),
+        );
 
         setTimeout(() => {
           navigate("/agent/addlisting/3");
         }, 500);
       }
     } catch (error) {
-      toast.error("Error:", error);
+      console.error("API Error:", error); // Log the full error object
+      console.error("Error Response Data:", error.response?.data); // Log the error response data
+      toast.error(
+        error.response?.data?.message ||
+          "An error occurred while saving fees details.",
+      );
     } finally {
       setLoading(false);
     }
   };
 
   // GET FEES TYPES FROM THE API
-  const getFeesTypes = async (token) => {
+  const getFeesTypes = async () => {
     try {
-      const response = await fetch(
+      const response = await axios.get(
         `${apiUrl}/api/v1/agents/listings-attributes/feesTypes`,
-        {
-          method: "GET",
-          headers: { Authorization: `Bearer ${token}` },
-        },
+        { withCredentials: true },
       );
-      if (response.ok) {
-        const result = await response.json();
-        setFeesTypes(result.payload?.data || []);
+
+      console.log("Fees Types Response:", response); // Log the full response
+
+      if (response.status === 200) {
+        setFeesTypes(response.data.payload?.data || []);
       } else {
         console.log("Failed to fetch apartment types");
       }
     } catch (error) {
-      console.log("Error fetching apartment types:", error);
+      console.error("Fees Types Error:", error); // Log the full error object
+      console.error("Error Response Data:", error.response?.data); // Log the error response data
+      toast.error("Failed to fetch fees types. Please try again.");
     }
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-    if (token) {
-      getFeesTypes(token);
-    }
+    getFeesTypes();
+    console.log(
+      "Basic Details from LocalStorage:",
+      JSON.parse(localStorage.getItem("basicDetails")),
+    );
   }, []);
 
   return (
@@ -154,7 +151,6 @@ const CostBreakdown = () => {
                 value={selectedFeeType}
                 onChange={(value) => {
                   setSelectedFeeType(value);
-                  console.log(selectedFeeType);
                 }}
               >
                 <Option>per annum</Option>

@@ -19,7 +19,7 @@ const SessionExpiredModal = ({ isOpen, onConfirm, userRole }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-[200] flex items-center justify-center">
       {/* Animated Overlay */}
       <div
         className="fixed inset-0 bg-black/50 transition-opacity duration-300 ease-in-out"
@@ -70,7 +70,7 @@ const SessionExpiredModal = ({ isOpen, onConfirm, userRole }) => {
               onConfirm();
               window.location.href = loginPath;
             }}
-            className="w-full transform rounded-lg bg-blue-600 px-4 py-2 text-white transition-all duration-200 ease-in-out hover:bg-blue-700 hover:scale-[1.02] active:scale-[0.98]"
+            className="w-full transform rounded-lg bg-primaryPurple px-4 py-2 text-white transition-all duration-200 ease-in-out hover:bg-blue-700 hover:scale-[1.02] active:scale-[0.98]"
             style={{
               animation: "fadeInUp 0.5s ease-out",
             }}

@@ -61,7 +61,6 @@ function Routing() {
         const currentDate = new Date();
 
         if (expiryDate <= currentDate) {
-          clearToken();
           setShowExpiredModal(true);
         }
       }
@@ -83,6 +82,7 @@ function Routing() {
         isOpen={showExpiredModal}
         onConfirm={() => {
           setShowExpiredModal(false);
+          clearToken();
           // Redirect to login based on role
           const loginPath =
             tokenData?.role === "agent" ? "/agent/login" : "/renter/login";
@@ -111,7 +111,6 @@ function Routing() {
             {/* Public Routes */}
             <Route path="/renter/login" element={<RenterLogin />} />
             <Route path="/renter/signup" element={<RenterSignup />} />
-            <Route path="/signup" element={<SignupChoice />} />
             <Route path="/agent/signup" element={<AgentSignup />} />
             <Route path="/aboutus" element={<AboutUs />} />
             <Route path="/blog" element={<Blog />} />
@@ -139,6 +138,14 @@ function Routing() {
             {/* Protected Agent Routes */}
             <Route
               path="/agent/dashboard"
+              element={
+                <AgentRoute>
+                  <AgentDashboard />
+                </AgentRoute>
+              }
+            />
+            <Route
+              path="/agent/dashboard/listings"
               element={
                 <AgentRoute>
                   <AgentDashboard />
@@ -189,31 +196,31 @@ function Routing() {
 export default Routing;
 {
   /* <Route
-                                                    path="/search-results"
-                                                    element={<SearchResultsPage />}
-                                                /> */
+                                                        path="/search-results"
+                                                        element={<SearchResultsPage />}
+                                                    /> */
 }
 {
   /*
-                            
-                            
-                            
-                            
-                                                <Route
-                                                    path="/agent/profile"
-                                                    element={<AgentProfilePage />}
-                                                />
-                                                <Route
-                                                    path="/renter/profile"
-                                                    element={<RenterProfilePage />}
-                                                />
-                            
-                            
-                            
-                                                <Route
-                                                    path="/agent/agentdashboard"
-                                                    element={<AgentDashboard />}
-                                                />
-                            
-                             */
+                                
+                                
+                                
+                                
+                                                    <Route
+                                                        path="/agent/profile"
+                                                        element={<AgentProfilePage />}
+                                                    />
+                                                    <Route
+                                                        path="/renter/profile"
+                                                        element={<RenterProfilePage />}
+                                                    />
+                                
+                                
+                                
+                                                    <Route
+                                                        path="/agent/agentdashboard"
+                                                        element={<AgentDashboard />}
+                                                    />
+                                
+                                 */
 }

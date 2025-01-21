@@ -64,9 +64,9 @@ const Sidebar = ({ firstname, loading }) => {
                   {loading ? "..." : firstname}
                 </h2>
               </div>
-              <button className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                <Settings className="w-5 h-5 text-gray-500" />
-              </button>
+              {/*<button className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">*/}
+              {/*  <Settings className="w-5 h-5 text-gray-500" />*/}
+              {/*</button>*/}
             </div>
 
             <ul className="space-y-3 px-2">

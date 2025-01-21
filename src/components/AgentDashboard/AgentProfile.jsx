@@ -170,7 +170,7 @@ const AgentProfile = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="flex flex-col lg:flex-row mt-20 max-w-7xl w-[98%] mx-auto gap-10 min-h-screen p-4 lg:ml-64 lg:w-[80%]"
+        className="flex flex-col lg:flex-row mt-20 max-w-7xl w-[98%] mx-auto gap-10 min-h-screen px-4 lg:ml-64 lg:w-[80%]"
       >
         {/* Profile Sidebar */}
         <motion.div

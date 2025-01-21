@@ -211,7 +211,7 @@ const AgentDashboard = () => {
   };
 
   useEffect(() => {
-    // fetchAgentDetails();
+    fetchAgentDetails();
   }, []);
 
   const formatDate = (dateString) => {

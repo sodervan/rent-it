@@ -61,16 +61,15 @@ const AgentDashboard = () => {
       }
     } catch (error) {
       console.error("Error delisting listing:", error);
-      toast.error("Error deleting listing")
+      toast.error("Error deleting listing");
       throw error; // Propagate the error to the modal
     }
   };
 
   const handleDelete = async (listingId) => {
     try {
-      const response = await axios.post(
+      const response = await axios.delete(
         `${apiUrl}/api/v1/agents/listings/${listingId}`,
-        null, // No request body needed
         {
           withCredentials: true,
         },
@@ -79,16 +78,15 @@ const AgentDashboard = () => {
       if (response.data.status === "success") {
         toast.success("Listing deleted successfully!");
         // Update the listings state to remove the delisted listing
-        if(activeTab === "published"){
+        if (activeTab === "published") {
           setListings((prev) =>
-              prev.filter((listing) => listing.id !== listingId),
+            prev.filter((listing) => listing.id !== listingId),
           );
-        }else{
+        } else {
           setUnpublishedListings((prev) =>
-              prev.filter((listing) => listing.id !== listingId),
+            prev.filter((listing) => listing.id !== listingId),
           );
         }
-
       } else {
         toast.error(response.data.message || "Failed to delist listing.");
         throw new Error(response.data.message || "Failed to delist listing.");
@@ -127,7 +125,7 @@ const AgentDashboard = () => {
 
       setAgentData(agentResponse.data);
       localStorage.setItem("agentData", JSON.stringify(agentResponse.data));
-
+      console.log(unpublishedResponse)
       setListings(publishedResponse.data.payload.data || []);
       setUnpublishedListings(unpublishedResponse.data.payload.data || []);
 
@@ -213,7 +211,7 @@ const AgentDashboard = () => {
   };
 
   useEffect(() => {
-    // fetchAgentDetails();
+    fetchAgentDetails();
   }, []);
 
   const formatDate = (dateString) => {
@@ -453,7 +451,6 @@ const AgentDashboard = () => {
                                     console.log("Bookmark listing:", item.id);
                                   }}
                                   onDelete={() => handleDelete(item.id)}
-
                                   onBookings={() => {
                                     // Add your bookmark logic here
                                     console.log("Bookmark listing:", item.id);
@@ -521,7 +518,7 @@ const AgentDashboard = () => {
                           <p className="text-sm font-bold">{item.title}</p>
                           <div className="flex gap-1 items-center">
                             <p className="text-[15px] text-gray-600">
-                              {`₦ ${item.baseCost?.toLocaleString() || "N/A"}`}
+                              {`₦ ${item.baseCost?.toLocaleString('en-NG') || "N/A"}`}
                             </p>
                             <p className="text-xs bg-[#D7D6FD] font-light px-2 rounded-full">
                               {item.paymentDuration || "N/A"}

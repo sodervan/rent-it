@@ -70,9 +70,9 @@ const CostBreakdown = () => {
       };
 
       const response = await axios.post(
-          `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/fees`,
-          data,
-          { withCredentials: true },
+        `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/fees`,
+        data,
+        { withCredentials: true },
       );
 
       console.log("API Response:", response); // Log the full response
@@ -80,8 +80,8 @@ const CostBreakdown = () => {
       if (response.data.status === "success") {
         toast.success("Fees details saved successfully!");
         localStorage.setItem(
-            "feesDetails",
-            JSON.stringify(response.data.payload),
+          "feesDetails",
+          JSON.stringify(response.data.payload),
         );
 
         setTimeout(() => {
@@ -92,7 +92,7 @@ const CostBreakdown = () => {
       console.error("API Error:", error); // Log the full error object
       console.error("Error Response Data:", error.response?.data); // Log the error response data
       toast.error(
-          error.response?.data?.message ||
+        error.response?.data?.message ||
           "An error occurred while saving fees details.",
       );
     } finally {
@@ -135,13 +135,10 @@ const CostBreakdown = () => {
       <div>
         <div className="flex items-center justify-between border-b border-gray-200 pb-4 px-6">
           <p className="text-xl font-medium">Add New Listing</p>
-          <Button className="bg-secondaryPurple text-primaryPurple font-poppins font-medium shadow-none hover:shadow-none hover:bg-primaryPurple hover:text-white duration-300 transition-all">
-            Save
-          </Button>
         </div>
         <div className="px-6">
           <div>
-            <p className="text-gray-500 mt-2 font-medium">Step 2 of 15</p>
+            <p className="text-gray-500 mt-2 font-medium">Step 2 of 13</p>
             <p className="mt-2 text-lg">Cost Breakdown</p>
           </div>
           {/*BASE RENT FEE*/}

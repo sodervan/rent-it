@@ -1,5 +1,12 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { X, ZoomIn, Download, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  X,
+  ZoomIn,
+  Download,
+  ChevronLeft,
+  ChevronRight,
+  ArrowLeft,
+} from "lucide-react";
 
 const ImageModal = ({ images, open, onClose }) => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -9,13 +16,11 @@ const ImageModal = ({ images, open, onClose }) => {
   const [isZoomed, setIsZoomed] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("all");
 
-  // Extract unique categories from images
   const categories = useMemo(() => {
     const uniqueTags = new Set(images.map((image) => image.tag?.name));
     return ["all", ...Array.from(uniqueTags)];
   }, [images]);
 
-  // Filter images based on selected category
   const filteredImages = useMemo(() => {
     if (selectedCategory === "all") return images;
     return images.filter((image) => image.tag?.name === selectedCategory);
@@ -68,6 +73,12 @@ const ImageModal = ({ images, open, onClose }) => {
     setIsZoomed(false);
   };
 
+  const handleBack = () => {
+    setSelectedImage(null);
+    setIsZoomed(false);
+    setLoading(true);
+  };
+
   const toggleZoom = (e) => {
     e.stopPropagation();
     setIsZoomed(!isZoomed);
@@ -100,11 +111,24 @@ const ImageModal = ({ images, open, onClose }) => {
         {/* Header */}
         <div className="absolute top-0 left-0 right-0 z-50 flex flex-col gap-4 p-4 bg-gradient-to-b from-black/80 to-transparent">
           <div className="flex justify-between items-center">
-            <h2 className="text-white text-xl font-semibold">
-              {selectedImage
-                ? `Image ${selectedIndex + 1} of ${filteredImages.length}`
-                : "Image Gallery"}
-            </h2>
+            {selectedImage ? (
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={handleBack}
+                  className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors flex items-center gap-2"
+                >
+                  <ArrowLeft className="w-5 h-5 text-white" />
+                  <span className="text-white text-sm">Back to Gallery</span>
+                </button>
+                <h2 className="text-white text-xl font-semibold">
+                  Image {selectedIndex + 1} of {filteredImages.length}
+                </h2>
+              </div>
+            ) : (
+              <h2 className="text-white text-xl font-semibold">
+                Image Gallery
+              </h2>
+            )}
             <button
               onClick={onClose}
               className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"

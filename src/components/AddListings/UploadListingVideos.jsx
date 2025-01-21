@@ -127,16 +127,9 @@ const UploadListingVideos = ({ listingId }) => {
       <div>
         <div className="flex items-center justify-between border-b border-gray-200 pb-4 px-6">
           <p className="text-xl font-medium">Add New Listing Videos</p>
-          <Button
-            className="bg-secondaryPurple text-primaryPurple font-poppins font-medium shadow-none hover:shadow-none hover:bg-primaryPurple hover:text-white duration-300 transition-all"
-            onClick={uploadVideos}
-            disabled={isUploading}
-          >
-            {isUploading ? "Uploading..." : "Save"}
-          </Button>
         </div>
         <div className="px-6">
-          <p className="text-gray-500 mt-2 font-medium">Step 10 of 15</p>
+          <p className="text-gray-500 mt-2 font-medium">Step 10 of 13</p>
           <p className="mt-2 text-lg">Upload Listing Videos</p>
           <p className="text-sm text-gray-500 my-2">
             Add high-quality videos to attract potential renters. Max 2 videos,

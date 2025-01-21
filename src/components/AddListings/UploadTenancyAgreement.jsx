@@ -99,20 +99,10 @@ const UploadTenancyAgreement = () => {
     <div>
       <div>
         <div className="flex items-center justify-between border-b border-gray-200 pb-4 px-6">
-          <p className="text-xl font-medium">
-            Upload Tenancy Agreement (Optional)
-          </p>
-          <Button
-            className="bg-secondaryPurple text-primaryPurple font-poppins font-medium shadow-none hover:shadow-none hover:bg-primaryPurple hover:text-white duration-300 transition-all"
-            onClick={uploadFile}
-            disabled={isUploading || !agreeToTerms} // Disable if not agreed to terms
-          >
-            {isUploading ? "Uploading..." : "Save"}
-          </Button>
+          <p className="text-xl font-medium">Upload Tenancy Agreement</p>
         </div>
         <div className="px-6">
           <div>
-            <p className="text-gray-500 mt-2 font-medium">Optional Step</p>
             <p className="mt-2 text-lg">Upload Tenancy Agreement</p>
             <p className="text-sm text-gray-500 my-2">
               Please upload a PDF, DOC, or DOCX file of the tenancy agreement or

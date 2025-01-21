@@ -7,9 +7,7 @@ const Description = () => {
   const [descriptionDetails, setDescriptionDetails] = useState("");
 
   useEffect(() => {
-    setDescriptionDetails(
-      localStorage.getItem("descriptionDetails"),
-    );
+    setDescriptionDetails(localStorage.getItem("descriptionDetails"));
   }, []);
 
   return (
@@ -17,19 +15,16 @@ const Description = () => {
       <div>
         <div className="flex items-center justify-between border-b border-gray-200 pb-4 px-6">
           <p className="text-xl font-medium">Add New Listing</p>
-          <Button className="bg-secondaryPurple text-primaryPurple font-poppins font-medium shadow-none hover:shadow-none hover:bg-primaryPurple hover:text-white duration-300 transition-all">
-            Save
-          </Button>
         </div>
         <div className="px-6">
           <div className="mb-5">
-            <p className="text-gray-500 mt-2 font-medium">Step 5 of 15</p>
+            <p className="text-gray-500 mt-2 font-medium">Step 5 of 13</p>
           </div>
           <div>
             <p className="text-gray-500 mb-2">Preview Description</p>
             <div className="w-full">
               <div className="border border-gray-200 rounded-lg p-4">
-                {descriptionDetails ?(
+                {descriptionDetails ? (
                   <p>{descriptionDetails}</p>
                 ) : (
                   <p>No description available</p>
@@ -49,7 +44,7 @@ const Description = () => {
                 className="capitalize font-medium bg-primaryPurple text-white w-full text-[15px] font-poppins"
                 onClick={() => {
                   navigate("/agent/addlisting/6");
-                  localStorage.removeItem("descriptionDetails")
+                  localStorage.removeItem("descriptionDetails");
                 }}
               >
                 Proceed

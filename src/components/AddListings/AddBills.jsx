@@ -19,8 +19,8 @@ const FurnishingState = () => {
     try {
       setIsLoading(true);
       const response = await axios.get(
-          `${apiUrl}/api/v1/agents/listings-attributes/billsTags?page=${page}`,
-          { withCredentials: true }, // Include cookies in the request
+        `${apiUrl}/api/v1/agents/listings-attributes/billsTags?page=${page}`,
+        { withCredentials: true }, // Include cookies in the request
       );
 
       console.log("Bills Tags Response:", response); // Log the full response
@@ -46,9 +46,9 @@ const FurnishingState = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-          `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/billTags`,
-          { billTagsIds: selectedTags },
-          { withCredentials: true }, // Include cookies in the request
+        `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/billTags`,
+        { billTagsIds: selectedTags },
+        { withCredentials: true }, // Include cookies in the request
       );
 
       console.log("Post Bills Response:", response); // Log the full response
@@ -65,7 +65,8 @@ const FurnishingState = () => {
       console.error("Error posting BillTags:", error); // Log the full error object
       console.error("Error Response Data:", error.response?.data); // Log the error response data
       toast.error(
-          error.response?.data?.message || "An error occurred while saving bills.",
+        error.response?.data?.message ||
+          "An error occurred while saving bills.",
       ); // Error toast
     } finally {
       setLoading(false);
@@ -75,9 +76,9 @@ const FurnishingState = () => {
   // TOGGLE TAG SELECTION
   const toggleTagSelection = (tagId) => {
     setSelectedTags((prev) =>
-        prev.includes(tagId)
-            ? prev.filter((id) => id !== tagId)
-            : [...prev, tagId],
+      prev.includes(tagId)
+        ? prev.filter((id) => id !== tagId)
+        : [...prev, tagId],
     );
   };
 
@@ -87,75 +88,72 @@ const FurnishingState = () => {
   }, [currentPage]);
 
   return (
-      <div className="bg-gray-50 p-6 rounded-lg shadow-md">
-        <div className="flex items-center justify-between pb-4">
-          <h1 className="text-2xl font-semibold text-gray-800">
-            Add New Listing
-          </h1>
-          <Button className="bg-secondaryPurple text-primaryPurple shadow-md hover:bg-primaryPurple hover:text-white transition duration-300">
-            Save
-          </Button>
-        </div>
-        <div>
-          <p className="text-gray-600 font-medium">Step 8 of 15</p>
-          <h2 className="mt-2 text-lg text-gray-800">Add Bills</h2>
-          <div className="w-full my-3 h-[1px] bg-gray-300"></div>
-          {isLoading ? (
-              <LoaderTwo />
-          ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {tags.map((tag) => (
-                    <Button
-                        key={tag.id}
-                        variant={selectedTags.includes(tag.id) ? "filled" : "outlined"}
-                        className={`rounded-lg shadow-sm ${
-                            selectedTags.includes(tag.id)
-                                ? "bg-primaryPurple text-white border border-primaryPurple"
-                                : "bg-white text-gray-700 border border-gray-300"
-                        } hover:bg-primaryPurple hover:text-white transition`}
-                        onClick={() => toggleTagSelection(tag.id)}
-                    >
-                      {tag.name}
-                    </Button>
-                ))}
-              </div>
-          )}
-          <div className="flex justify-between mt-5">
-            <Button
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                className="bg-secondaryPurple text-primaryPurple hover:bg-primaryPurple hover:text-white transition"
-            >
-              Previous
-            </Button>
-            <Button
-                onClick={() => setCurrentPage((prev) => prev + 1)}
-                className="bg-primaryPurple text-white hover:bg-secondaryPurple hover:text-primaryPurple transition"
-            >
-              Next
-            </Button>
+    <div className="bg-gray-50 p-6 rounded-lg shadow-md">
+      <div className="flex items-center justify-between pb-4">
+        <h1 className="text-2xl font-semibold text-gray-800">
+          Add New Listing
+        </h1>
+      </div>
+      <div>
+        <p className="text-gray-600 font-medium">Step 8 of 13</p>
+        <h2 className="mt-2 text-lg text-gray-800">Add Bills</h2>
+        <div className="w-full my-3 h-[1px] bg-gray-300"></div>
+        {isLoading ? (
+          <LoaderTwo />
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {tags.map((tag) => (
+              <Button
+                key={tag.id}
+                variant={selectedTags.includes(tag.id) ? "filled" : "outlined"}
+                className={`rounded-lg shadow-sm ${
+                  selectedTags.includes(tag.id)
+                    ? "bg-primaryPurple text-white border border-primaryPurple"
+                    : "bg-white text-gray-700 border border-gray-300"
+                } hover:bg-primaryPurple hover:text-white transition`}
+                onClick={() => toggleTagSelection(tag.id)}
+              >
+                {tag.name}
+              </Button>
+            ))}
           </div>
-        </div>
-        <div className="flex justify-between mt-8 gap-4">
+        )}
+        <div className="flex justify-between mt-5">
           <Button
-              className="bg-secondaryPurple text-primaryPurple w-full font-medium"
-              onClick={() => navigate("/agent/addlisting/7")}
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            className="bg-secondaryPurple text-primaryPurple hover:bg-primaryPurple hover:text-white transition"
           >
             Previous
           </Button>
           <Button
-              disabled={loading}
-              onClick={postBasicBills}
-              className={`${
-                  loading
-                      ? "bg-gray-200 text-gray-500"
-                      : "bg-primaryPurple text-white"
-              } w-full flex justify-center items-center`}
+            onClick={() => setCurrentPage((prev) => prev + 1)}
+            className="bg-primaryPurple text-white hover:bg-secondaryPurple hover:text-primaryPurple transition"
           >
-            {loading ? <Spinner className="h-4 w-4" /> : "Proceed"}
+            Next
           </Button>
         </div>
       </div>
+      <div className="flex justify-between mt-8 gap-4">
+        <Button
+          className="bg-secondaryPurple text-primaryPurple w-full font-medium"
+          onClick={() => navigate("/agent/addlisting/7")}
+        >
+          Previous
+        </Button>
+        <Button
+          disabled={loading}
+          onClick={postBasicBills}
+          className={`${
+            loading
+              ? "bg-gray-200 text-gray-500"
+              : "bg-primaryPurple text-white"
+          } w-full flex justify-center items-center`}
+        >
+          {loading ? <Spinner className="h-4 w-4" /> : "Proceed"}
+        </Button>
+      </div>
+    </div>
   );
 };
 

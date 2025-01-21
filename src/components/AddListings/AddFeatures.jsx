@@ -46,7 +46,7 @@ const FurnishingState = () => {
         { featureTagsIds: selectedTags },
         { withCredentials: true }, // Include cookies in the request
       );
-      console.log(response)
+      console.log(response);
       if (response.data.status === "success") {
         console.log("Success:", response.data);
         toast.success("Features saved successfully!"); // Success toast
@@ -86,12 +86,9 @@ const FurnishingState = () => {
         <h1 className="text-2xl font-semibold text-gray-800">
           Add New Listing
         </h1>
-        <Button className="bg-secondaryPurple text-primaryPurple shadow-md hover:bg-primaryPurple hover:text-white transition duration-300">
-          Save
-        </Button>
       </div>
       <div>
-        <p className="text-gray-600 font-medium">Step 7 of 15</p>
+        <p className="text-gray-600 font-medium">Step 7 of 13</p>
         <h2 className="mt-2 text-lg text-gray-800">Add Other Features</h2>
         <div className="w-full my-3 h-[1px] bg-gray-300"></div>
         {isLoading ? (

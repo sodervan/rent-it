@@ -125,7 +125,7 @@ const AgentDashboard = () => {
 
       setAgentData(agentResponse.data);
       localStorage.setItem("agentData", JSON.stringify(agentResponse.data));
-      console.log(unpublishedResponse)
+      console.log(unpublishedResponse);
       setListings(publishedResponse.data.payload.data || []);
       setUnpublishedListings(unpublishedResponse.data.payload.data || []);
 
@@ -211,7 +211,7 @@ const AgentDashboard = () => {
   };
 
   useEffect(() => {
-    fetchAgentDetails();
+    // fetchAgentDetails();
   }, []);
 
   const formatDate = (dateString) => {
@@ -518,7 +518,7 @@ const AgentDashboard = () => {
                           <p className="text-sm font-bold">{item.title}</p>
                           <div className="flex gap-1 items-center">
                             <p className="text-[15px] text-gray-600">
-                              {`₦ ${item.baseCost?.toLocaleString('en-NG') || "N/A"}`}
+                              {`₦ ${item.baseCost?.toLocaleString("en-NG") || "N/A"}`}
                             </p>
                             <p className="text-xs bg-[#D7D6FD] font-light px-2 rounded-full">
                               {item.paymentDuration || "N/A"}

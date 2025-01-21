@@ -6,9 +6,10 @@ import {
   UserCircle,
   Settings,
   LogOut,
+  History,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import {NavLink, useLocation, useNavigate} from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import LoaderThree from "@/components/Loaders/LoaderThree.jsx";
 
 const Sidebar = ({ firstname, loading }) => {
@@ -30,6 +31,11 @@ const Sidebar = ({ firstname, loading }) => {
       icon: Calendar,
       label: "Booking Requests",
       link: "/agent/dashboard/booking",
+    },
+    {
+      icon: History,
+      label: "Transactions",
+      link: "/agent/dashboard/transactions",
     },
     {
       icon: UserCircle,
@@ -96,7 +102,8 @@ const Sidebar = ({ firstname, loading }) => {
 
 const SidebarItem = ({ icon: Icon, label, link, isActive }) => (
   <li>
-    <NavLink to={link}
+    <NavLink
+      to={link}
       href={link}
       className={cn(
         "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all relative",

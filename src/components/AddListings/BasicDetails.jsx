@@ -10,6 +10,7 @@ import { IconPlus, IconX } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { motion, AnimatePresence } from "framer-motion";
 
 const BasicDetails = () => {
   const navigate = useNavigate();
@@ -150,7 +151,13 @@ const BasicDetails = () => {
   };
 
   return (
-    <div className="mt-22">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.3 }}
+      className="mt-22"
+    >
       <div>
         <div className="flex items-center justify-between border-b border-gray-200 pb-4 px-6">
           <p className="text-xl font-medium">Add New Listing</p>
@@ -160,16 +167,28 @@ const BasicDetails = () => {
             <p className="text-gray-500 mt-2 font-medium">Step 1 of 13</p>
             <p className="mt-2 text-lg">Basic Details</p>
           </div>
+
           {/*LISTING TITLE*/}
-          <div className="mt-6">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="mt-6"
+          >
             <p className="mb-2 text-gray-700">Listing Title</p>
             <Input
               label="Add a descriptive listing title"
               value={description}
               onChange={handleDescriptionChange}
+              aria-label="Listing Title"
             />
-          </div>
-          <div className="my-2">
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="my-2"
+          >
             <p className="text-gray-600 font-medium mb-2">
               Make it descriptive, for example:
             </p>
@@ -177,15 +196,21 @@ const BasicDetails = () => {
               Spacious 3-Bedroom Apartment in Lekki with Modern Finishes, Single
               Rooms near UNILAG, Akoka
             </p>
-          </div>
+          </motion.div>
 
           {/*SET APARTMENT TYPE*/}
-          <div className="my-5">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="my-5"
+          >
             <p className="mb-1 text-gray-700">Apartment Type</p>
             <div className="relative w-full">
               <Select
                 onChange={(e) => setSelectedAppType(e)}
                 label="Select Type"
+                aria-label="Apartment Type"
               >
                 {appTypes.length > 0 ? (
                   appTypes.map((type) => (
@@ -198,10 +223,14 @@ const BasicDetails = () => {
                 )}
               </Select>
             </div>
-          </div>
+          </motion.div>
 
           {/*SET UNITS*/}
-          <div>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
             <p className="text-gray-700 mb-2">Units Available</p>
             <div className="relative flex w-full items-center gap-2">
               <Input
@@ -212,12 +241,14 @@ const BasicDetails = () => {
                 containerProps={{
                   className: "min-w-0",
                 }}
+                aria-label="Units Available"
               />
               <div className="absolute right-1 top-1/2 transform -translate-y-1/2 flex gap-2">
                 <Button
                   size="sm"
                   className="rounded bg-secondaryPurple text-primaryPurple shadow-none"
                   onClick={handleUnitsAdd}
+                  aria-label="Increase Units"
                 >
                   <IconPlus size={15} />
                 </Button>
@@ -225,19 +256,26 @@ const BasicDetails = () => {
                   size="sm"
                   className="rounded bg-secondaryPurple text-primaryPurple shadow-none"
                   onClick={handleUnitsSubtract}
+                  aria-label="Decrease Units"
                 >
                   <IconX size={15} />
                 </Button>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/*ADDRESS*/}
-          <div className="mt-5">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="mt-5"
+          >
             <p className="mb-2 text-gray-700">Address</p>
             <Input
               label="e.g., 10 Adewale Street"
               onChange={handleAddressChange}
+              aria-label="Address"
             />
 
             {/*SELECT STATE*/}
@@ -246,6 +284,7 @@ const BasicDetails = () => {
               <Select
                 label="Select State"
                 onChange={(e) => handleStateChange(parseInt(e))}
+                aria-label="Select State"
               >
                 {states.length > 0 ? (
                   states.map((state) => (
@@ -262,7 +301,11 @@ const BasicDetails = () => {
             {/*SELECT LGAS*/}
             <div className="relative w-full mt-4">
               <p className="mb-2 text-gray-700">LGA</p>
-              <Select label="Select LGA" onChange={(e) => setCurrentLgas(e)}>
+              <Select
+                label="Select LGA"
+                onChange={(e) => setCurrentLgas(e)}
+                aria-label="Select LGA"
+              >
                 {lgas.length > 0 ? (
                   lgas.map((lga) => (
                     <Option key={lga.id} value={String(lga.id)}>
@@ -278,7 +321,11 @@ const BasicDetails = () => {
             {/*SELECT CITY*/}
             <div className="relative w-full mt-4">
               <p className="my-2 text-gray-700">City</p>
-              <Select onChange={(e) => setSelectedCity(e)} label="Select City">
+              <Select
+                onChange={(e) => setSelectedCity(e)}
+                label="Select City"
+                aria-label="Select City"
+              >
                 {cities.length > 0 ? (
                   cities.map((city) => (
                     <Option key={city.id} value={String(city.id)}>
@@ -300,14 +347,33 @@ const BasicDetails = () => {
                 }`}
                 disabled={loading}
                 onClick={postBasicDetails}
+                aria-label="Proceed"
               >
-                {loading ? <Spinner className="h-4 w-4" /> : "Proceed"}
+                <AnimatePresence mode="wait">
+                  {loading ? (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                    >
+                      <Spinner className="h-4 w-4" />
+                    </motion.div>
+                  ) : (
+                    <motion.span
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                    >
+                      Proceed
+                    </motion.span>
+                  )}
+                </AnimatePresence>
               </Button>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

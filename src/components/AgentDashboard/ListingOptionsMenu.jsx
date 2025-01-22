@@ -228,7 +228,8 @@ const ListingOptionsMenu = ({ onDelist, onDelete, onBookings }) => {
             </button>
             <button
               onClick={handleDelete}
-              className="px-4 py-2 text-sm rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors"
+              disabled={isDeleting}
+              className="px-4 py-2 text-sm rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors flex items-center gap-2"
             >
               {isDeleting ? (
                 <>

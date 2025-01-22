@@ -62,7 +62,7 @@ const AgentDashboard = () => {
         setPublishedHasMore(false);
       }
     } catch (error) {
-      if (error.response.status === 404) {
+      if (error?.response.status === 404) {
         setPublishedListings([]);
       } else {
         setPublishedError(
@@ -95,7 +95,7 @@ const AgentDashboard = () => {
         setUnpublishedHasMore(false);
       }
     } catch (error) {
-      if (error.response.status === 404) {
+      if (error?.response.status === 404) {
         setUnpublishedListings([]);
       } else {
         setUnpublishedError(
@@ -122,7 +122,7 @@ const AgentDashboard = () => {
   const handleDelist = async (listingId) => {
     try {
       const response = await axios.post(
-        `${apiUrl}/api/v1/agents/${listingId}/delist`,
+        `${apiUrl}/api/v1/agents/listings/${listingId}/delist`,
         null,
         { withCredentials: true },
       );

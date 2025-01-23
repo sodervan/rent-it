@@ -8,6 +8,7 @@ import {
   AlertCircle,
   X,
   Loader,
+  View,
 } from "lucide-react";
 
 const Modal = ({ isOpen, onClose, children }) => {
@@ -122,19 +123,26 @@ const ListingOptionsMenu = ({ onDelist, onDelete, onBookings }) => {
           <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-[151] animate-in slide-in-from-top-2 duration-200">
             <div className="py-1 divide-y divide-gray-100">
               <button
+                onClick={() => handleAction("bookings")}
+                className="group flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-purple-50 transition-all duration-300"
+              >
+                <View className="mr-3 h-4 w-4 text-gray-400 group-hover:text-primaryPurple" />
+                View Listing
+              </button>
+              <button
                 onClick={() => handleAction("delist")}
                 className="group flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-purple-50 transition-all duration-300"
               >
                 <BadgeMinus className="mr-3 h-4 w-4 text-gray-400 group-hover:text-primaryPurple" />
                 De-List apartment
               </button>
-              <button
-                onClick={() => handleAction("delete")}
-                className="group flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-all duration-300"
-              >
-                <Trash className="mr-3 h-4 w-4 text-red-400 group-hover:text-red-600" />
-                Delete Listing
-              </button>
+              {/*<button*/}
+              {/*  onClick={() => handleAction("delete")}*/}
+              {/*  className="group flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-all duration-300"*/}
+              {/*>*/}
+              {/*  <Trash className="mr-3 h-4 w-4 text-red-400 group-hover:text-red-600" />*/}
+              {/*  Delete Listing*/}
+              {/*</button>*/}
               <button
                 onClick={() => handleAction("bookings")}
                 className="group flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-purple-50 transition-all duration-300"

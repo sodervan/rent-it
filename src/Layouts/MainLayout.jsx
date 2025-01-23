@@ -17,7 +17,9 @@ const MainLayout = () => {
   const isAgentRegistration = location.pathname.includes(
     "/agent/agentregistration",
   );
-
+  const isForgotPassword =
+    location.pathname.includes("/renter/forgotpassword") ||
+    location.pathname.includes("/renter/resetpassword");
   const isInRenterDash = location.pathname.includes("/renter/dashboard");
 
   // Show loading or default navbar while token is being verified
@@ -32,7 +34,7 @@ const MainLayout = () => {
 
   // Determine which navbar to render based on verified token and path
   let navbar = null;
-  if (!isVerificationPage) {
+  if (!isVerificationPage && !isForgotPassword) {
     if (isAgentRegistration) {
       navbar = <AgentRegistrationNavBar />;
     } else if (tokenData?.role === "agent") {
@@ -44,7 +46,7 @@ const MainLayout = () => {
 
   return (
     <>
-      {!isInRenterDash ? navbar : ""}
+      {navbar}
       <Outlet />
     </>
   );

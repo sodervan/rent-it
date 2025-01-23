@@ -8,7 +8,8 @@ import MainLayout from "./Layouts/MainLayout";
 import HomePage from "./Pages/HomePage";
 import RenterLogin from "@/components/Forms/RenterLogin";
 import RenterSignup from "@/components/Forms/RenterSignup";
-import SignupChoice from "./components/Forms/SignupChoice";
+import EnterEmail from "@/components/ForgotPassword/EnterEmail";
+import PasswordReset from "@/components/ForgotPassword/PasswordReset";
 import AgentSignup from "./components/Forms/AgentSignup";
 import AboutUs from "./components/NavLinksComponents/AboutUs";
 import Blog from "./components/NavLinksComponents/Blog";
@@ -110,6 +111,8 @@ function Routing() {
 
             {/* Public Routes */}
             <Route path="/renter/login" element={<RenterLogin />} />
+            <Route path="/renter/forgotpassword" element={<EnterEmail />} />
+            <Route path="/renter/resetpassword" element={<PasswordReset />} />
             <Route path="/renter/signup" element={<RenterSignup />} />
             <Route path="/agent/signup" element={<AgentSignup />} />
             <Route path="/aboutus" element={<AboutUs />} />

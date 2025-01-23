@@ -169,6 +169,36 @@ const AgentDashboard = () => {
     }
   };
 
+  const handleRepublish = async (listingId) => {
+    try {
+      const response = await axios.get(
+        `${apiUrl}/api/v1/agents/listings/${listingId}/publish`,
+        { withCredentials: true },
+      );
+
+      if (response.data.status === "success") {
+        toast.success("Listing re-Published successfully!");
+        if (activeTab === "published") {
+          setPublishedListings((prev) =>
+            prev.filter((listing) => listing.id !== listingId),
+          );
+        } else {
+          setUnpublishedListings((prev) =>
+            prev.filter((listing) => listing.id !== listingId),
+          );
+        }
+      } else {
+        toast.error(response.data.message || "Failed to re-Publish listing.");
+      }
+    } catch (error) {
+      toast.error(
+        error?.response.data.message || "Failed to re-Publish listing.",
+      );
+      console.error("Error publishing listing:", error);
+      throw error;
+    }
+  };
+
   // Separate load more functions
   const fetchMorePublished = async () => {
     if (!publishedHasMore || isFetchingMore) return;
@@ -231,9 +261,9 @@ const AgentDashboard = () => {
   };
 
   useEffect(() => {
-    fetchAgentDetails();
-    fetchPublishedListings();
-    fetchUnpublishedListings();
+    // fetchAgentDetails();
+    // fetchPublishedListings();
+    // fetchUnpublishedListings();
   }, []);
 
   const formatDate = (dateString) => {
@@ -367,6 +397,7 @@ const AgentDashboard = () => {
                           // Add your bookmark logic here
                           console.log("Bookmark listing:", item.id);
                         }}
+                        onRepublish={() => handleRepublish(item.id)}
                       />
                     )}
                     <button
@@ -475,7 +506,7 @@ const AgentDashboard = () => {
                 <button
                   onClick={() => {
                     fetchPublishedListings();
-                    fetchPublishedListings();
+                    fetchUnpublishedListings();
                   }}
                   className="flex items-center justify-center gap-2 px-4 py-2 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 transition-all w-full sm:w-auto"
                 >

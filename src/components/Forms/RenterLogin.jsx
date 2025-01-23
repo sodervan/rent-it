@@ -47,29 +47,32 @@ const RenterSignup = () => {
       } else {
         console.log("Failed to fetch agent details");
         toast.error(
-            result.message || "An error occurred while fetching agent details.",
-            {
-              position: "top-right",
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-            },
+          result.message || "An error occurred while fetching agent details.",
+          {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          },
         );
       }
     } catch (error) {
       console.log("Error:", error);
-      toast.error(error.message || "An error occurred while fetching agent details.", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
+      toast.error(
+        error.message || "An error occurred while fetching agent details.",
+        {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        },
+      );
     } finally {
       setIsLoading(false);
     }
@@ -82,20 +85,20 @@ const RenterSignup = () => {
       console.log("Attempting login with:", { email, password });
 
       const response = await axios.post(
-          `${apiUrl}/api/v1/users/login`,
-          {
-            email: email,
-            password: password,
-          },
-          {
-            withCredentials: true,
-          },
+        `${apiUrl}/api/v1/users/login`,
+        {
+          email: email,
+          password: password,
+        },
+        {
+          withCredentials: true,
+        },
       );
 
       console.log("Server response:", response.data);
 
       const expiryTime = Math.floor(
-          new Date(response.data.payload.session_expiry_time).getTime() / 1000,
+        new Date(response.data.payload.session_expiry_time).getTime() / 1000,
       );
 
       const payload = {
@@ -107,10 +110,10 @@ const RenterSignup = () => {
 
       // Create JWT token using jose
       const token = await new SignJWT(payload)
-          .setProtectedHeader({ alg: "HS256" })
-          .setIssuedAt()
-          .setExpirationTime(payload.exp)
-          .sign(new TextEncoder().encode(SECRET_KEY));
+        .setProtectedHeader({ alg: "HS256" })
+        .setIssuedAt()
+        .setExpirationTime(payload.exp)
+        .sign(new TextEncoder().encode(SECRET_KEY));
 
       console.log("JWT token created successfully");
 
@@ -139,9 +142,9 @@ const RenterSignup = () => {
       });
 
       const errorMessage =
-          error.response?.data?.message ||
-          error.message ||
-          "Something went wrong, please try again later.";
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong, please try again later.";
 
       setMessage(errorMessage);
       toast.error(errorMessage, {
@@ -218,7 +221,7 @@ const RenterSignup = () => {
                   </button>
                 )}
                 <NavLink
-                  to=""
+                  to="/renter/forgotpassword"
                   className="underline text-primaryPurple hover:text-purple-700"
                 >
                   Forgot Password

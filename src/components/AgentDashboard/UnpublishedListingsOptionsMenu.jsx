@@ -20,6 +20,7 @@ import {
   ClipboardCheck,
   Info,
   BedDouble,
+  RefreshCcw,
 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -57,7 +58,12 @@ const Modal = ({ isOpen, onClose, children }) => {
   );
 };
 
-const UnpublishedListingOptionsMenu = ({ onEdit, onDelete, onBookings }) => {
+const UnpublishedListingOptionsMenu = ({
+  onEdit,
+  onDelete,
+  onBookings,
+  onRepublish,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -65,7 +71,9 @@ const UnpublishedListingOptionsMenu = ({ onEdit, onDelete, onBookings }) => {
   const [isDelisting, setIsDelisting] = useState(false);
   const [delistError, setDelistError] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isRePublishing, setIsRePublishing] = useState(false);
   const [deleteError, setDeleteError] = useState(null);
+  const [isRepublishedError, setIsRepublishedError] = useState(null);
   const [isRedirecting, setIsRedirecting] = useState(false);
   const navigate = useNavigate();
 
@@ -210,6 +218,22 @@ const UnpublishedListingOptionsMenu = ({ onEdit, onDelete, onBookings }) => {
     setShowDeleteModal(false);
   };
 
+  const handleRePublish = async () => {
+    setIsRePublishing(true);
+    setIsRepublishedError(null);
+    try {
+      await onRepublish?.();
+      setShowBookingsModal(false);
+    } catch (error) {
+      console.error("Error deleting:", error);
+      setIsRepublishedError("Failed to delete. Please try again.");
+      setTimeout(() => setDelistError(""), 3000);
+    } finally {
+      setIsRePublishing(false);
+    }
+    setShowBookingsModal(false);
+  };
+
   const handleEdit = async () => {
     setIsDelisting(true);
     setDelistError(null);
@@ -254,19 +278,26 @@ const UnpublishedListingOptionsMenu = ({ onEdit, onDelete, onBookings }) => {
                 <Edit className="mr-3 h-4 w-4 text-gray-400 group-hover:text-primaryPurple" />
                 Edit Listing
               </button>
-              <button
-                onClick={() => handleAction("delete")}
-                className="group flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-all duration-300"
-              >
-                <Trash className="mr-3 h-4 w-4 text-red-400 group-hover:text-red-600" />
-                Delete Listing
-              </button>
+              {/*<button*/}
+              {/*  onClick={() => handleAction("delete")}*/}
+              {/*  className="group flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-all duration-300"*/}
+              {/*>*/}
+              {/*  <Trash className="mr-3 h-4 w-4 text-red-400 group-hover:text-red-600" />*/}
+              {/*  Delete Listing*/}
+              {/*</button>*/}
               <button
                 onClick={() => handleAction("bookings")}
                 className="group flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-purple-50 transition-all duration-300"
               >
                 <Bookmark className="mr-3 h-4 w-4 text-gray-400 group-hover:text-primaryPurple" />
                 View Bookings
+              </button>
+              <button
+                onClick={() => handleAction("bookings")}
+                className="group flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-purple-50 transition-all duration-300"
+              >
+                <RefreshCcw className="mr-3 h-4 w-4 text-gray-400 group-hover:text-primaryPurple" />
+                re-Publish
               </button>
             </div>
           </div>
@@ -382,7 +413,7 @@ const UnpublishedListingOptionsMenu = ({ onEdit, onDelete, onBookings }) => {
             </button>
             <button
               onClick={handleDelete}
-              className="px-4 py-2 text-sm rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors"
+              className="px-4 py-2 text-sm rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors flex items-center gap-2"
             >
               {isDeleting ? (
                 <>
@@ -397,7 +428,7 @@ const UnpublishedListingOptionsMenu = ({ onEdit, onDelete, onBookings }) => {
         </div>
       </Modal>
 
-      {/* Bookings Modal */}
+      {/* Republished Modal */}
       <Modal
         isOpen={showBookingsModal}
         onClose={() => setShowBookingsModal(false)}
@@ -411,13 +442,36 @@ const UnpublishedListingOptionsMenu = ({ onEdit, onDelete, onBookings }) => {
           </button>
 
           <div className="flex items-center gap-2 text-primaryPurple mb-2">
-            <Bookmark className="h-5 w-5" />
-            <h3 className="text-lg font-semibold">Apartment Bookings</h3>
+            <RefreshCcw className="h-5 w-5" />
+            <h3 className="text-lg font-semibold">Confirm re-Publish</h3>
           </div>
 
-          <p className="text-gray-600">
-            Redirecting you to view all bookings for this apartment...
+          <p className="text-gray-600 mb-6">
+            Are you sure you want to re-Publish this listing, this action will
+            make the listing available for renters to book.
           </p>
+
+          <div className="flex justify-end gap-3">
+            <button
+              onClick={() => setShowBookingsModal(false)}
+              className="px-4 py-2 text-sm rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleRePublish}
+              className="px-4 py-2 text-sm rounded-lg bg-primaryPurple text-white transition-colors flex items-center gap-2"
+            >
+              {isRePublishing ? (
+                <>
+                  <Loader className="h-4 w-4 animate-spin" />
+                  Publishing...
+                </>
+              ) : (
+                "re-Publish"
+              )}
+            </button>
+          </div>
         </div>
       </Modal>
     </div>

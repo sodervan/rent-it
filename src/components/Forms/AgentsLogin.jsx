@@ -31,23 +31,23 @@ const AgentLogin = () => {
 
     try {
       const response = await axios.post(
-          `${apiUrl}/api/v1/agents/login`,
-          {
-            email,
-            password,
+        `${apiUrl}/api/v1/agents/login`,
+        {
+          email,
+          password,
+        },
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
           },
-          {
-            withCredentials: true,
-            headers: {
-              "Content-Type": "application/json",
-            },
-          },
+        },
       );
 
       const result = response.data;
 
       const timeExpiry = Math.floor(
-          new Date(response.data.payload.session_expiry_time).getTime() / 1000,
+        new Date(response.data.payload.session_expiry_time).getTime() / 1000,
       );
 
       const payload = {
@@ -57,10 +57,10 @@ const AgentLogin = () => {
 
       // Create JWT token
       const token = await new SignJWT(payload)
-          .setProtectedHeader({ alg: "HS256" })
-          .setIssuedAt()
-          .setExpirationTime(payload.exp)
-          .sign(new TextEncoder().encode(SECRET_KEY));
+        .setProtectedHeader({ alg: "HS256" })
+        .setIssuedAt()
+        .setExpirationTime(payload.exp)
+        .sign(new TextEncoder().encode(SECRET_KEY));
 
       // Set cookie with proper attributes
       document.cookie = `the_token=${token}; path=/; expires=${new Date(timeExpiry * 1000).toUTCString()}; secure; SameSite=Strict`;
@@ -79,11 +79,9 @@ const AgentLogin = () => {
       setTimeout(() => {
         // Store the target route in sessionStorage
         window.location.href = result.payload?.isRegistrationComplete
-            ? "/agent/dashboard"
-            : `/agent/agentregistration/${result.payload.registrationStep}`;
-
+          ? "/agent/dashboard"
+          : `/agent/agentregistration/${result.payload.registrationStep}`;
       }, 1000); // Match the toast duration
-
     } catch (error) {
       console.error("Login Error:", error);
 
@@ -202,7 +200,7 @@ const AgentLogin = () => {
                 {/* Forgot Password and Signup Links */}
                 <div className="flex justify-between text-sm text-gray-600">
                   <NavLink
-                    to="/forgot-password"
+                    to="/agent/forgotpassword"
                     className="underline text-primaryPurple hover:text-purple-700"
                   >
                     Forgot Password?

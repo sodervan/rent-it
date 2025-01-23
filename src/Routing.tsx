@@ -23,6 +23,7 @@ import AllSteps from "@/components/AddListings/AllSteps";
 import VerifyEmail from "@/components/VerifyEmail";
 import RenterVerificationEmail from "@/components/RenterVerificationEmail";
 import SessionExpiredModal from "../SessionExpiryModal";
+import AgentPasswordReset from "@/components/ForgotPassword/AgentPasswordReset";
 
 // Protected Route Components
 const ProtectedRoute = ({ children, allowedRoles, redirectPath }) => {
@@ -112,7 +113,12 @@ function Routing() {
             {/* Public Routes */}
             <Route path="/renter/login" element={<RenterLogin />} />
             <Route path="/renter/forgotpassword" element={<EnterEmail />} />
+            <Route path="/agent/forgotpassword" element={<EnterEmail />} />
             <Route path="/renter/resetpassword" element={<PasswordReset />} />
+            <Route
+              path="/agent/resetpassword"
+              element={<AgentPasswordReset />}
+            />
             <Route path="/renter/signup" element={<RenterSignup />} />
             <Route path="/agent/signup" element={<AgentSignup />} />
             <Route path="/aboutus" element={<AboutUs />} />

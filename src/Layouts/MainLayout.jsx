@@ -19,7 +19,9 @@ const MainLayout = () => {
   );
   const isForgotPassword =
     location.pathname.includes("/renter/forgotpassword") ||
-    location.pathname.includes("/renter/resetpassword");
+    location.pathname.includes("/renter/resetpassword") ||
+    location.pathname.includes("/agent/forgotpassword") ||
+    location.pathname.includes("/agent/resetpassword");
   const isInRenterDash = location.pathname.includes("/renter/dashboard");
 
   // Show loading or default navbar while token is being verified

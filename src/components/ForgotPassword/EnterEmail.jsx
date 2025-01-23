@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { Mail, ArrowLeft } from "lucide-react";
+import useTokenData from "../../../TokenHook.js";
 
 const ResetPassword = () => {
   const [email, setEmail] = useState("");
@@ -10,6 +11,7 @@ const ResetPassword = () => {
   const [emailError, setEmailError] = useState("");
   const navigate = useNavigate();
   const apiUrl = import.meta.env.VITE_API_URL;
+  const { tokenData } = useTokenData();
 
   const validateEmail = (emailToValidate) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -35,17 +37,25 @@ const ResetPassword = () => {
     setIsLoading(true);
 
     try {
+      const role = tokenData?.role === "user" ? "users" : "agents";
       const response = await axios.post(
-        `${apiUrl}/api/v1/agents/reset-password-mail`,
+        `${apiUrl}/api/v1/${role}/reset-password-mail`,
         { email },
         { withCredentials: true },
       );
-      console.log(response);
       toast.success(
         response.data.message || "Password reset link sent successfully",
       );
       setTimeout(() => {
-        window.open("mailto:?", "_blank");
+        const isMobile =
+          /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+            navigator.userAgent,
+          );
+        if (isMobile) {
+          window.location.href = "mailto:?";
+        } else {
+          window.open("https://mail.google.com", "_blank");
+        }
       }, 1000);
     } catch (error) {
       toast.error(

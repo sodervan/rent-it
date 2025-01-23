@@ -4,7 +4,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { Lock, LockOpen, Eye, EyeOff, ArrowLeft } from "lucide-react";
 
-const PasswordReset = () => {
+const AgentPasswordReset = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
@@ -32,12 +32,12 @@ const PasswordReset = () => {
     try {
       const token = searchParams.get("token");
       const response = await axios.post(
-        `${apiUrl}/api/v1/users/reset-password?token=${token}`,
+        `${apiUrl}/api/v1/agents/reset-password?token=${token}`,
         { newPassword, confirmPassword },
         { withCredentials: true },
       );
       toast.success(response.data.message);
-      setTimeout(() => (window.location.href = "/renter/login"), 1000);
+      setTimeout(() => (window.location.href = "/agent/login"), 1000);
     } catch (error) {
       toast.error(error.response?.data?.message || "Unable to reset password");
     } finally {
@@ -138,4 +138,4 @@ const PasswordReset = () => {
   );
 };
 
-export default PasswordReset;
+export default AgentPasswordReset;

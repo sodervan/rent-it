@@ -38,6 +38,10 @@ const AgentDashboard = () => {
   const [priceRange, setPriceRange] = useState("");
   const apiUrl = import.meta.env.VITE_API_URL;
 
+  const encodeId = (id) => {
+    return btoa(id.toString()); // Encode the ID to Base64
+  };
+
   const updateShareState = () => setShare(true);
   const closeShareModal = () => setShare(false);
 
@@ -261,7 +265,7 @@ const AgentDashboard = () => {
   };
 
   useEffect(() => {
-    // fetchAgentDetails();
+    fetchAgentDetails();
     // fetchPublishedListings();
     // fetchUnpublishedListings();
   }, []);
@@ -388,9 +392,9 @@ const AgentDashboard = () => {
                       />
                     ) : (
                       <UnpublishedListingsOptionsMenu
-                        onEdit={() => {
-                          // Add your bookmark logic here
-                          console.log("Bookmark listing:", item.id);
+                        onEdit={(stepId) => {
+                          const encodedItemId = encodeId(item.id); // Encode the item.id
+                          window.location.href = `/agent/addlisting/${stepId}?itemId=${encodedItemId}`;
                         }}
                         onDelete={() => handleDelete(item.id)}
                         onBookings={() => {

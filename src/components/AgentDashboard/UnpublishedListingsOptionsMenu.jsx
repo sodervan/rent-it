@@ -234,19 +234,11 @@ const UnpublishedListingOptionsMenu = ({
     setShowBookingsModal(false);
   };
 
-  const handleEdit = async () => {
-    setIsDelisting(true);
-    setDelistError(null);
-
-    try {
-      await onEdit?.();
-      setShowEditModal(false);
-    } catch (error) {
-      console.error("Error delisting:", error);
-      setDelistError("Failed to delist. Please try again.");
-    } finally {
-      setIsDelisting(false);
-    }
+  const handleEdit = async (stepId) => {
+    onEdit?.(stepId);
+    setIsRedirecting(true);
+    setShowEditModal(false);
+    setIsRedirecting(false);
   };
 
   const handleBookings = () => {
@@ -341,7 +333,7 @@ const UnpublishedListingOptionsMenu = ({
                     return (
                       <motion.button
                         key={step.id}
-                        onClick={() => handleStepClick(step.id)}
+                        onClick={() => handleEdit(step.id)}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         className="flex items-start gap-3 p-3 rounded-lg hover:bg-purple-50 transition-all duration-200 group text-left"

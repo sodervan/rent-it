@@ -7,10 +7,11 @@ import {
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import { IconPlus, IconX } from "@tabler/icons-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
+import SelectComponent from "@/components/AddListings/SelectComponent.jsx";
 
 const BasicDetails = () => {
   const navigate = useNavigate();
@@ -27,6 +28,62 @@ const BasicDetails = () => {
   const [currentLgas, setCurrentLgas] = useState("");
   const [loading, isLoading] = useState(false);
   const apiUrl = import.meta.env.VITE_API_URL;
+  const [searchParams] = useSearchParams();
+  const encodedItemId = searchParams.get("itemId");
+
+  const decodeId = (encodedId) => {
+    return atob(encodedId); // Decode the Base64 string
+  };
+  const itemId = decodeId(encodedItemId);
+
+  const fetchBasicDetails = async () => {
+    try {
+      const response = await axios.get(
+        `${apiUrl}/api/v1/agents/listings/${itemId}/basic-details`,
+        { withCredentials: true },
+      );
+      console.log(response);
+      const data = response.data.payload;
+
+      // Set the fetched data as the default state
+      setDescription(data.title || "");
+      setSelectedAppType(String(data.apartmentTypeId) || "");
+      setAddress(data.streetAddress || "");
+      setSelectedState(String(data.stateId) || "");
+      setSelectedCity(String(data.cityId) || "");
+      setCurrentLgas(String(data.localGovernmentAreaId) || "");
+      setUnits(data.units || 1);
+
+      // Fetch dependent data (cities and LGAs) based on the selected state
+      if (data.stateId) {
+        await getCities(data.stateId);
+        await getLgas(data.stateId);
+      }
+    } catch (error) {
+      console.error("Error fetching basic details:", error);
+      toast.error("Failed to fetch basic details");
+    }
+  };
+
+  const appTypeOptions = appTypes.map((type) => ({
+    value: String(type.id),
+    label: type.name,
+  }));
+
+  const stateOptions = states.map((state) => ({
+    value: String(state.id),
+    label: state.name,
+  }));
+
+  const lgaOptions = lgas.map((lga) => ({
+    value: String(lga.id),
+    label: lga.name,
+  }));
+
+  const cityOptions = cities.map((city) => ({
+    value: String(city.id),
+    label: city.name,
+  }));
 
   const handleDescriptionChange = (e) => {
     setDescription(e.target.value);
@@ -103,7 +160,9 @@ const BasicDetails = () => {
         );
       }
       setTimeout(() => {
-        navigate("/agent/addlisting/2");
+        navigate(
+          `/agent/addlisting/2${encodedItemId ? "?itemId=" + encodedItemId : ""}`,
+        );
       }, 500);
     } catch (error) {
       console.error("Error updating listing:", error);
@@ -119,6 +178,7 @@ const BasicDetails = () => {
         `${apiUrl}/api/v1/agents/listings-attributes/location/cities?state_id=${stateId}`,
         { withCredentials: true },
       );
+      console.log(response);
       setCities(response.data.payload || []);
     } catch (error) {
       console.error("Error fetching cities:", error);
@@ -142,6 +202,9 @@ const BasicDetails = () => {
   useEffect(() => {
     getApartmentTypes();
     getStates();
+    if (encodedItemId) {
+      fetchBasicDetails();
+    }
   }, []);
 
   const handleStateChange = (stateId) => {
@@ -206,23 +269,13 @@ const BasicDetails = () => {
             className="my-5"
           >
             <p className="mb-1 text-gray-700">Apartment Type</p>
-            <div className="relative w-full">
-              <Select
-                onChange={(e) => setSelectedAppType(e)}
-                label="Select Type"
-                aria-label="Apartment Type"
-              >
-                {appTypes.length > 0 ? (
-                  appTypes.map((type) => (
-                    <Option key={type.id} value={String(type.id)}>
-                      {type.name}
-                    </Option>
-                  ))
-                ) : (
-                  <Option disabled>No apartment types available</Option>
-                )}
-              </Select>
-            </div>
+            <SelectComponent
+              options={appTypeOptions}
+              value={selectedAppType}
+              onChange={setSelectedAppType}
+              label="Select Apartment Type"
+              placeholder="Choose an apartment type"
+            />
           </motion.div>
 
           {/*SET UNITS*/}
@@ -274,6 +327,7 @@ const BasicDetails = () => {
             <p className="mb-2 text-gray-700">Address</p>
             <Input
               label="e.g., 10 Adewale Street"
+              value={address}
               onChange={handleAddressChange}
               aria-label="Address"
             />
@@ -281,61 +335,39 @@ const BasicDetails = () => {
             {/*SELECT STATE*/}
             <div className="relative w-full mt-4">
               <p className="mb-2 text-gray-700">State</p>
-              <Select
+              <SelectComponent
+                options={stateOptions}
+                value={selectedState}
+                onChange={(stateId) => {
+                  handleStateChange(parseInt(stateId));
+                }}
                 label="Select State"
-                onChange={(e) => handleStateChange(parseInt(e))}
-                aria-label="Select State"
-              >
-                {states.length > 0 ? (
-                  states.map((state) => (
-                    <Option key={state.id} value={String(state.id)}>
-                      {state.name}
-                    </Option>
-                  ))
-                ) : (
-                  <Option disabled>No states available</Option>
-                )}
-              </Select>
+                placeholder="Choose a state"
+              />
             </div>
 
             {/*SELECT LGAS*/}
             <div className="relative w-full mt-4">
               <p className="mb-2 text-gray-700">LGA</p>
-              <Select
+              <SelectComponent
+                options={lgaOptions}
+                value={currentLgas}
+                onChange={setCurrentLgas}
                 label="Select LGA"
-                onChange={(e) => setCurrentLgas(e)}
-                aria-label="Select LGA"
-              >
-                {lgas.length > 0 ? (
-                  lgas.map((lga) => (
-                    <Option key={lga.id} value={String(lga.id)}>
-                      {lga.name}
-                    </Option>
-                  ))
-                ) : (
-                  <Option disabled>No LGAs available</Option>
-                )}
-              </Select>
+                placeholder="Choose an LGA"
+              />
             </div>
 
             {/*SELECT CITY*/}
             <div className="relative w-full mt-4">
               <p className="my-2 text-gray-700">City</p>
-              <Select
-                onChange={(e) => setSelectedCity(e)}
+              <SelectComponent
+                options={cityOptions}
+                value={String(selectedCity)}
+                onChange={setSelectedCity}
                 label="Select City"
-                aria-label="Select City"
-              >
-                {cities.length > 0 ? (
-                  cities.map((city) => (
-                    <Option key={city.id} value={String(city.id)}>
-                      {city.name}
-                    </Option>
-                  ))
-                ) : (
-                  <Option disabled>No cities available</Option>
-                )}
-              </Select>
+                placeholder="Choose a city"
+              />
             </div>
 
             <div className="my-8">

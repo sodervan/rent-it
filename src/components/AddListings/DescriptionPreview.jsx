@@ -1,10 +1,12 @@
 import { Button } from "@material-tailwind/react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 const Description = () => {
   const navigate = useNavigate();
   const [descriptionDetails, setDescriptionDetails] = useState("");
+  const [searchParams] = useSearchParams();
+  const encodedItemId = searchParams.get("itemId");
 
   useEffect(() => {
     setDescriptionDetails(localStorage.getItem("descriptionDetails"));
@@ -35,7 +37,9 @@ const Description = () => {
               <Button
                 className="capitalize font-medium bg-secondaryPurple text-primaryPurple w-full text-[15px] font-poppins"
                 onClick={() => {
-                  navigate("/agent/addlisting/4");
+                  navigate(
+                    `/agent/addlisting/4${encodedItemId ? `?itemId=${encodedItemId}` : ""}`,
+                  );
                 }}
               >
                 Previous
@@ -43,7 +47,9 @@ const Description = () => {
               <Button
                 className="capitalize font-medium bg-primaryPurple text-white w-full text-[15px] font-poppins"
                 onClick={() => {
-                  navigate("/agent/addlisting/6");
+                  navigate(
+                    `/agent/addlisting/6${encodedItemId ? `?itemId=${encodedItemId}` : ""}`,
+                  );
                   localStorage.removeItem("descriptionDetails");
                 }}
               >

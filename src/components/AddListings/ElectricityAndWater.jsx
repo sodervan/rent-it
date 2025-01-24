@@ -6,11 +6,12 @@ import {
   Select,
   Spinner,
 } from "@material-tailwind/react";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 import axios from "axios"; // Import Axios
 import { toast } from "react-toastify"; // For toast notifications
-import Cookies from "js-cookie"; // For working with cookies
+import Cookies from "js-cookie";
+import SelectComponent from "@/components/AddListings/SelectComponent.jsx"; // For working with cookies
 
 const ElectricityAndWater = () => {
   const navigate = useNavigate();
@@ -20,6 +21,13 @@ const ElectricityAndWater = () => {
   const [furnishingState, setFurnishingState] = useState("");
   const [loading, setLoading] = useState(false);
   const apiUrl = import.meta.env.VITE_API_URL;
+  const [searchParams] = useSearchParams();
+  const encodedItemId = searchParams.get("itemId");
+
+  const decodeId = (encodedId) => {
+    return atob(encodedId); // Decode the Base64 string
+  };
+  const itemId = decodeId(encodedItemId);
 
   const handleWaterSupplyChange = (label) => {
     setWaterSupply((prev) =>
@@ -27,6 +35,31 @@ const ElectricityAndWater = () => {
         ? prev.filter((item) => item !== label)
         : [...prev, label],
     );
+  };
+
+  const fetchFeatures = async () => {
+    try {
+      const response = await axios.get(
+        `${apiUrl}/api/v1/agents/listings/${itemId}/features`,
+        { withCredentials: true },
+      );
+      const data = response.data.payload;
+      console.log(response);
+      // Set the fetched data as the default state
+      setPaymentType(data.electricityPaymentType || "Prepaid");
+      setAccessType(data.electricityAccessType || "Personal");
+      setWaterSupply(
+        [
+          data.inHouseRunningWater ? "In-House running water" : "",
+          data.outDoorWaterTaps ? "Outdoor water taps" : "",
+          data.waterFromExternalSource ? "Water from external source" : "",
+        ].filter(Boolean),
+      );
+      setFurnishingState(data.furnishingState);
+    } catch (error) {
+      console.error("Error fetching features:", error);
+      toast.error("Failed to fetch features details");
+    }
   };
 
   // POST ELECTRICITY AND WATER DETAILS TO THE API
@@ -60,7 +93,9 @@ const ElectricityAndWater = () => {
         console.log("Success:", response.data);
         toast.success("Electricity and water details saved successfully!"); // Success toast
         setTimeout(() => {
-          navigate("/agent/addlisting/7");
+          navigate(
+            `/agent/addlisting/7${encodedItemId ? `?itemId=${encodedItemId}` : ""}`,
+          );
         }, 500);
       }
     } catch (error) {
@@ -74,6 +109,11 @@ const ElectricityAndWater = () => {
     }
   };
 
+  useEffect(() => {
+    if (encodedItemId) {
+      fetchFeatures();
+    }
+  }, []);
   return (
     <>
       <div>
@@ -98,13 +138,18 @@ const ElectricityAndWater = () => {
                       <Radio
                         label="Prepaid"
                         name="type"
-                        checked={paymentType === "Prepaid"}
+                        checked={
+                          paymentType === "Prepaid" || paymentType === "prepaid"
+                        }
                         onChange={() => setPaymentType("Prepaid")}
                       />
                       <Radio
                         name="type"
                         label="Postpaid"
-                        checked={paymentType === "Postpaid"}
+                        checked={
+                          paymentType === "Postpaid" ||
+                          paymentType === "postpaid"
+                        }
                         onChange={() => setPaymentType("Postpaid")}
                       />
                     </div>
@@ -116,13 +161,17 @@ const ElectricityAndWater = () => {
                       <Radio
                         label="Shared"
                         name="access"
-                        checked={accessType === "Shared"}
+                        checked={
+                          accessType === "Shared" || accessType === "shared"
+                        }
                         onChange={() => setAccessType("Shared")}
                       />
                       <Radio
                         name="access"
                         label="Personal"
-                        checked={accessType === "Personal"}
+                        checked={
+                          accessType === "Personal" || accessType === "personal"
+                        }
                         onChange={() => setAccessType("Personal")}
                       />
                     </div>
@@ -161,14 +210,17 @@ const ElectricityAndWater = () => {
                 <div className="mb-5">
                   <p className="text-md text-gray-600">Furnishing State</p>
                   <div className="w-full mt-3">
-                    <Select
-                      label="Select"
-                      onChange={(e) => setFurnishingState(e)}
-                    >
-                      <Option value="Fully-Furnished">Fully Furnished</Option>
-                      <Option value="Semi-Furnished">Semi-Furnished</Option>
-                      <Option value="Not-Furnished">Not Furnished</Option>
-                    </Select>
+                    <SelectComponent
+                      options={[
+                        { value: "fully-furnished", label: "Fully Furnished" },
+                        { value: "semi-furnished", label: "Semi-Furnished" },
+                        { value: "not-furnished", label: "Not Furnished" },
+                      ]}
+                      value={furnishingState}
+                      onChange={setFurnishingState}
+                      label="Select Furnishing State"
+                      placeholder="Choose furnishing state"
+                    />
                   </div>
                 </div>
               </div>
@@ -177,7 +229,9 @@ const ElectricityAndWater = () => {
               <Button
                 className="capitalize font-medium bg-secondaryPurple text-primaryPurple w-full text-[15px] font-poppins"
                 onClick={() => {
-                  navigate("/agent/addlisting/5");
+                  navigate(
+                    `/agent/addlisting/5${encodedItemId ? `?itemId=${encodedItemId}` : ""}`,
+                  );
                 }}
               >
                 Previous

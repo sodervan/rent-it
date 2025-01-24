@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 import {
@@ -20,7 +20,13 @@ const CostBreakdown = () => {
   const [rentFeeDeposit, setRentFeeDeposit] = useState("");
   const [loading, setLoading] = useState(false);
   const apiUrl = import.meta.env.VITE_API_URL;
+  const [searchParams] = useSearchParams();
+  const encodedItemId = searchParams.get("itemId");
 
+  const decodeId = (encodedId) => {
+    return atob(encodedId); // Decode the Base64 string
+  };
+  const itemId = decodeId(encodedItemId);
   // Calculate Agent Fee (10% of Base Rent Fee) and Legal Fee (12.5% of Base Rent Fee)
   useEffect(() => {
     if (baseRentFee > 0) {
@@ -41,6 +47,27 @@ const CostBreakdown = () => {
   const handleBaseRentFee = (e) => {
     const value = parseFloat(e.target.value) || 0;
     setBaseRentFee(value);
+  };
+
+  const fetchCostBreakdown = async () => {
+    try {
+      const response = await axios.get(
+        `${apiUrl}/api/v1/agents/listings/${itemId}/fees`,
+        { withCredentials: true },
+      );
+      console.log(response);
+      const data = response.data.payload;
+      console.log(response);
+
+      // Set the fetched data as the default state
+      setBaseRentFee(data.baseCost || "");
+      setAgentFee(data.extraFees[0]?.amount || "0");
+      setLegalFee(data.extraFees[1]?.amount || "0");
+      setRentFeeDeposit(data.RentFeeDeposit || "");
+    } catch (error) {
+      console.error("Error fetching basic details:", error);
+      toast.error("Failed to fetch basic details");
+    }
   };
 
   // SEND FEES DETAILS TO THE API
@@ -85,7 +112,9 @@ const CostBreakdown = () => {
         );
 
         setTimeout(() => {
-          navigate("/agent/addlisting/3");
+          navigate(
+            `/agent/addlisting/3${encodedItemId ? "?itemId=" + encodedItemId : ""}`,
+          );
         }, 500);
       }
     } catch (error) {
@@ -124,10 +153,9 @@ const CostBreakdown = () => {
 
   useEffect(() => {
     getFeesTypes();
-    console.log(
-      "Basic Details from LocalStorage:",
-      JSON.parse(localStorage.getItem("basicDetails")),
-    );
+    if (encodedItemId) {
+      fetchCostBreakdown();
+    }
   }, []);
 
   return (
@@ -202,7 +230,9 @@ const CostBreakdown = () => {
             <Button
               className="capitalize font-medium text-[20px] bg-secondaryPurple text-primaryPurple w-full text-[15px] font-poppins"
               onClick={() => {
-                navigate("/agent/addlisting/1");
+                navigate(
+                  `/agent/addlisting/1${encodedItemId ? `?itemId=${encodedItemId}` : ""}`,
+                );
               }}
             >
               Previous

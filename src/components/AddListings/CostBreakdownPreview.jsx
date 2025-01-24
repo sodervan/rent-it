@@ -1,10 +1,12 @@
 import { Button } from "@material-tailwind/react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 const CostBreakdownPreview = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [feesDetails, setFeesDetails] = useState({});
+  const encodedItemId = searchParams.get("itemId");
 
   useEffect(() => {
     setFeesDetails(JSON.parse(localStorage.getItem("feesDetails")));
@@ -73,7 +75,9 @@ const CostBreakdownPreview = () => {
             <Button
               className="capitalize font-medium text-[20px] bg-secondaryPurple text-primaryPurple w-full text-[15px] font-poppins"
               onClick={() => {
-                navigate("/agent/addlisting/2");
+                navigate(
+                  `/agent/addlisting/2${encodedItemId ? `?itemId=${encodedItemId}` : ""}`,
+                );
               }}
             >
               Previous
@@ -81,7 +85,9 @@ const CostBreakdownPreview = () => {
             <Button
               className="capitalize font-medium text-[20px] bg-primaryPurple text-white w-full text-[15px] font-poppins"
               onClick={() => {
-                navigate("/agent/addlisting/4");
+                navigate(
+                  `/agent/addlisting/4${encodedItemId ? `?itemId=${encodedItemId}` : ""}`,
+                );
                 localStorage.removeItem("feesDetails");
               }}
             >

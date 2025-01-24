@@ -1,6 +1,6 @@
 import { Button, Spinner, Textarea } from "@material-tailwind/react";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 import axios from "axios"; // Import Axios
 import { toast } from "react-toastify"; // Optional: For toast notifications
 import Cookies from "js-cookie"; // Optional: For working with cookies
@@ -10,11 +10,33 @@ const Description = () => {
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const apiUrl = import.meta.env.VITE_API_URL;
+  const [searchParams] = useSearchParams();
+  const encodedItemId = searchParams.get("itemId");
 
+  const decodeId = (encodedId) => {
+    return atob(encodedId); // Decode the Base64 string
+  };
+  const itemId = decodeId(encodedItemId);
   const handleDescription = (e) => {
     setDescription(e.target.value);
   };
 
+  const fetchDescription = async () => {
+    try {
+      const response = await axios.get(
+        `${apiUrl}/api/v1/agents/listings/${itemId}/description`,
+        { withCredentials: true },
+      );
+      console.log(response);
+      const data = response.data.payload;
+      setDescription(data.description); // Set the fetched data as the default state
+
+      // Set the fetched data as the default state
+    } catch (error) {
+      console.error("Error fetching basic details:", error);
+      toast.error("Failed to fetch basic details");
+    }
+  };
   // POST DESCRIPTION TO THE API
   const postDescription = async () => {
     setLoading(true);
@@ -41,7 +63,9 @@ const Description = () => {
         toast.success("Description saved successfully!"); // Optional: Show success toast
 
         setTimeout(() => {
-          navigate("/agent/addlisting/5");
+          navigate(
+            `/agent/addlisting/5${encodedItemId ? `?itemId=${encodedItemId}` : ""}`,
+          );
         }, 500);
       }
     } catch (error) {
@@ -55,6 +79,11 @@ const Description = () => {
     }
   };
 
+  useEffect(() => {
+    if (encodedItemId) {
+      fetchDescription();
+    }
+  }, []);
   return (
     <>
       <div>
@@ -75,6 +104,7 @@ const Description = () => {
                   label="Enter a Description"
                   variant="outlined"
                   className="focus:ring-0"
+                  value={description}
                 />
               </div>
             </div>
@@ -85,7 +115,9 @@ const Description = () => {
               <Button
                 className="capitalize font-medium bg-secondaryPurple text-primaryPurple w-full text-[15px] font-poppins"
                 onClick={() => {
-                  navigate("/agent/addlisting/3");
+                  navigate(
+                    `/agent/addlisting/3${encodedItemId ? `?itemId=${encodedItemId}` : ""}`,
+                  );
                 }}
               >
                 Previous

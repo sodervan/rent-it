@@ -74,7 +74,12 @@ function RenterHome() {
 				) : (
 					<>
 						{data.payload.data.map((e) => {
-							return <SearchCard {...e} key={e.id} />;
+							return (
+								<SearchCard
+									{...e}
+									key={e.id}
+								/>
+							);
 						})}
 					</>
 				)}

@@ -12,5 +12,5 @@ let defaultListingOptions = {
 	latitude: "",
 	radius: "",
 };
-let listingOptions = atom(defaultListingOptions);
-export { countAtom, sideBarAtom ,listingOptions};
+let listingOptionsAtom = atom(defaultListingOptions);
+export { countAtom, sideBarAtom ,listingOptionsAtom};

@@ -9,6 +9,8 @@ import {
 	IconUser,
 	IconX,
 } from "@tabler/icons-react";
+import { useAtom } from "jotai";
+import { listingOptionsAtom } from "@/store/store";
 
 const links = [
 	{
@@ -29,6 +31,8 @@ const links = [
 ];
 function NavBarItems() {
 	let navigate = useNavigate();
+
+	let defaultOptions = useAtom(listingOptionsAtom)
 	return (
 		<div className="flex flex-col  h-full py-2 gap-2 px-2">
 			{/* {links.map(({ name, path, icon: Icon }) => {
@@ -58,6 +62,7 @@ function NavBarItems() {
 			</div>
 
 			<div className="flex flex-col gap-2">
+				<label>Pricing</label>
 				<div>
 					<label className="text-sm opacity-50">Min Amount</label>
 					<Input
@@ -79,7 +84,7 @@ function NavBarItems() {
 			</div>
 
 			<div className="mt-4">
-				<label className="text-sm opacity-50">ApartmentType</label>
+				<label className="text-sm ">ApartmentType</label>
 
 				<Input
 					type="text"
@@ -97,7 +102,7 @@ function NavBarItems() {
 						type="number"
 						leftSection={<IconCurrencyNaira />}
 						title="sss"
-						placeholder="MinAmount"
+						placeholder="Longitude"
 					/>
 				</div>
 				<div>
@@ -106,7 +111,7 @@ function NavBarItems() {
 						type="number"
 						leftSection={<IconCurrencyNaira />}
 						title="sss"
-						placeholder="MaxAmount"
+						placeholder="Latitude"
 					/>
 				</div>
 				<div>
@@ -115,7 +120,7 @@ function NavBarItems() {
 						type="number"
 						leftSection={<IconCurrencyNaira />}
 						title="sss"
-						placeholder="MaxAmount"
+						placeholder="Radius"
 					/>
 				</div>
 			</div>

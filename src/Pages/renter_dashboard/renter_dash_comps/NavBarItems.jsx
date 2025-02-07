@@ -33,6 +33,9 @@ function NavBarItems() {
 	let navigate = useNavigate();
 
 	let defaultOptions = useAtom(listingOptionsAtom)
+	
+
+	
 	return (
 		<div className="flex flex-col  h-full py-2 gap-2 px-2">
 			{/* {links.map(({ name, path, icon: Icon }) => {

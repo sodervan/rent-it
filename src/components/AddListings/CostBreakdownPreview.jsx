@@ -1,10 +1,12 @@
 import { Button } from "@material-tailwind/react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 const CostBreakdownPreview = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [feesDetails, setFeesDetails] = useState({});
+  const encodedItemId = searchParams.get("itemId");
 
   useEffect(() => {
     setFeesDetails(JSON.parse(localStorage.getItem("feesDetails")));
@@ -15,14 +17,11 @@ const CostBreakdownPreview = () => {
         <div>
           <div className="flex items-center justify-between border-b border-gray-200 pb-4 px-6 w-[90%]">
             <p className="text-xl font-medium">Add New Listing</p>
-            <Button className="bg-secondaryPurple text-primaryPurple font-poppins font-medium shadow-none hover:shadow-none hover:bg-primaryPurple hover:text-white duration-300 transition-all">
-              Save
-            </Button>
           </div>
         </div>
         <div className="px-6">
           <div>
-            <p className="text-gray-500 mt-2 font-medium">Step 3 of 15</p>
+            <p className="text-gray-500 mt-2 font-medium">Step 3 of 13</p>
             <p className="mt-2 text-lg">Cost Breakdown Preview</p>
           </div>
 
@@ -59,12 +58,16 @@ const CostBreakdownPreview = () => {
 
               <div className="p-4 flex items-center justify-between bg-[#F9FAFB] border-b border-gray-300">
                 <div className="text-gray-700 font-medium">MINIMUM DEPOSIT</div>
-                <div>{Number(feesDetails.totalMinDeposit).toLocaleString()}</div>
+                <div>
+                  {Number(feesDetails.totalMinDeposit).toLocaleString()}
+                </div>
               </div>
 
               <div className="p-4 flex items-center justify-between  rounded-b-lg">
                 <div className="text-gray-700 font-medium">TOTAL COST</div>
-                <div>{Number(feesDetails.totalListingCost).toLocaleString()}</div>
+                <div>
+                  {Number(feesDetails.totalListingCost).toLocaleString()}
+                </div>
               </div>
             </div>
           }
@@ -72,7 +75,9 @@ const CostBreakdownPreview = () => {
             <Button
               className="capitalize font-medium text-[20px] bg-secondaryPurple text-primaryPurple w-full text-[15px] font-poppins"
               onClick={() => {
-                navigate("/agent/addlisting/2");
+                navigate(
+                  `/agent/addlisting/2${encodedItemId ? `?itemId=${encodedItemId}` : ""}`,
+                );
               }}
             >
               Previous
@@ -80,7 +85,9 @@ const CostBreakdownPreview = () => {
             <Button
               className="capitalize font-medium text-[20px] bg-primaryPurple text-white w-full text-[15px] font-poppins"
               onClick={() => {
-                navigate("/agent/addlisting/4");
+                navigate(
+                  `/agent/addlisting/4${encodedItemId ? `?itemId=${encodedItemId}` : ""}`,
+                );
                 localStorage.removeItem("feesDetails");
               }}
             >

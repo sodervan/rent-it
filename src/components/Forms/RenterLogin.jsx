@@ -1,3 +1,4 @@
+import axios from "axios";
 import { NavLink } from "react-router-dom";
 import Typewriter from "typewriter-effect";
 import { Input, Button } from "@material-tailwind/react";
@@ -5,12 +6,14 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { SignJWT } from "jose";
 
 import { ToastContainer } from "react-toastify";
-import AuthService from "../../../authService.js";
+import { useToken } from "../../../TokenContext.js";
 
 const RenterSignup = () => {
   const apiUrl = import.meta.env.VITE_API_URL;
+  const SECRET_KEY = import.meta.env.VITE_SECRET_KEY;
   const navigate = useNavigate();
   const [message, setMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -33,17 +36,13 @@ const RenterSignup = () => {
 
   const fetchRenterDetails = async (accessToken) => {
     try {
-      setIsLoading(true); // Start loading
-      const response = await fetch(`${apiUrl}/api/v1/agents`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
+      setIsLoading(true);
+      const response = await axios.get(`${apiUrl}/api/v1/agents`, {
+        withCredentials: true, // Add this to include cookies
       });
 
-      const result = await response.json();
-      if (response.ok) {
-        localStorage.setItem("profileImage", result.payload.profilePicLink);
+      const result = response.data;
+      if (response.status === 200) {
         console.log(result);
       } else {
         console.log("Failed to fetch agent details");
@@ -62,34 +61,9 @@ const RenterSignup = () => {
       }
     } catch (error) {
       console.log("Error:", error);
-    } finally {
-      setIsLoading(false); // End loading
-    }
-  };
-
-  const handleLogin = async (event) => {
-    event.preventDefault();
-    try {
-      setIsLoading(true);
-      console.log(email, password);
-      const response = await fetch(`${apiUrl}/api/v1/users/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
-      });
-      const result = await response.json();
-      if (response.ok) {
-        localStorage.setItem("userId", result.payload.id);
-        localStorage.setItem("accessToken", result.payload.access_token);
-        localStorage.setItem("refreshToken", result.payload.refresh_token);
-        localStorage.setItem("accountType", result.payload.role[0]);
-        AuthService.startRefreshTimer();
-        toast.success(result.message || "Login Successful!", {
+      toast.error(
+        error.message || "An error occurred while fetching agent details.",
+        {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -97,32 +71,83 @@ const RenterSignup = () => {
           pauseOnHover: true,
           draggable: true,
           progress: undefined,
-        });
-        await fetchRenterDetails();
-        navigate("/renter/dashboard");
+        },
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-        window.history.replaceState(null, "", "/");
-        console.log(result);
-      } else {
-        console.log("Registration Failed");
-        setMessage(result.message || "Login failed");
-        toast.error(
-          result.message || "Login failed. Please check your credentials.",
-          {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          },
-        );
-      }
+  const handleLogin = async (event) => {
+    event.preventDefault();
+    try {
+      setIsLoading(true);
+      console.log("Attempting login with:", { email, password });
+
+      const response = await axios.post(
+        `${apiUrl}/api/v1/users/login`,
+        {
+          email: email,
+          password: password,
+        },
+        {
+          withCredentials: true,
+        },
+      );
+
+      console.log("Server response:", response.data);
+
+      const expiryTime = Math.floor(
+        new Date(response.data.payload.session_expiry_time).getTime() / 1000,
+      );
+
+      const payload = {
+        role: response.data.payload.role[0],
+        exp: expiryTime, // Unix timestamp in seconds
+      };
+
+      console.log("Token payload:", payload);
+
+      // Create JWT token using jose
+      const token = await new SignJWT(payload)
+        .setProtectedHeader({ alg: "HS256" })
+        .setIssuedAt()
+        .setExpirationTime(payload.exp)
+        .sign(new TextEncoder().encode(SECRET_KEY));
+
+      console.log("JWT token created successfully");
+
+      document.cookie = `the_token=${token}; path=/; expires=${new Date(expiryTime * 1000).toUTCString()}; secure; SameSite=Strict`;
+
+      toast.success(response.data.message || "Login Successful!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+
+      setTimeout(() => {
+        window.location.href = "/renter/dashboard";
+      }, 500);
+
+      window.history.replaceState(null, "", "/");
     } catch (error) {
-      console.error("Error during login:", error);
-      setMessage("Something went wrong, please try again later.");
-      toast.error("Something went wrong, please try again later.", {
+      console.error("Login error details:", {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+      });
+
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong, please try again later.";
+
+      setMessage(errorMessage);
+      toast.error(errorMessage, {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -135,7 +160,6 @@ const RenterSignup = () => {
       setIsLoading(false);
     }
   };
-
   return (
     <>
       <div className="flex items-center justify-center h-screen px-4 md:px-10 lg:px-20">
@@ -197,7 +221,7 @@ const RenterSignup = () => {
                   </button>
                 )}
                 <NavLink
-                  to=""
+                  to="/renter/forgotpassword"
                   className="underline text-primaryPurple hover:text-purple-700"
                 >
                   Forgot Password

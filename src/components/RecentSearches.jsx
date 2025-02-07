@@ -3,8 +3,8 @@ import recentSearches from "../Data/recent_searches.json";
 const RecentSearches = () => {
   return (
     <>
-      <div className="w-full py-10 whitespace-nowrap my-16">
-        <div className="bg-[#FCFAFF] w-full px-6 py-4 sm:px-20">
+      <div className="w-full whitespace-nowrap">
+        <div className="bg-[#FCFAFF] w-full px-6 py-8 sm:px-20">
           <div className="mb-3 text-[20px] sm:text-xl">
             <p>Recent Searches</p>
           </div>

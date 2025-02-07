@@ -6,8 +6,12 @@ import {
   Select,
   Spinner,
 } from "@material-tailwind/react";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios"; // Import Axios
+import { toast } from "react-toastify"; // For toast notifications
+import Cookies from "js-cookie";
+import SelectComponent from "@/components/AddListings/SelectComponent.jsx"; // For working with cookies
 
 const ElectricityAndWater = () => {
   const navigate = useNavigate();
@@ -17,6 +21,13 @@ const ElectricityAndWater = () => {
   const [furnishingState, setFurnishingState] = useState("");
   const [loading, setLoading] = useState(false);
   const apiUrl = import.meta.env.VITE_API_URL;
+  const [searchParams] = useSearchParams();
+  const encodedItemId = searchParams.get("itemId");
+
+  const decodeId = (encodedId) => {
+    return atob(encodedId); // Decode the Base64 string
+  };
+  const itemId = decodeId(encodedItemId);
 
   const handleWaterSupplyChange = (label) => {
     setWaterSupply((prev) =>
@@ -25,17 +36,42 @@ const ElectricityAndWater = () => {
         : [...prev, label],
     );
   };
+
+  const fetchFeatures = async () => {
+    try {
+      const response = await axios.get(
+        `${apiUrl}/api/v1/agents/listings/${itemId}/features`,
+        { withCredentials: true },
+      );
+      const data = response.data.payload;
+      console.log(response);
+      // Set the fetched data as the default state
+      setPaymentType(data.electricityPaymentType || "Prepaid");
+      setAccessType(data.electricityAccessType || "Personal");
+      setWaterSupply(
+        [
+          data.inHouseRunningWater ? "In-House running water" : "",
+          data.outDoorWaterTaps ? "Outdoor water taps" : "",
+          data.waterFromExternalSource ? "Water from external source" : "",
+        ].filter(Boolean),
+      );
+      setFurnishingState(data.furnishingState);
+    } catch (error) {
+      console.error("Error fetching features:", error);
+      toast.error("Failed to fetch features details");
+    }
+  };
+
   // POST ELECTRICITY AND WATER DETAILS TO THE API
   const postElecAndWater = async () => {
     setLoading(true);
-    console.log(paymentType, accessType, waterSupply, furnishingState);
     try {
-      const token = localStorage.getItem("accessToken");
-      const storedDetails = JSON.parse(localStorage.getItem("basicDetails"));
+      const storedDetails = JSON.parse(localStorage.getItem("basicDetails")); // Get data from cookies
 
       if (!storedDetails || !storedDetails.listingId) {
         throw new Error("Invalid basicDetails or listingId missing.");
       }
+
       const data = {
         electricityPaymentType: paymentType.toLowerCase(),
         electricityAccessType: accessType.toLowerCase(),
@@ -46,45 +82,48 @@ const ElectricityAndWater = () => {
         ),
         furnishingState: furnishingState.toLowerCase(),
       };
-      console.log(data);
-      const response = await fetch(
-        `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/features?id=${storedDetails.listingId}`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        },
+
+      const response = await axios.post(
+        `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/features`,
+        data,
+        { withCredentials: true }, // Include cookies in the request
       );
 
-      if (response.ok) {
-        const result = await response.json();
-        console.log("Success:", result);
+      if (response.data.status === "success") {
+        console.log("Success:", response.data);
+        toast.success("Electricity and water details saved successfully!"); // Success toast
         setTimeout(() => {
-          navigate("/agent/addlisting/7");
+          navigate(
+            `/agent/addlisting/7${encodedItemId ? `?itemId=${encodedItemId}` : ""}`,
+          );
         }, 500);
       }
     } catch (error) {
       console.error("Error:", error);
+      toast.error(
+        error.response?.data?.message ||
+          "An error occurred while saving details.",
+      ); // Error toast
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (encodedItemId) {
+      fetchFeatures();
+    }
+  }, []);
   return (
     <>
       <div>
         <div>
           <div className="flex items-center justify-between border-b border-gray-200 pb-4 px-6">
             <p className="text-xl font-medium">Add New Listing</p>
-            <Button className="bg-secondaryPurple text-primaryPurple font-poppins font-medium shadow-none hover:shadow-none hover:bg-primaryPurple hover:text-white duration-300 transition-all">
-              Save
-            </Button>
           </div>
           <div className="px-6">
             <div className="mb-5">
-              <p className="text-gray-500 mt-2 font-medium">Step 6 of 15</p>
+              <p className="text-gray-500 mt-2 font-medium">Step 6 of 13</p>
               <p className="mt-2 text-lg">Electricity and water supply</p>
               <div className="w-full border border-gray-200 mt-3"></div>
             </div>
@@ -99,13 +138,18 @@ const ElectricityAndWater = () => {
                       <Radio
                         label="Prepaid"
                         name="type"
-                        checked={paymentType === "Prepaid"}
+                        checked={
+                          paymentType === "Prepaid" || paymentType === "prepaid"
+                        }
                         onChange={() => setPaymentType("Prepaid")}
                       />
                       <Radio
                         name="type"
                         label="Postpaid"
-                        checked={paymentType === "Postpaid"}
+                        checked={
+                          paymentType === "Postpaid" ||
+                          paymentType === "postpaid"
+                        }
                         onChange={() => setPaymentType("Postpaid")}
                       />
                     </div>
@@ -117,13 +161,17 @@ const ElectricityAndWater = () => {
                       <Radio
                         label="Shared"
                         name="access"
-                        checked={accessType === "Shared"}
+                        checked={
+                          accessType === "Shared" || accessType === "shared"
+                        }
                         onChange={() => setAccessType("Shared")}
                       />
                       <Radio
                         name="access"
                         label="Personal"
-                        checked={accessType === "Personal"}
+                        checked={
+                          accessType === "Personal" || accessType === "personal"
+                        }
                         onChange={() => setAccessType("Personal")}
                       />
                     </div>
@@ -162,14 +210,17 @@ const ElectricityAndWater = () => {
                 <div className="mb-5">
                   <p className="text-md text-gray-600">Furnishing State</p>
                   <div className="w-full mt-3">
-                    <Select
-                      label="Select"
-                      onChange={(e) => setFurnishingState(e)}
-                    >
-                      <Option value="Fully-Furnished">Fully Furnished</Option>
-                      <Option value="Semi-Furnished">Semi-Furnished</Option>
-                      <Option value="Not-Furnished">Not Furnished</Option>
-                    </Select>
+                    <SelectComponent
+                      options={[
+                        { value: "fully-furnished", label: "Fully Furnished" },
+                        { value: "semi-furnished", label: "Semi-Furnished" },
+                        { value: "not-furnished", label: "Not Furnished" },
+                      ]}
+                      value={furnishingState}
+                      onChange={setFurnishingState}
+                      label="Select Furnishing State"
+                      placeholder="Choose furnishing state"
+                    />
                   </div>
                 </div>
               </div>
@@ -178,7 +229,9 @@ const ElectricityAndWater = () => {
               <Button
                 className="capitalize font-medium bg-secondaryPurple text-primaryPurple w-full text-[15px] font-poppins"
                 onClick={() => {
-                  navigate("/agent/addlisting/5");
+                  navigate(
+                    `/agent/addlisting/5${encodedItemId ? `?itemId=${encodedItemId}` : ""}`,
+                  );
                 }}
               >
                 Previous
@@ -190,9 +243,7 @@ const ElectricityAndWater = () => {
                     : "bg-primaryPurple text-white w-full text-[15px] font-poppins flex justify-center items-center"
                 }`}
                 disabled={loading}
-                onClick={() => {
-                  postElecAndWater();
-                }}
+                onClick={postElecAndWater}
               >
                 {loading ? <Spinner className="h-4 w-4" /> : "Proceed"}
               </Button>

@@ -9,12 +9,15 @@ import {
   IconPower,
   IconPool,
 } from "@tabler/icons-react";
-import { Button, Spinner } from "@material-tailwind/react";
+import { Button, Spinner, Checkbox } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
 import MapReview from "./MapReview";
 import { IconSchool, IconAmbulance, IconBus } from "@tabler/icons-react";
 import axios from "axios";
+import { toast } from "react-toastify";
 import CompletedModal from "@/components/AddListings/CompletedModal.jsx";
+import VideoModal from "./VideoModal";
+import ImageModal from "@/components/AddListings/ImagesModal.jsx"; // Import the VideoModal component
 
 const ReviewListing = () => {
   const navigate = useNavigate();
@@ -22,7 +25,8 @@ const ReviewListing = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  // const mapKey = import.meta.env.VITE_APP_MAP_KEY;
+  const [showVideoModal, setShowVideoModal] = useState(false);
+  const [showImageModal, setShowImageModal] = useState(false);
   const apiUrl = import.meta.env.VITE_API_URL;
 
   const { isLoaded } = useLoadScript({
@@ -31,29 +35,24 @@ const ReviewListing = () => {
 
   const getData = async () => {
     setIsLoading(true);
-    const token = localStorage.getItem("accessToken");
     const storedDetails = JSON.parse(localStorage.getItem("basicDetails"));
+
     try {
-      const response = await fetch(
+      const response = await axios.get(
         `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/review?listingId=${storedDetails.listingId}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        },
+        { withCredentials: true },
       );
-      if (response.ok) {
-        const result = await response.json();
-        console.log(result);
-        setReviewDetails(result.payload);
-        console.log(reviewDetails);
+
+      console.log("Review Data Response:", response);
+
+      if (response.status === 200) {
+        setReviewDetails(response.data.payload);
       } else {
-        console.error("Failed to fetch listings");
+        toast.error("Failed to fetch review data.");
       }
     } catch (error) {
-      console.error("Error fetching listings:", error);
+      console.error("Error fetching review data:", error);
+      toast.error("An error occurred while fetching review data.");
     } finally {
       setIsLoading(false);
     }
@@ -61,47 +60,28 @@ const ReviewListing = () => {
 
   const publishListing = async () => {
     setIsUploading(true);
-    const token = localStorage.getItem("accessToken");
     const storedDetails = JSON.parse(localStorage.getItem("basicDetails"));
 
-    console.log("Publishing listing with details:", {
-      listingId: storedDetails.listingId,
-      token: token ? "Token exists" : "No token found"
-    });
-
     try {
-      const response = await axios({
-        method: 'get',
-        url: `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/publish`,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await axios.get(
+        `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/publish`,
+        { withCredentials: true },
+      );
 
-      console.log("Publish listing success:", {
-        status: response.status,
-        statusText: response.statusText,
-        data: response.data
-      });
+      console.log("Publish Listing Response:", response);
 
-      setShowSuccessModal(true);
-
-    } catch (error) {
-      if (error.response) {
-        // Server responded with a status code outside of 2xx range
-        console.error("Publish listing failed:", {
-          status: error.response.status,
-          statusText: error.response.statusText,
-          data: error.response.data
-        });
-      } else if (error.request) {
-        // Request was made but no response received
-        console.error("No response received:", error.request);
+      if (response.status === 200) {
+        toast.success("Listing published successfully!");
+        setShowSuccessModal(true);
       } else {
-        // Error in setting up the request
-        console.error("Error setting up request:", error.message);
+        toast.error("Failed to publish listing.");
       }
+    } catch (error) {
+      console.error("Error publishing listing:", error);
+      toast.error(
+        error.response?.data?.message ||
+          "An error occurred while publishing the listing.",
+      );
     } finally {
       setIsUploading(false);
     }
@@ -143,7 +123,7 @@ const ReviewListing = () => {
                   </div>
                   <img
                     src={
-                      reviewDetails?.pictures?.[0]?.photoLink ||
+                      reviewDetails?.pictures?.[0]?.cloudinaryUrl ||
                       "/placeholder.jpg"
                     }
                     alt="Listing"
@@ -187,9 +167,9 @@ const ReviewListing = () => {
               <div className="w-full md:w-[600px] flex justify-center items-center">
                 {reviewDetails?.video &&
                 reviewDetails.video.length > 0 &&
-                reviewDetails.video[0]?.videoLink ? (
+                reviewDetails.video[0]?.cloudinaryUrl ? (
                   <video
-                    src={reviewDetails.video[0].videoLink}
+                    src={reviewDetails.video[0].cloudinaryUrl}
                     controls
                     className="rounded-lg shadow-lg w-full h-[350px] max-w-[600px]"
                   >
@@ -203,15 +183,34 @@ const ReviewListing = () => {
           </div>
           {/*IMAGE AND VIDEO BUTTONS*/}
           <div className="px-6 flex gap-3 mt-3">
-            <button className="bg-secondaryPurple border border-primaryPurple text-primaryPurple p-2 rounded-lg my-3 text-sm flex items-center">
+            <button
+              className="bg-secondaryPurple border border-primaryPurple text-primaryPurple p-2 rounded-lg my-3 text-sm flex items-center"
+              onClick={() => setShowImageModal(true)}
+            >
               <IconPhoto size={16} className="mr-2" />
               View all images
             </button>
-            <button className="bg-secondaryPurple border border-primaryPurple text-primaryPurple p-2 rounded-lg my-3 text-sm flex items-center">
+            <button
+              className="bg-secondaryPurple border border-primaryPurple text-primaryPurple p-2 rounded-lg my-3 text-sm flex items-center"
+              onClick={() => setShowVideoModal(true)} // Open video modal
+            >
               <IconVideo size={16} className="mr-2" />
               View all videos
             </button>
           </div>
+
+          {/* Video Modal */}
+          <VideoModal
+            videos={reviewDetails?.video || []}
+            open={showVideoModal}
+            onClose={() => setShowVideoModal(false)}
+          />
+
+          <ImageModal
+            images={reviewDetails?.pictures || []}
+            open={showImageModal}
+            onClose={() => setShowImageModal(false)}
+          />
 
           {/* Remaining sections */}
           <div className="my-4">
@@ -520,8 +519,8 @@ const ReviewListing = () => {
       )}
       {/* ... existing JSX ... */}
       <CompletedModal
-          isOpen={showSuccessModal}
-          onClose={() => setShowSuccessModal(false)}
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
       />
     </>
   );

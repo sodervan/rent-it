@@ -6,10 +6,12 @@ import Lottie from "lottie-react"; // Lottie animations
 import loginAnimation from "../../../public/assets/signup-animation.json"; // Animation path
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import AuthService from "../../../authService.js";
+import { SignJWT } from "jose";
+import axios from "axios";
 
 const AgentLogin = () => {
   const apiUrl = import.meta.env.VITE_API_URL;
+  const SECRET_KEY = import.meta.env.VITE_SECRET_KEY;
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
@@ -25,29 +27,68 @@ const AgentLogin = () => {
   // Handle Login Functionality
   const handleLogin = async (e) => {
     e.preventDefault();
-    setIsLoading(true); // Enable loading state
+    setIsLoading(true);
+
     try {
-      const response = await fetch(`${apiUrl}/api/v1/agents/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await axios.post(
+        `${apiUrl}/api/v1/agents/login`,
+        {
+          email,
+          password,
         },
-        body: JSON.stringify({ email, password }),
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      const result = response.data;
+
+      const timeExpiry = Math.floor(
+        new Date(response.data.payload.session_expiry_time).getTime() / 1000,
+      );
+
+      const payload = {
+        role: response.data.payload.role[0],
+        exp: timeExpiry,
+      };
+
+      // Create JWT token
+      const token = await new SignJWT(payload)
+        .setProtectedHeader({ alg: "HS256" })
+        .setIssuedAt()
+        .setExpirationTime(payload.exp)
+        .sign(new TextEncoder().encode(SECRET_KEY));
+
+      // Set cookie with proper attributes
+      document.cookie = `the_token=${token}; path=/; expires=${new Date(timeExpiry * 1000).toUTCString()}; secure; SameSite=Strict`;
+
+      // Success notification
+      toast.success("Login successful!", {
+        position: "top-right",
+        autoClose: 1500, // Reduced to 1.5s since we're reloading
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
       });
 
-      if (response.ok) {
-        const result = await response.json();
-        console.log(result);
-        // Store tokens in localStorage
-        localStorage.setItem("accessToken", result.payload.access_token);
-        localStorage.setItem("userId", result.payload.id);
-        localStorage.setItem("refreshToken", result.payload.refresh_token);
-        localStorage.setItem("accountType", result.payload.role[0]);
+      // Wait for toast to be visible
+      setTimeout(() => {
+        // Store the target route in sessionStorage
+        window.location.href = result.payload?.isRegistrationComplete
+          ? "/agent/dashboard"
+          : `/agent/agentregistration/${result.payload.registrationStep}`;
+      }, 1000); // Match the toast duration
+    } catch (error) {
+      console.error("Login Error:", error);
 
-        AuthService.startRefreshTimer();
-
-        // Success toast
-        toast.success("Login successful!", {
+      // Handle different types of errors
+      if (error.response) {
+        // Server responded with error status (4xx, 5xx)
+        toast.error(error.response.data.message || "Login failed!", {
           position: "top-right",
           autoClose: 3000,
           hideProgressBar: false,
@@ -55,19 +96,19 @@ const AgentLogin = () => {
           pauseOnHover: true,
           draggable: true,
         });
-
-        // Redirect to agent dashboard
-        if (result.payload?.isRegistrationComplete === true) {
-          navigate("/agent/dashboard");
-        } else {
-          navigate(
-            `/agent/agentregistration/${result.payload.registrationStep}`,
-          );
-        }
+      } else if (error.request) {
+        // Request was made but no response received
+        toast.error("No response from server. Please check your connection.", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
       } else {
-        const error = await response.json();
-        // Error toast
-        toast.error(error.message || "Login failed!", {
+        // Something happened in setting up the request
+        toast.error("Something went wrong. Please try again later.", {
           position: "top-right",
           autoClose: 3000,
           hideProgressBar: false,
@@ -76,19 +117,8 @@ const AgentLogin = () => {
           draggable: true,
         });
       }
-    } catch (error) {
-      console.error("Login Error:", error);
-      // Network or unexpected error toast
-      toast.error("Something went wrong. Please try again later.", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
     } finally {
-      setIsLoading(false); // Disable loading state
+      setIsLoading(false);
     }
   };
 
@@ -170,7 +200,7 @@ const AgentLogin = () => {
                 {/* Forgot Password and Signup Links */}
                 <div className="flex justify-between text-sm text-gray-600">
                   <NavLink
-                    to="/forgot-password"
+                    to="/agent/forgotpassword"
                     className="underline text-primaryPurple hover:text-purple-700"
                   >
                     Forgot Password?

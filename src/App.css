@@ -32,6 +32,11 @@
     animation: logo-spin infinite 20s linear;
   }
 }
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-4deg); }
+  75% { transform: rotate(4deg); }
+}
 
 .card {
   padding: 2em;

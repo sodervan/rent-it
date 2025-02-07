@@ -6,9 +6,12 @@ import {
   Spinner,
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
-import {IconPlus, IconX} from "@tabler/icons-react";
-import { useNavigate } from "react-router-dom";
-import {toast} from "react-toastify";
+import { IconPlus, IconX } from "@tabler/icons-react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import axios from "axios";
+import { motion, AnimatePresence } from "framer-motion";
+import SelectComponent from "@/components/AddListings/SelectComponent.jsx";
 
 const BasicDetails = () => {
   const navigate = useNavigate();
@@ -18,24 +21,77 @@ const BasicDetails = () => {
   const [selectedState, setSelectedState] = useState("");
   const [cities, setCities] = useState([]);
   const [selectedCity, setSelectedCity] = useState("");
-  const [accessToken, setAccessToken] = useState("");
   const [units, setUnits] = useState(1);
   const [description, setDescription] = useState("");
   const [address, setAddress] = useState("");
-  const [lgas, setLgas] = useState("");
+  const [lgas, setLgas] = useState([]);
   const [currentLgas, setCurrentLgas] = useState("");
   const [loading, isLoading] = useState(false);
   const apiUrl = import.meta.env.VITE_API_URL;
+  const [searchParams] = useSearchParams();
+  const encodedItemId = searchParams.get("itemId");
+
+  const decodeId = (encodedId) => {
+    return atob(encodedId); // Decode the Base64 string
+  };
+  const itemId = decodeId(encodedItemId);
+
+  const fetchBasicDetails = async () => {
+    try {
+      const response = await axios.get(
+        `${apiUrl}/api/v1/agents/listings/${itemId}/basic-details`,
+        { withCredentials: true },
+      );
+      console.log(response);
+      const data = response.data.payload;
+
+      // Set the fetched data as the default state
+      setDescription(data.title || "");
+      setSelectedAppType(String(data.apartmentTypeId) || "");
+      setAddress(data.streetAddress || "");
+      setSelectedState(String(data.stateId) || "");
+      setSelectedCity(String(data.cityId) || "");
+      setCurrentLgas(String(data.localGovernmentAreaId) || "");
+      setUnits(data.units || 1);
+
+      // Fetch dependent data (cities and LGAs) based on the selected state
+      if (data.stateId) {
+        await getCities(data.stateId);
+        await getLgas(data.stateId);
+      }
+    } catch (error) {
+      console.error("Error fetching basic details:", error);
+      toast.error("Failed to fetch basic details");
+    }
+  };
+
+  const appTypeOptions = appTypes.map((type) => ({
+    value: String(type.id),
+    label: type.name,
+  }));
+
+  const stateOptions = states.map((state) => ({
+    value: String(state.id),
+    label: state.name,
+  }));
+
+  const lgaOptions = lgas.map((lga) => ({
+    value: String(lga.id),
+    label: lga.name,
+  }));
+
+  const cityOptions = cities.map((city) => ({
+    value: String(city.id),
+    label: city.name,
+  }));
 
   const handleDescriptionChange = (e) => {
     setDescription(e.target.value);
-    console.log(description);
   };
 
   const handleAddressChange = (e) => {
     e.preventDefault();
     setAddress(e.target.value);
-    console.log(address);
   };
 
   const handleUnitsChange = (e) => {
@@ -50,168 +106,152 @@ const BasicDetails = () => {
     setUnits((prevUnits) => Math.max(1, prevUnits - 1));
   };
 
-  const getApartmentTypes = async (token) => {
+  const getApartmentTypes = async () => {
     try {
-      const response = await fetch(
+      const response = await axios.get(
         `${apiUrl}/api/v1/agents/listings-attributes/apartmentTypes`,
-        {
-          method: "GET",
-          headers: { Authorization: `Bearer ${token}` },
-        },
+        { withCredentials: true },
       );
-      if (response.ok) {
-        const result = await response.json();
-        console.log(result);
-        setAppTypes(result.payload?.data || []);
-      } else {
-        console.log("Failed to fetch apartment types");
-      }
+      setAppTypes(response.data.payload?.data || []);
     } catch (error) {
-      console.log("Error fetching apartment types:", error);
+      console.error("Error fetching apartment types:", error);
+      toast.error("Failed to fetch apartment types");
     }
   };
 
-  const getStates = async (token) => {
+  const getStates = async () => {
     try {
-      const response = await fetch(
+      const response = await axios.get(
         `${apiUrl}/api/v1/agents/listings-attributes/location/states?country_id=1`,
-        {
-          method: "GET",
-          headers: { Authorization: `Bearer ${token}` },
-        },
+        { withCredentials: true },
       );
-      if (response.ok) {
-        const result = await response.json();
-        setStates(result.payload || []);
-      } else {
-        console.log("Failed to fetch states");
-      }
+      setStates(response.data.payload || []);
     } catch (error) {
-      console.log("Error fetching states:", error);
+      console.error("Error fetching states:", error);
+      toast.error("Failed to fetch states");
     }
   };
-  // POST BASIC DETAILS
+
   const postBasicDetails = async () => {
     isLoading(true);
     try {
-      const response = await fetch(
+      const response = await axios.post(
         `${apiUrl}/api/v1/agents/listings/basic-details`,
         {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
-          body: JSON.stringify({
-            title: description,
-            apartmentTypeId: parseInt(selectedAppType),
-            streetAddress: address,
-            cityId: selectedCity,
-            localGovernmentAreaId: parseInt(currentLgas),
-            stateId: parseInt(selectedState),
-            units: units,
-          }),
+          title: description,
+          apartmentTypeId: parseInt(selectedAppType),
+          streetAddress: address,
+          cityId: selectedCity,
+          localGovernmentAreaId: parseInt(currentLgas),
+          stateId: parseInt(selectedState),
+          units: units,
+        },
+        {
+          withCredentials: true,
+          headers: { "Content-Type": "application/json" },
         },
       );
-      if (response.ok) {
-        const result = await response.json();
-        toast.success("Success")
-        if (result) {
-          localStorage.setItem("basicDetails", JSON.stringify(result.payload));
-        }
-        setTimeout(() => {
-          navigate("/agent/addlisting/2");
-        }, 500);
-      } else {
-        console.log("Failed to update");
+
+      toast.success("Success");
+      if (response.data) {
+        localStorage.setItem(
+          "basicDetails",
+          JSON.stringify(response.data.payload),
+        );
       }
+      setTimeout(() => {
+        navigate(
+          `/agent/addlisting/2${encodedItemId ? "?itemId=" + encodedItemId : ""}`,
+        );
+      }, 500);
     } catch (error) {
-      toast.error("Error updating listing:", error);
+      console.error("Error updating listing:", error);
+      toast.error(error.response?.data?.message || "Error updating listing");
     } finally {
       isLoading(false);
     }
   };
-// GET CITIES
-  const getCities = async (stateId, token) => {
+
+  const getCities = async (stateId) => {
     try {
-      const response = await fetch(
+      const response = await axios.get(
         `${apiUrl}/api/v1/agents/listings-attributes/location/cities?state_id=${stateId}`,
-        {
-          method: "GET",
-          headers: { Authorization: `Bearer ${token}` },
-        },
+        { withCredentials: true },
       );
-      if (response.ok) {
-        const result = await response.json();
-        setCities(result.payload || []);
-      } else {
-        console.log("Failed to fetch cities");
-      }
+      console.log(response);
+      setCities(response.data.payload || []);
     } catch (error) {
-      console.log("Error fetching cities:", error);
+      console.error("Error fetching cities:", error);
+      toast.error("Failed to fetch cities");
     }
   };
 
-  const getLgas = async (stateId, token) => {
+  const getLgas = async (stateId) => {
     try {
-      const response = await fetch(
+      const response = await axios.get(
         `${apiUrl}/api/v1/agents/listings-attributes/location/lgas?state_id=${stateId}`,
-        {
-          method: "GET",
-          headers: { Authorization: `Bearer ${token}` },
-        },
+        { withCredentials: true },
       );
-      if (response.ok) {
-        const result = await response.json();
-        setLgas(result.payload || []);
-      } else {
-        console.log("Failed to fetch cities");
-      }
+      setLgas(response.data.payload || []);
     } catch (error) {
-      console.log("Error fetching cities:", error);
+      console.error("Error fetching LGAs:", error);
+      toast.error("Failed to fetch LGAs");
     }
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-    setAccessToken(token);
-    if (token) {
-      getApartmentTypes(token);
-      getStates(token);
+    getApartmentTypes();
+    getStates();
+    if (encodedItemId) {
+      fetchBasicDetails();
     }
   }, []);
 
   const handleStateChange = (stateId) => {
     setSelectedState(stateId);
-    const token = localStorage.getItem("accessToken");
-    getCities(stateId, token);
-    getLgas(stateId, token);
+    getCities(stateId);
+    getLgas(stateId);
   };
 
   return (
-    <div className="mt-22">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.3 }}
+      className="mt-22"
+    >
       <div>
         <div className="flex items-center justify-between border-b border-gray-200 pb-4 px-6">
           <p className="text-xl font-medium">Add New Listing</p>
-          <Button className="bg-secondaryPurple text-primaryPurple font-poppins font-medium shadow-none hover:shadow-none hover:bg-primaryPurple hover:text-white duration-300 transition-all">
-            Save
-          </Button>
         </div>
         <div className="px-6">
           <div>
-            <p className="text-gray-500 mt-2 font-medium">Step 1 of 15</p>
+            <p className="text-gray-500 mt-2 font-medium">Step 1 of 13</p>
             <p className="mt-2 text-lg">Basic Details</p>
           </div>
-          {/*LISTING TIT  LE*/}
-          <div className="mt-6">
+
+          {/*LISTING TITLE*/}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="mt-6"
+          >
             <p className="mb-2 text-gray-700">Listing Title</p>
             <Input
               label="Add a descriptive listing title"
               value={description}
               onChange={handleDescriptionChange}
+              aria-label="Listing Title"
             />
-          </div>
-          <div className="my-2">
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="my-2"
+          >
             <p className="text-gray-600 font-medium mb-2">
               Make it descriptive, for example:
             </p>
@@ -219,36 +259,31 @@ const BasicDetails = () => {
               Spacious 3-Bedroom Apartment in Lekki with Modern Finishes, Single
               Rooms near UNILAG, Akoka
             </p>
-          </div>
+          </motion.div>
 
-          {/*SET APPARTMENT TYPE*/}
-
-          <div className="my-5">
+          {/*SET APARTMENT TYPE*/}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="my-5"
+          >
             <p className="mb-1 text-gray-700">Apartment Type</p>
-            <div className="relative w-full">
-              <Select
-                onChange={(e) => {
-                  setSelectedAppType(e);
-                  console.log(e);
-                }}
-                label="Select Type"
-              >
-                {appTypes.length > 0 ? (
-                  appTypes.map((type) => (
-                    <Option key={type.id} value={String(type.id)}>
-                      {type.name}
-                    </Option>
-                  ))
-                ) : (
-                  <Option disabled>No apartment types available</Option>
-                )}
-              </Select>
-            </div>
-          </div>
+            <SelectComponent
+              options={appTypeOptions}
+              value={selectedAppType}
+              onChange={setSelectedAppType}
+              label="Select Apartment Type"
+              placeholder="Choose an apartment type"
+            />
+          </motion.div>
 
           {/*SET UNITS*/}
-
-          <div>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
             <p className="text-gray-700 mb-2">Units Available</p>
             <div className="relative flex w-full items-center gap-2">
               <Input
@@ -259,97 +294,82 @@ const BasicDetails = () => {
                 containerProps={{
                   className: "min-w-0",
                 }}
+                aria-label="Units Available"
               />
               <div className="absolute right-1 top-1/2 transform -translate-y-1/2 flex gap-2">
                 <Button
                   size="sm"
                   className="rounded bg-secondaryPurple text-primaryPurple shadow-none"
                   onClick={handleUnitsAdd}
+                  aria-label="Increase Units"
                 >
-                  <IconPlus size={15}/>
+                  <IconPlus size={15} />
                 </Button>
                 <Button
                   size="sm"
                   className="rounded bg-secondaryPurple text-primaryPurple shadow-none"
                   onClick={handleUnitsSubtract}
+                  aria-label="Decrease Units"
                 >
-                  <IconX size={15}/>
+                  <IconX size={15} />
                 </Button>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/*ADDRESS*/}
-
-          <div className="mt-5">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="mt-5"
+          >
             <p className="mb-2 text-gray-700">Address</p>
             <Input
               label="e.g., 10 Adewale Street"
+              value={address}
               onChange={handleAddressChange}
+              aria-label="Address"
             />
 
             {/*SELECT STATE*/}
-
             <div className="relative w-full mt-4">
               <p className="mb-2 text-gray-700">State</p>
-              <Select
-                label="Select State"
-                onChange={(e) => {
-                  handleStateChange(parseInt(e));
-                  console.log(e);
+              <SelectComponent
+                options={stateOptions}
+                value={selectedState}
+                onChange={(stateId) => {
+                  handleStateChange(parseInt(stateId));
                 }}
-              >
-                {states.length > 0 ? (
-                  states.map((state) => (
-                    <Option key={state.id} value={String(state.id)}>
-                      {state.name}
-                    </Option>
-                  ))
-                ) : (
-                  <Option disabled>No states available</Option>
-                )}
-              </Select>
+                label="Select State"
+                placeholder="Choose a state"
+              />
             </div>
 
             {/*SELECT LGAS*/}
-
             <div className="relative w-full mt-4">
               <p className="mb-2 text-gray-700">LGA</p>
-              <Select
+              <SelectComponent
+                options={lgaOptions}
+                value={currentLgas}
+                onChange={setCurrentLgas}
                 label="Select LGA"
-                onChange={(e) => {
-                  setCurrentLgas(e);
-                  console.log(e);
-                }}
-              >
-                {lgas.length > 0 ? (
-                  lgas.map((lga) => (
-                    <Option key={lga.id} value={String(lga.id)}>
-                      {lga.name}
-                    </Option>
-                  ))
-                ) : (
-                  <Option disabled>No LGAS available</Option>
-                )}
-              </Select>
+                placeholder="Choose an LGA"
+              />
             </div>
 
             {/*SELECT CITY*/}
-
             <div className="relative w-full mt-4">
               <p className="my-2 text-gray-700">City</p>
-              <Select onChange={(e) => setSelectedCity(e)} label="Select City">
-                {cities.length > 0 ? (
-                  cities.map((city) => (
-                    <Option key={city.id} value={String(city.id)}>
-                      {city.name}
-                    </Option>
-                  ))
-                ) : (
-                  <Option disabled>No cities available</Option>
-                )}
-              </Select>
+              <SelectComponent
+                options={cityOptions}
+                value={String(selectedCity)}
+                onChange={setSelectedCity}
+                label="Select City"
+                placeholder="Choose a city"
+              />
             </div>
+
             <div className="my-8">
               <Button
                 className={`${
@@ -358,17 +378,34 @@ const BasicDetails = () => {
                     : "bg-primaryPurple text-white w-full text-[15px] font-poppins flex justify-center items-center"
                 }`}
                 disabled={loading}
-                onClick={() => {
-                  postBasicDetails();
-                }}
+                onClick={postBasicDetails}
+                aria-label="Proceed"
               >
-                {loading ? <Spinner className="h-4 w-4" /> : "Proceed"}
+                <AnimatePresence mode="wait">
+                  {loading ? (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                    >
+                      <Spinner className="h-4 w-4" />
+                    </motion.div>
+                  ) : (
+                    <motion.span
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                    >
+                      Proceed
+                    </motion.span>
+                  )}
+                </AnimatePresence>
               </Button>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

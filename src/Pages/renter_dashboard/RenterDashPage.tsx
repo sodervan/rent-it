@@ -1,95 +1,15 @@
-<<<<<<< HEAD
-import { AppShell, Burger, Divider, Title } from "@mantine/core";
+import { AppShell, Burger, Divider, Title, Button } from "@mantine/core";
 import { Route, Routes } from "react-router-dom";
 import NavBarItems from "./renter_dash_comps/NavBarItems";
-=======
-import {
-  AppShell,
-  Box,
-  Burger,
-  Container,
-  Divider,
-  Stack,
-  Title,
-  Button,
-} from "@mantine/core";
-import { Route, Routes } from "react-router-dom";
-import NavBarItems from "./renter_dash_comps/NavBarItems";
-import SearchPage from "./renter_dash_pages/SearchPage";
->>>>>>> origin/master
 import Popular from "./renter_dash_pages/Popular";
 import { useAtom } from "jotai";
 import { sideBarAtom } from "@/store/store";
 import RenterSettings from "./renter_dash_pages/RenterSettings";
 import TransactionHistory from "./renter_dash_pages/TransactionHistory";
 import { useEffect } from "react";
-<<<<<<< HEAD
-import RenterHome from "./renter_dash_pages/RenterHome";
-import RenterSearch from "./renter_dash_pages/RenterSearch";
-
-function RenterDashPage() {
-	// const [opened, setOpened] = useDisclosure();
-	useEffect(() => {
-		document.title = "Renter Dashboard";
-	}, []);
-	const [opened, setOpened] = useAtom(sideBarAtom);
-	return (
-		<AppShell
-			navbar={{
-				width: 200,
-				breakpoint: "sm",
-				collapsed: { mobile: !opened },
-			}}
-		>
-			<AppShell.Navbar className="">
-				<div className="flex items-center ">
-					<Title
-						order={1}
-						className="text-purple-600 h-20 flex items-center px-2"
-					>
-						Rentit
-					</Title>
-					<div className="ml-auto mr-2 md:hidden">
-						<Burger
-							opened={opened}
-							onClick={() => {
-								setOpened(!opened);
-							}}
-						/>
-					</div>
-				</div>
-				<Divider />
-				<NavBarItems />
-			</AppShell.Navbar>
-			<AppShell.Main className="">
-				<Routes>
-					<Route
-						path="/home"
-						element={<RenterHome />}
-					/>
-					<Route
-						path="/search"
-						element={<RenterSearch />}
-					/>
-					<Route
-						path="/popular"
-						element={<Popular />}
-					/>
-					<Route
-						path="/settings"
-						element={<RenterSettings />}
-					/>
-					<Route
-						path="/transactions"
-						element={<TransactionHistory />}
-					/>
-				</Routes>
-			</AppShell.Main>
-		</AppShell>
-	);
-=======
 import { useNavigate } from "react-router-dom";
 import useTokenData from "../../../TokenHook"; // Import the useTokenData hook
+import SearchResultsPage from "../SearchResultsPage";
 
 function RenterDashPage() {
   const { tokenData, isLoading, clearToken } = useTokenData(); // Get clearToken from the hook
@@ -147,7 +67,7 @@ function RenterDashPage() {
         </div>
 
         <Routes>
-          <Route path="/home" element={<SearchPage />} />
+          <Route path="/home" element={<SearchResultsPage />} />
           <Route path="/popular" element={<Popular />} />
           <Route path="/settings" element={<RenterSettings />} />
           <Route path="/transactions" element={<TransactionHistory />} />
@@ -155,7 +75,6 @@ function RenterDashPage() {
       </AppShell.Main>
     </AppShell>
   );
->>>>>>> origin/master
 }
 
 export default RenterDashPage;

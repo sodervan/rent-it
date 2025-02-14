@@ -57,7 +57,7 @@ const AgentDashboard = () => {
           params: { limit: 10 },
         },
       );
-
+      console.log(response.data.payload.data);
       setPublishedListings(response.data.payload.data || []);
       if (response.data.payload.pagination?.next_cursor) {
         setPublishedHasMore(true);
@@ -266,7 +266,7 @@ const AgentDashboard = () => {
 
   useEffect(() => {
     fetchAgentDetails();
-    // fetchPublishedListings();
+    fetchPublishedListings();
     // fetchUnpublishedListings();
   }, []);
 
@@ -443,9 +443,7 @@ const AgentDashboard = () => {
                   {item.pictures?.map((picture, idx) => (
                     <img
                       key={idx}
-                      src={
-                        picture.cloudinaryUrl || "path/to/fallback/image.jpg"
-                      }
+                      src={picture.imageUrl || "path/to/fallback/image.jpg"}
                       alt={`image ${idx + 1}`}
                       className="w-full h-[15rem] object-cover"
                     />

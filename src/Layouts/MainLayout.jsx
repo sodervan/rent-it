@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import AgentNavbar from "@/components/AgentNavbar";
@@ -17,18 +16,18 @@ const MainLayout = () => {
   const isAgentRegistration = location.pathname.includes(
     "/agent/agentregistration",
   );
+  const isInRenterDash = location.pathname.includes("/renter/dashboard");
   const isForgotPassword =
     location.pathname.includes("/renter/forgotpassword") ||
     location.pathname.includes("/renter/resetpassword") ||
     location.pathname.includes("/agent/forgotpassword") ||
     location.pathname.includes("/agent/resetpassword");
-  const isInRenterDash = location.pathname.includes("/renter/dashboard");
 
   // Show loading or default navbar while token is being verified
   if (isLoading) {
     return (
       <>
-        {!isVerificationPage && <Navbar />}
+        {!isVerificationPage && !isInRenterDash && <Navbar />}
         <Outlet />
       </>
     );
@@ -36,7 +35,7 @@ const MainLayout = () => {
 
   // Determine which navbar to render based on verified token and path
   let navbar = null;
-  if (!isVerificationPage && !isForgotPassword) {
+  if (!isVerificationPage && !isForgotPassword && !isInRenterDash) {
     if (isAgentRegistration) {
       navbar = <AgentRegistrationNavBar />;
     } else if (tokenData?.role === "agent") {

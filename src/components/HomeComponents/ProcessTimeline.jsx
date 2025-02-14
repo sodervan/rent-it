@@ -25,7 +25,7 @@ const ProcessTimeline = () => {
   ];
 
   return (
-    <div className="max-w-6xl mx-auto p-6 my-20">
+    <div className="max-w-6xl mx-auto p-6 my-24">
       <div className="flex flex-col md:flex-row justify-between items-start gap-8">
         {steps.map((step, index) => (
           <div key={index} className="group relative flex-1 min-w-[250px]">

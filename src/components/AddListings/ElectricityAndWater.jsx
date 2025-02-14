@@ -43,11 +43,11 @@ const ElectricityAndWater = () => {
         `${apiUrl}/api/v1/agents/listings/${itemId}/features`,
         { withCredentials: true },
       );
-      const data = response.data.payload;
+      const data = response?.data.payload;
       console.log(response);
       // Set the fetched data as the default state
-      setPaymentType(data.electricityPaymentType || "Prepaid");
-      setAccessType(data.electricityAccessType || "Personal");
+      setPaymentType(data?.electricityPaymentType);
+      setAccessType(data?.electricityAccessType);
       setWaterSupply(
         [
           data.inHouseRunningWater ? "In-House running water" : "",
@@ -55,7 +55,7 @@ const ElectricityAndWater = () => {
           data.waterFromExternalSource ? "Water from external source" : "",
         ].filter(Boolean),
       );
-      setFurnishingState(data.furnishingState);
+      setFurnishingState(data?.furnishingState);
     } catch (error) {
       console.error("Error fetching features:", error);
       toast.error("Failed to fetch features details");

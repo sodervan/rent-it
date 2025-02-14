@@ -3,7 +3,6 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios"; // Import Axios
 import { toast } from "react-toastify"; // Optional: For toast notifications
-import Cookies from "js-cookie"; // Optional: For working with cookies
 
 const Description = () => {
   const navigate = useNavigate();
@@ -42,17 +41,17 @@ const Description = () => {
     setLoading(true);
     try {
       const storedDetails = JSON.parse(localStorage.getItem("basicDetails")); // Get data from cookies
-
-      if (!storedDetails || !storedDetails.listingId) {
-        throw new Error("Invalid basicDetails or listingId missing.");
-      }
+      console.log(storedDetails, itemId);
+      // if (!storedDetails || !storedDetails.listingId) {
+      //   throw new Error("Invalid basicDetails or listingId missing.");
+      // }
 
       const data = {
         description: description,
       };
 
       const response = await axios.post(
-        `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/description`,
+        `${apiUrl}/api/v1/agents/listings/${encodedItemId ? itemId + "/" : storedDetails.listingId + "/"}description`,
         data,
         { withCredentials: true }, // Include cookies in the request
       );

@@ -38,7 +38,7 @@ const ContactSection = () => {
     {
       icon: <Phone className="w-6 h-6" />,
       label: "Call Us",
-      description: "+91 8035735724",
+      description: "+234 0000000000",
       color: "bg-blue-50", // Light blue background
       hoverColor: "hover:bg-blue-100", // Slightly darker blue on hover
       iconColor: "text-blue-600", // Blue icon

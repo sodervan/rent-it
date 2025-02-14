@@ -122,10 +122,11 @@ const BasicDetails = () => {
   const getStates = async () => {
     try {
       const response = await axios.get(
-        `${apiUrl}/api/v1/agents/listings-attributes/location/states?country_id=1`,
+        `${apiUrl}/api/v1/location/states?country_id=1`,
         { withCredentials: true },
       );
       setStates(response.data.payload || []);
+      console.log(states);
     } catch (error) {
       console.error("Error fetching states:", error);
       toast.error("Failed to fetch states");
@@ -136,7 +137,7 @@ const BasicDetails = () => {
     isLoading(true);
     try {
       const response = await axios.post(
-        `${apiUrl}/api/v1/agents/listings/basic-details`,
+        `${apiUrl}/api/v1/agents/listings/${encodedItemId ? itemId + "/" : ""}basic-details`,
         {
           title: description,
           apartmentTypeId: parseInt(selectedAppType),
@@ -175,7 +176,7 @@ const BasicDetails = () => {
   const getCities = async (stateId) => {
     try {
       const response = await axios.get(
-        `${apiUrl}/api/v1/agents/listings-attributes/location/cities?state_id=${stateId}`,
+        `${apiUrl}/api/v1/location/cities?state_id=${stateId}`,
         { withCredentials: true },
       );
       console.log(response);
@@ -189,7 +190,7 @@ const BasicDetails = () => {
   const getLgas = async (stateId) => {
     try {
       const response = await axios.get(
-        `${apiUrl}/api/v1/agents/listings-attributes/location/lgas?state_id=${stateId}`,
+        `${apiUrl}/api/v1/location/lgas?state_id=${stateId}`,
         { withCredentials: true },
       );
       setLgas(response.data.payload || []);

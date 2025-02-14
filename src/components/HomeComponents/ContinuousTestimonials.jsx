@@ -4,7 +4,7 @@ import { Star } from "lucide-react";
 const ContinuousTestimonials = () => {
   const testimonials = [
     {
-      text: "The platform completely transformed my accommodation search. Their AI-powered recommendations were spot-on!",
+      text: "The platform completely transformed my accommodation search. Their powered recommendations were spot-on!",
       name: "Emmanuel Anu",
       university: "University of Lagos",
       country: "NG",
@@ -32,7 +32,7 @@ const ContinuousTestimonials = () => {
       rating: 5,
     },
     {
-      text: "The AI chatbot made the booking process so smooth. Got all my questions answered instantly!",
+      text: "Went from lack of trusting RentIT. Now they're my go-to when it comes to anything accommodation ",
       name: "Egbowon Emmanuel",
       university: "University of Lagos",
       country: "NG",
@@ -66,7 +66,7 @@ const ContinuousTestimonials = () => {
                 />
               ))}
             </div>
-            <span className="text-gray-600">+12,455 reviews</span>
+            <span className="text-gray-600">+2k reviews</span>
           </div>
         </div>
 

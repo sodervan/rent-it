@@ -7,6 +7,8 @@ import Footer from "@/components/Footer";
 import ContactSection from "@/components/HomeComponents/ContactSection";
 import ContinuousTestimonials from "@/components/HomeComponents/ContinuousTestimonials";
 import UserRolesShowcase from "@/components/HomeComponents/UserRolesShowcase";
+import RenterOrAgent from "@/components/HomeComponents/RenterOrAgent";
+import RecentSearches from "@/components/RecentSearches";
 // import { useOutletContext } from "react-router-dom";
 
 const HomePage = () => {
@@ -23,10 +25,12 @@ const HomePage = () => {
     <>
       <Body userId={id} />
       <div className="h-40 "></div>
+      <RecentSearches />
       <UserRolesShowcase />
       <WhoWeAre />
-      <ContinuousTestimonials />
       <General />
+      <ContinuousTestimonials />
+      <RenterOrAgent />
       <DiscoverSection />
       <ContactSection />
       <Footer />

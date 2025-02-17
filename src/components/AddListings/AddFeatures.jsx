@@ -12,6 +12,7 @@ const FurnishingState = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [newSelectedTag, setNewSelectedTag] = useState([]);
   const apiUrl = import.meta.env.VITE_API_URL;
   const [searchParams] = useSearchParams();
   const encodedItemId = searchParams.get("itemId");
@@ -61,8 +62,8 @@ const FurnishingState = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/featureTags`,
-        { featureTagsIds: selectedTags },
+        `${apiUrl}/api/v1/agents/listings/${encodedItemId ? itemId + "/" : storedDetails.listingId + "/"}featureTags`,
+        { featureTagsIds: newSelectedTag },
         { withCredentials: true },
       );
       if (response.data.status === "success") {
@@ -70,7 +71,7 @@ const FurnishingState = () => {
         setTimeout(
           () =>
             navigate(
-              `/agent/addlisting/8${encodedItemId ? "?itemId=" + itemId : ""}`,
+              `/agent/addlisting/8${encodedItemId ? "?itemId=" + encodedItemId : ""}`,
             ),
           500,
         );
@@ -89,6 +90,11 @@ const FurnishingState = () => {
 
   const toggleTagSelection = (tagId) => {
     setSelectedTags((prev) =>
+      prev.includes(tagId)
+        ? prev.filter((id) => id !== tagId)
+        : [...prev, tagId],
+    );
+    setNewSelectedTag((prev) =>
       prev.includes(tagId)
         ? prev.filter((id) => id !== tagId)
         : [...prev, tagId],
@@ -160,7 +166,11 @@ const FurnishingState = () => {
       <div className="flex justify-between mt-8 gap-4">
         <Button
           className="bg-secondaryPurple text-primaryPurple w-full font-medium"
-          onClick={() => navigate("/agent/addlisting/6")}
+          onClick={() => {
+            navigate(
+              `/agent/addlisting/6${encodedItemId ? `?itemId=${encodedItemId}` : ""}`,
+            );
+          }}
         >
           Previous
         </Button>

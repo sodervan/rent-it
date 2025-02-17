@@ -50,7 +50,6 @@ const Description = () => {
                   navigate(
                     `/agent/addlisting/6${encodedItemId ? `?itemId=${encodedItemId}` : ""}`,
                   );
-                  localStorage.removeItem("descriptionDetails");
                 }}
               >
                 Proceed

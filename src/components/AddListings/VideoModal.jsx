@@ -109,8 +109,8 @@ const VideoModal = ({ videos, open, onClose }) => {
                 </div>
               )}
               <video
-                key={selectedVideo.cloudinaryUrl}
-                src={selectedVideo.cloudinaryUrl}
+                key={selectedVideo.videoUrl}
+                src={selectedVideo.videoUrl}
                 className="w-full h-full rounded-lg shadow-2xl"
                 controls
                 autoPlay
@@ -149,7 +149,7 @@ const VideoModal = ({ videos, open, onClose }) => {
                   className="relative group cursor-pointer rounded-lg overflow-hidden bg-gray-900 aspect-video"
                 >
                   <video
-                    src={video.cloudinaryUrl}
+                    src={video.videoUrl}
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                     muted
                     playsInline

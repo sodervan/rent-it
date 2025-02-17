@@ -88,7 +88,6 @@ const CostBreakdownPreview = () => {
                 navigate(
                   `/agent/addlisting/4${encodedItemId ? `?itemId=${encodedItemId}` : ""}`,
                 );
-                localStorage.removeItem("feesDetails");
               }}
             >
               Proceed

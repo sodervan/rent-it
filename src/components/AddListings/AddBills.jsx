@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button, Spinner } from "@material-tailwind/react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 
@@ -13,6 +13,38 @@ const FurnishingState = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const apiUrl = import.meta.env.VITE_API_URL;
+  const [newSelectedTag, setNewSelectedTag] = useState([]);
+  const [searchParams] = useSearchParams();
+  const encodedItemId = searchParams.get("itemId");
+
+  const decodeId = (encodedId) => {
+    return atob(encodedId); // Decode the Base64 string
+  };
+  const itemId = decodeId(encodedItemId);
+
+  const fetchSelectedBills = async () => {
+    const itemId = decodeId(encodedItemId);
+    try {
+      const response = await axios.get(
+        `${apiUrl}/api/v1/agents/listings/${itemId}/billTags`,
+        { withCredentials: true },
+      );
+      if (response?.data.payload) {
+        const data = response?.data.payload.billsTags;
+        data.forEach((item) => {
+          setSelectedTags((prev) => [...new Set([...prev, item.id])]);
+        });
+      } else {
+        setSelectedTags([]);
+      }
+
+      console.log(response);
+      // Set the fetched data as the default state
+    } catch (error) {
+      console.error("Error fetching features:", error);
+      toast.error("Failed to fetch features details");
+    }
+  };
 
   const getBillsTags = async (page = 1) => {
     try {
@@ -21,7 +53,7 @@ const FurnishingState = () => {
         `${apiUrl}/api/v1/agents/listings-attributes/billsTags?page=${page}`,
         { withCredentials: true },
       );
-
+      console.log(response);
       if (response.data.status === "success") {
         setTags(response.data?.payload?.data || []);
       } else {
@@ -36,17 +68,24 @@ const FurnishingState = () => {
 
   const postBasicBills = async () => {
     const storedDetails = JSON.parse(localStorage.getItem("basicDetails"));
+    const listingId = encodedItemId ? itemId : storedDetails?.listingId;
     setLoading(true);
     try {
       const response = await axios.post(
-        `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/billTags`,
-        { billTagsIds: selectedTags },
+        `${apiUrl}/api/v1/agents/listings/${listingId}/billTags`,
+        { billTagsIds: newSelectedTag },
         { withCredentials: true },
       );
 
       if (response.data.status === "success") {
         toast.success("Bills saved successfully!");
-        setTimeout(() => navigate("/agent/addlisting/9"), 500);
+        setTimeout(
+          () =>
+            navigate(
+              `/agent/addlisting/9${encodedItemId ? "?itemId=" + encodedItemId : ""}`,
+            ),
+          500,
+        );
       } else {
         toast.error("Failed to save bills. Please try again.");
       }
@@ -66,10 +105,18 @@ const FurnishingState = () => {
         ? prev.filter((id) => id !== tagId)
         : [...prev, tagId],
     );
+    setNewSelectedTag((prev) =>
+      prev.includes(tagId)
+        ? prev.filter((id) => id !== tagId)
+        : [...prev, tagId],
+    );
   };
 
   useEffect(() => {
     getBillsTags(currentPage);
+    if (encodedItemId) {
+      fetchSelectedBills();
+    }
   }, [currentPage]);
 
   return (
@@ -108,7 +155,11 @@ const FurnishingState = () => {
                   } hover:bg-primaryPurple hover:text-white`}
                 onClick={() => toggleTagSelection(tag.id)}
               >
-                {tag.name}
+                <div className="flex items-center gap-2 hover:text-white">
+                  {/* Render the icon using the interface_icon_code */}
+                  <i className={`${tag.interfaceIconCode}`}></i>
+                  <span>{tag.name}</span>
+                </div>
               </motion.button>
             ))}
           </div>
@@ -132,7 +183,11 @@ const FurnishingState = () => {
       <div className="flex justify-between mt-8 gap-4">
         <Button
           className="bg-secondaryPurple text-primaryPurple w-full font-medium"
-          onClick={() => navigate("/agent/addlisting/7")}
+          onClick={() => {
+            navigate(
+              `/agent/addlisting/7${encodedItemId ? `?itemId=${encodedItemId}` : ""}`,
+            );
+          }}
         >
           Previous
         </Button>

@@ -1,6 +1,6 @@
 import { Button, Radio, Spinner } from "@material-tailwind/react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify"; // For toast notifications
 import axios from "axios"; // Import Axios
 
@@ -10,6 +10,12 @@ const UploadTenancyAgreement = () => {
   const [agreeToTerms, setAgreeToTerms] = useState(false); // Track agreement to terms
   const navigate = useNavigate();
   const apiUrl = import.meta.env.VITE_API_URL;
+  const [searchParams] = useSearchParams();
+  const encodedItemId = searchParams.get("itemId");
+  const decodeId = (encodedId) => {
+    return atob(encodedId); // Decode the Base64 string
+  };
+  const itemId = decodeId(encodedItemId);
 
   const handleFileUpload = (file) => {
     const newFile = {
@@ -179,14 +185,18 @@ const UploadTenancyAgreement = () => {
         <div className="flex justify-between my-8 gap-4 px-6">
           <Button
             className="font-poppins bg-secondaryPurple text-primaryPurple w-full font-medium"
-            onClick={() => navigate("/agent/addlisting/11")}
+            onClick={() => {
+              navigate(
+                `/agent/addlisting/11${encodedItemId ? `?itemId=${encodedItemId}` : ""}`,
+              );
+            }}
           >
             Previous
           </Button>
           <Button
             className="font-poppins bg-primaryPurple text-white w-full flex justify-center items-center"
             onClick={uploadFile}
-            disabled={isUploading || !agreeToTerms} // Disable if not agreed to terms
+            disabled={isUploading || !agreeToTerms || !file} // Disable if not agreed to terms
           >
             {isUploading ? <Spinner className="w-5 h-5" /> : "Proceed"}
           </Button>

@@ -136,22 +136,43 @@ const BasicDetails = () => {
   const postBasicDetails = async () => {
     isLoading(true);
     try {
-      const response = await axios.post(
-        `${apiUrl}/api/v1/agents/listings/${encodedItemId ? itemId + "/" : ""}basic-details`,
-        {
-          title: description,
-          apartmentTypeId: parseInt(selectedAppType),
-          streetAddress: address,
-          cityId: selectedCity,
-          localGovernmentAreaId: parseInt(currentLgas),
-          stateId: parseInt(selectedState),
-          units: units,
-        },
-        {
-          withCredentials: true,
-          headers: { "Content-Type": "application/json" },
-        },
-      );
+      const isUpdating = !!encodedItemId; // If `encodedItemId` exists, use PATCH
+
+      const url = `${apiUrl}/api/v1/agents/listings/${isUpdating ? itemId + "/" : ""}basic-details`;
+
+      const response = isUpdating
+        ? await axios.patch(
+            url,
+            {
+              title: description,
+              apartmentTypeId: parseInt(selectedAppType),
+              streetAddress: address,
+              cityId: selectedCity,
+              localGovernmentAreaId: parseInt(currentLgas),
+              stateId: parseInt(selectedState),
+              units: units,
+            },
+            {
+              withCredentials: true,
+              headers: { "Content-Type": "application/json" },
+            },
+          )
+        : await axios.post(
+            url,
+            {
+              title: description,
+              apartmentTypeId: parseInt(selectedAppType),
+              streetAddress: address,
+              cityId: selectedCity,
+              localGovernmentAreaId: parseInt(currentLgas),
+              stateId: parseInt(selectedState),
+              units: units,
+            },
+            {
+              withCredentials: true,
+              headers: { "Content-Type": "application/json" },
+            },
+          );
 
       toast.success("Success");
       if (response.data) {

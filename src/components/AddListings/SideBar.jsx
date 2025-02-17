@@ -20,7 +20,7 @@ const Sidebar = ({ activeStep, steps, onStepClick, completedSteps = {} }) => {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto rounded-r-lg h-full">
+      <nav className="flex-1 overflow-y-auto rounded-r-lg h-full pb-24">
         <ul className="p-4 space-y-2">
           {steps.map((step, index) => {
             const isActive = step.id === activeStep;

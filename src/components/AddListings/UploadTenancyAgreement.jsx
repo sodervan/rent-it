@@ -1,33 +1,72 @@
 import { Button, Radio, Spinner } from "@material-tailwind/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { toast } from "react-toastify"; // For toast notifications
-import axios from "axios"; // Import Axios
+import { toast } from "react-toastify";
+import axios from "axios";
 
 const UploadTenancyAgreement = () => {
   const [file, setFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
-  const [agreeToTerms, setAgreeToTerms] = useState(false); // Track agreement to terms
+  const [isLoading, setIsLoading] = useState(true);
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const [existingAgreement, setExistingAgreement] = useState(null);
+
   const navigate = useNavigate();
   const apiUrl = import.meta.env.VITE_API_URL;
   const [searchParams] = useSearchParams();
   const encodedItemId = searchParams.get("itemId");
+
   const decodeId = (encodedId) => {
-    return atob(encodedId); // Decode the Base64 string
+    return atob(encodedId);
   };
-  const itemId = decodeId(encodedItemId);
+
+  const itemId = encodedItemId ? decodeId(encodedItemId) : null;
+
+  const fetchTenancyAgreement = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axios.get(
+        `${apiUrl}/api/v1/agents/listings/${itemId}/tenancy-agreement`,
+        { withCredentials: true },
+      );
+
+      if (response.data.payload && response.data.payload[0]) {
+        const agreement = response.data.payload[0];
+        const agreementData = {
+          name: agreement.path.split("/").pop(),
+          preview: agreement.fileUrl,
+          existingFile: true,
+          id: agreement.id,
+          path: agreement.path,
+          listingId: agreement.listingId,
+        };
+        setExistingAgreement(agreementData);
+        setFile(agreementData);
+        setAgreeToTerms(true);
+      }
+    } catch (error) {
+      console.error("Error fetching tenancy agreement:", error);
+      toast.error("Failed to fetch tenancy agreement");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleFileUpload = (file) => {
     const newFile = {
       file,
       name: file.name,
       preview: URL.createObjectURL(file),
+      existingFile: false,
     };
     setFile(newFile);
+    setExistingAgreement(null); // Clear existing agreement when new file is uploaded
   };
 
   const removeFile = () => {
     setFile(null);
+    setAgreeToTerms(false);
+    setExistingAgreement(null);
   };
 
   const handleFileInput = (event) => {
@@ -50,73 +89,119 @@ const UploadTenancyAgreement = () => {
   };
 
   const uploadFile = async () => {
-    const storedDetails = JSON.parse(localStorage.getItem("basicDetails"));
-
     if (!agreeToTerms) {
-      toast.error("You must agree to the terms and conditions to proceed."); // Error toast
+      toast.error("You must agree to the terms and conditions to proceed.");
+      return;
+    }
+
+    if (!file) {
+      toast.error("Please select or upload a tenancy agreement.");
       return;
     }
 
     setIsUploading(true);
 
     try {
-      const formData = new FormData();
+      let response;
+      const targetId = encodedItemId
+        ? itemId
+        : JSON.parse(localStorage.getItem("basicDetails"))?.listingId;
 
-      // If file exists, append it to formData, otherwise send empty object
-      if (file && file.file) {
-        formData.append("file", file.file);
-      }
-
-      const response = await axios.post(
-        `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/tenancy-agreement`,
-        file ? formData : {}, // Send FormData if file exists, otherwise send empty object
-        {
-          withCredentials: true, // Include cookies in the request
-          headers: {
-            "Content-Type": file ? "multipart/form-data" : "application/json",
+      if (file.existingFile) {
+        // If using existing agreement, send it as JSON
+        const formData = new FormData();
+        formData.append("file", existingAgreement);
+        response = await axios.post(
+          `${apiUrl}/api/v1/agents/listings/${targetId}/tenancy-agreement`,
+          {
+            formData,
           },
-        },
-      );
+          {
+            withCredentials: true,
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          },
+        );
+      } else {
+        // If using new file, send as FormData
+        const formData = new FormData();
+        formData.append("file", file.file);
 
-      console.log("Upload Response:", response); // Log the full response
+        response = await axios.post(
+          `${apiUrl}/api/v1/agents/listings/${targetId}/tenancy-agreement`,
+          formData,
+          {
+            withCredentials: true,
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          },
+        );
+      }
 
       if (response.data.status === "success") {
-        toast.success("Tenancy agreement uploaded successfully!"); // Success toast
-        setFile(null);
+        toast.success("Tenancy agreement processed successfully!");
         setTimeout(() => {
-          navigate("/agent/addlisting/13");
+          navigate(
+            `/agent/addlisting/13${encodedItemId ? `?itemId=${encodedItemId}` : ""}`,
+          );
         }, 500);
       } else {
-        toast.error("Failed to upload tenancy agreement."); // Error toast
+        toast.error("Failed to process tenancy agreement.");
       }
     } catch (error) {
-      console.error("Error uploading file:", error); // Log the full error object
-      console.error("Error Response Data:", error.response?.data); // Log the error response data
+      console.error("Error processing file:", error);
       toast.error(
         error.response?.data?.message ||
-          "An error occurred while uploading the file.",
-      ); // Error toast
+          "An error occurred while processing the file.",
+      );
     } finally {
       setIsUploading(false);
     }
   };
 
+  useEffect(() => {
+    if (itemId) {
+      fetchTenancyAgreement();
+    } else {
+      setIsLoading(false);
+    }
+  }, [itemId]);
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Spinner className="w-8 h-8" />
+      </div>
+    );
+  }
+
   return (
     <div>
       <div>
         <div className="flex items-center justify-between border-b border-gray-200 pb-4 px-6">
-          <p className="text-xl font-medium">Upload Tenancy Agreement</p>
+          <p className="text-xl font-medium">
+            {existingAgreement
+              ? "Review Tenancy Agreement"
+              : "Upload Tenancy Agreement"}
+          </p>
         </div>
         <div className="px-6">
           <div>
-            <p className="mt-2 text-lg">Upload Tenancy Agreement</p>
+            <p className="mt-2 text-lg">
+              {existingAgreement
+                ? "Current Tenancy Agreement"
+                : "Upload Tenancy Agreement"}
+            </p>
             <p className="text-sm text-gray-500 my-2">
               Please upload a PDF, DOC, or DOCX file of the tenancy agreement or
               property documentation, ensuring it includes all key details.
             </p>
-            <div className="mt-6">
+
+            {!file && (
               <div
-                className="w-full border border-gray-500 rounded-lg px-3 py-4 flex flex-col gap-3 items-center justify-center cursor-pointer"
+                className="mt-6 w-full border border-gray-500 rounded-lg px-3 py-4 flex flex-col gap-3 items-center justify-center cursor-pointer"
                 onClick={triggerFileInput}
                 onDrop={handleDrop}
                 onDragOver={(e) => e.preventDefault()}
@@ -135,36 +220,56 @@ const UploadTenancyAgreement = () => {
                   </p>
                 </div>
               </div>
+            )}
 
-              <input
-                id="fileInput"
-                type="file"
-                accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                className="hidden"
-                onChange={handleFileInput}
-              />
-            </div>
+            <input
+              id="fileInput"
+              type="file"
+              accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+              className="hidden"
+              onChange={handleFileInput}
+            />
 
             {file && (
               <div className="relative group w-full h-full mt-6 border border-gray-300 rounded-lg overflow-hidden">
                 <div className="flex items-center justify-between p-3">
-                  <p className="text-gray-700 font-medium">{file.name}</p>
-                  <button
-                    className="bg-black/60 text-white text-xs px-2 py-1 rounded-md"
-                    onClick={removeFile}
-                  >
-                    Remove
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <img
+                      src="https://res.cloudinary.com/dmlgns85e/image/upload/v1725362394/Featured_icon_mtrbjd.png"
+                      alt="File icon"
+                      className="w-6 h-6"
+                    />
+                    <p className="text-gray-700 font-medium">{file.name}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {file.preview && (
+                      <a
+                        href={file.preview}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-primaryPurple text-white text-xs px-2 py-1 rounded-md hover:bg-purple-700 transition-colors"
+                      >
+                        View
+                      </a>
+                    )}
+                    <button
+                      className="bg-black/60 text-white text-xs px-2 py-1 rounded-md hover:bg-black/70 transition-colors"
+                      onClick={removeFile}
+                    >
+                      Remove
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
           </div>
         </div>
+
         <div className="px-6 my-4">
           <Radio
             label="I agree that the tenancy agreement is valid, accurate and includes all required details."
             checked={agreeToTerms}
-            onChange={() => setAgreeToTerms(!agreeToTerms)} // Toggle agreement
+            onChange={() => setAgreeToTerms(!agreeToTerms)}
           />
           <div className="my-2">
             <ul>
@@ -182,9 +287,10 @@ const UploadTenancyAgreement = () => {
             </ul>
           </div>
         </div>
+
         <div className="flex justify-between my-8 gap-4 px-6">
           <Button
-            className="font-poppins bg-secondaryPurple text-primaryPurple w-full font-medium"
+            className="font-poppins bg-secondaryPurple text-primaryPurple w-full font-medium hover:bg-purple-100 transition-colors"
             onClick={() => {
               navigate(
                 `/agent/addlisting/11${encodedItemId ? `?itemId=${encodedItemId}` : ""}`,
@@ -194,9 +300,9 @@ const UploadTenancyAgreement = () => {
             Previous
           </Button>
           <Button
-            className="font-poppins bg-primaryPurple text-white w-full flex justify-center items-center"
+            className="font-poppins bg-primaryPurple text-white w-full flex justify-center items-center hover:bg-purple-700 transition-colors"
             onClick={uploadFile}
-            disabled={isUploading || !agreeToTerms || !file} // Disable if not agreed to terms
+            disabled={isUploading || !agreeToTerms || !file}
           >
             {isUploading ? <Spinner className="w-5 h-5" /> : "Proceed"}
           </Button>

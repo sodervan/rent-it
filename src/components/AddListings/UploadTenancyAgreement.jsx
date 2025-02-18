@@ -60,7 +60,7 @@ const UploadTenancyAgreement = () => {
       existingFile: false,
     };
     setFile(newFile);
-    setExistingAgreement(null); // Clear existing agreement when new file is uploaded
+    setExistingAgreement(null);
   };
 
   const removeFile = () => {
@@ -88,7 +88,7 @@ const UploadTenancyAgreement = () => {
     }
   };
 
-  const uploadFile = async () => {
+  const handleProceed = async () => {
     if (!agreeToTerms) {
       toast.error("You must agree to the terms and conditions to proceed.");
       return;
@@ -99,36 +99,18 @@ const UploadTenancyAgreement = () => {
       return;
     }
 
-    setIsUploading(true);
+    const targetId = encodedItemId
+      ? itemId
+      : JSON.parse(localStorage.getItem("basicDetails"))?.listingId;
 
-    try {
-      let response;
-      const targetId = encodedItemId
-        ? itemId
-        : JSON.parse(localStorage.getItem("basicDetails"))?.listingId;
-
-      if (file.existingFile) {
-        // If using existing agreement, send it as JSON
-        const formData = new FormData();
-        formData.append("file", existingAgreement);
-        response = await axios.post(
-          `${apiUrl}/api/v1/agents/listings/${targetId}/tenancy-agreement`,
-          {
-            formData,
-          },
-          {
-            withCredentials: true,
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          },
-        );
-      } else {
-        // If using new file, send as FormData
+    // Only upload if there's a new file
+    if (!file.existingFile) {
+      setIsUploading(true);
+      try {
         const formData = new FormData();
         formData.append("file", file.file);
 
-        response = await axios.post(
+        const response = await axios.post(
           `${apiUrl}/api/v1/agents/listings/${targetId}/tenancy-agreement`,
           formData,
           {
@@ -138,27 +120,28 @@ const UploadTenancyAgreement = () => {
             },
           },
         );
-      }
 
-      if (response.data.status === "success") {
+        if (response.data.status !== "success") {
+          throw new Error("Failed to process tenancy agreement.");
+        }
+
         toast.success("Tenancy agreement processed successfully!");
-        setTimeout(() => {
-          navigate(
-            `/agent/addlisting/13${encodedItemId ? `?itemId=${encodedItemId}` : ""}`,
-          );
-        }, 500);
-      } else {
-        toast.error("Failed to process tenancy agreement.");
+      } catch (error) {
+        console.error("Error processing file:", error);
+        toast.error(
+          error.response?.data?.message ||
+            "An error occurred while processing the file.",
+        );
+        return; // Don't navigate if upload failed
+      } finally {
+        setIsUploading(false);
       }
-    } catch (error) {
-      console.error("Error processing file:", error);
-      toast.error(
-        error.response?.data?.message ||
-          "An error occurred while processing the file.",
-      );
-    } finally {
-      setIsUploading(false);
     }
+
+    // Navigate to next page regardless of whether we uploaded or not
+    navigate(
+      `/agent/addlisting/13${encodedItemId ? `?itemId=${encodedItemId}` : ""}`,
+    );
   };
 
   useEffect(() => {
@@ -293,7 +276,9 @@ const UploadTenancyAgreement = () => {
             className="font-poppins bg-secondaryPurple text-primaryPurple w-full font-medium hover:bg-purple-100 transition-colors"
             onClick={() => {
               navigate(
-                `/agent/addlisting/11${encodedItemId ? `?itemId=${encodedItemId}` : ""}`,
+                `/agent/addlisting/11${
+                  encodedItemId ? `?itemId=${encodedItemId}` : ""
+                }`,
               );
             }}
           >
@@ -301,7 +286,7 @@ const UploadTenancyAgreement = () => {
           </Button>
           <Button
             className="font-poppins bg-primaryPurple text-white w-full flex justify-center items-center hover:bg-purple-700 transition-colors"
-            onClick={uploadFile}
+            onClick={handleProceed}
             disabled={isUploading || !agreeToTerms || !file}
           >
             {isUploading ? <Spinner className="w-5 h-5" /> : "Proceed"}

@@ -153,7 +153,7 @@ const Sidebar = ({ activeStep, steps, onStepClick, completedSteps = {} }) => {
 
       {/* Mobile Menu Overlay */}
       <div
-        className={`md:hidden fixed inset-0 bg-black/50 z-50 transition-opacity duration-300
+        className={`md:hidden fixed inset-0 bg-black/50 z-[50] transition-opacity duration-300
           ${isMobileMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
         onClick={() => setIsMobileMenuOpen(false)}
       />
@@ -161,7 +161,7 @@ const Sidebar = ({ activeStep, steps, onStepClick, completedSteps = {} }) => {
       {/* Mobile Slide-out Menu */}
       <div
         className={`md:hidden fixed inset-y-0 right-0 w-full max-w-[300px] bg-gradient-to-br from-purple-50 to-[#F4EBFF] 
-          shadow-lg z-50 transition-transform duration-300 mobile-menu
+          shadow-lg z-[5000] transition-transform duration-300 mobile-menu
           ${isMobileMenuOpen ? "translate-x-0" : "translate-x-full"}`}
       >
         <div className="flex flex-col h-full">

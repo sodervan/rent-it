@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { Check, Menu, X, ChevronRight } from "lucide-react";
+import { Check, Menu, X, ChevronRight, Lock } from "lucide-react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 
 const Sidebar = ({ activeStep, steps, onStepClick, completedSteps = {} }) => {
@@ -31,15 +31,33 @@ const Sidebar = ({ activeStep, steps, onStepClick, completedSteps = {} }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isMobileMenuOpen]);
 
-  // Calculate if a step should be accessible
+  // Calculate if a step should be accessible based on your new requirements
   const isStepAccessible = (stepId) => {
+    // If we have encodedItemId, all steps are accessible (editing mode)
+    if (encodedItemId) return true;
+
+    // Otherwise, follow the sequential access logic:
+    // First step is always accessible
     if (stepId === 1) return true;
-    return completedSteps[stepId - 1] || stepId === activeStep;
+    // Current step is accessible
+    if (stepId === activeStep) return true;
+    // Previous steps are accessible if completed
+    if (stepId < activeStep) return completedSteps[stepId];
+    // Next steps are accessible if all previous steps are completed
+    if (stepId > activeStep) {
+      // Check if all previous steps are completed
+      for (let i = 1; i < stepId; i++) {
+        if (!completedSteps[i] && i !== activeStep) return false;
+      }
+      return true;
+    }
+
+    return false;
   };
 
   // Handle step navigation
   const handleStepNavigation = (stepId) => {
-    // if (!isStepAccessible(stepId)) return;
+    if (!isStepAccessible(stepId)) return;
 
     const baseUrl = `/agent/addlisting/${stepId}`;
     const url = encodedItemId ? `${baseUrl}?itemId=${encodedItemId}` : baseUrl;
@@ -59,20 +77,23 @@ const Sidebar = ({ activeStep, steps, onStepClick, completedSteps = {} }) => {
           <li key={index}>
             <button
               onClick={() => handleStepNavigation(step.id)}
-              // disabled={!isAccessible}
+              disabled={!isAccessible}
               className={`w-full flex items-center px-4 py-3 rounded-lg transition-all duration-300 group
-                ${isActive ? "bg-white shadow-md" : "hover:bg-white/50"}
+                ${isActive ? "bg-white shadow-md" : isAccessible ? "hover:bg-white/50" : "opacity-60 cursor-not-allowed"}
                 ${isCompleted ? "bg-purple-50" : ""}`}
             >
-              {/* Step number/check circle */}
+              {/* Step number/check/lock circle */}
               <div
                 className={`flex items-center justify-center w-8 h-8 rounded-full transition-all duration-300
                   ${isActive ? "bg-purple-600 text-white scale-110" : ""}
-                  ${isCompleted ? "bg-green-500 text-white" : "bg-gray-200 text-gray-600"}
-                  ${!isActive && !isCompleted && isAccessible ? "group-hover:bg-purple-200" : ""}`}
+                  ${isCompleted ? "bg-green-500 text-white" : ""}
+                  ${!isActive && !isCompleted && isAccessible ? "bg-gray-200 text-gray-600 group-hover:bg-purple-200" : ""}
+                  ${!isAccessible ? "bg-gray-300 text-gray-500" : ""}`}
               >
                 {isCompleted ? (
                   <Check size={16} />
+                ) : !isAccessible ? (
+                  <Lock size={14} />
                 ) : (
                   <span className="text-sm font-semibold">{step.id}</span>
                 )}
@@ -83,19 +104,25 @@ const Sidebar = ({ activeStep, steps, onStepClick, completedSteps = {} }) => {
                 <p
                   className={`text-sm font-semibold transition-colors duration-300
                     ${isActive ? "text-purple-900" : ""}
-                    ${isCompleted ? "text-green-700" : "text-gray-700"}`}
+                    ${isCompleted ? "text-green-700" : ""}
+                    ${!isActive && !isCompleted && isAccessible ? "text-gray-700" : ""}
+                    ${!isAccessible ? "text-gray-500" : ""}`}
                 >
                   {step.label}
                 </p>
                 {step.description && (
-                  <p className="text-xs text-gray-500 mt-0.5">
+                  <p
+                    className={`text-xs mt-0.5 ${!isAccessible ? "text-gray-400" : "text-gray-500"}`}
+                  >
                     {step.description}
                   </p>
                 )}
               </div>
 
-              {isMobile && isAccessible && (
-                <ChevronRight className="w-5 h-5 text-gray-400" />
+              {isMobile && (
+                <ChevronRight
+                  className={`w-5 h-5 ${!isAccessible ? "text-gray-300" : "text-gray-400"}`}
+                />
               )}
             </button>
           </li>
@@ -127,7 +154,7 @@ const Sidebar = ({ activeStep, steps, onStepClick, completedSteps = {} }) => {
         {/* Header */}
         <div className="px-6 py-4 border-b border-purple-100">
           <h2 className="text-lg font-semibold text-purple-900">
-            Create Listing
+            {encodedItemId ? "Edit Listing" : "Create Listing"}
           </h2>
           <p className="text-sm text-purple-600">
             Complete all steps to publish
@@ -169,7 +196,7 @@ const Sidebar = ({ activeStep, steps, onStepClick, completedSteps = {} }) => {
           <div className="px-6 py-4 border-b border-purple-100 flex justify-between items-center">
             <div>
               <h2 className="text-lg font-semibold text-purple-900">
-                Create Listing
+                {encodedItemId ? "Edit Listing" : "Create Listing"}
               </h2>
               <p className="text-sm text-purple-600">
                 Complete all steps to publish

@@ -195,7 +195,7 @@ const CostBreakdown = () => {
             <p className="text-gray-700 mb-2">Agent Fee</p>
             <Input
               label="NGN"
-              value={`N ${agentFee.toLocaleString()}`}
+              value={`₦ ${agentFee.toLocaleString()}`}
               disabled
             />
             <p className="text-gray-700 text-sm">10% of annual rent fee</p>
@@ -206,7 +206,7 @@ const CostBreakdown = () => {
             <p className="text-gray-700 mb-2">Legal Fee</p>
             <Input
               label="NGN"
-              value={`N ${legalFee.toLocaleString()}`}
+              value={`₦ ${legalFee.toLocaleString()}`}
               disabled
             />
             <p className="text-gray-700 text-sm">12.5% of annual rent fee</p>

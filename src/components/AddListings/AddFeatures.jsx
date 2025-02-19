@@ -9,18 +9,18 @@ const FurnishingState = () => {
   const navigate = useNavigate();
   const [tags, setTags] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
+  const [initialTags, setInitialTags] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [newSelectedTag, setNewSelectedTag] = useState([]);
   const apiUrl = import.meta.env.VITE_API_URL;
   const [searchParams] = useSearchParams();
   const encodedItemId = searchParams.get("itemId");
 
   const decodeId = (encodedId) => {
-    return atob(encodedId); // Decode the Base64 string
+    return encodedId ? atob(encodedId) : null; // Decode the Base64 string
   };
-  const itemId = decodeId(encodedItemId);
+  const itemId = encodedItemId ? decodeId(encodedItemId) : null;
 
   const fetchSelectedFeatures = async () => {
     try {
@@ -28,13 +28,10 @@ const FurnishingState = () => {
         `${apiUrl}/api/v1/agents/listings/${itemId}/featureTags`,
         { withCredentials: true },
       );
-      const data = response?.data.payload.featuresTags;
-      data.forEach((item) => {
-        setSelectedTags((prev) => [...new Set([...prev, item.id])]);
-      });
-
-      console.log(response);
-      // Set the fetched data as the default state
+      const data = response?.data.payload.featuresTags || [];
+      const fetchedTagIds = data.map((item) => item.id);
+      setInitialTags(fetchedTagIds);
+      setSelectedTags(fetchedTagIds);
     } catch (error) {
       console.error("Error fetching features:", error);
       toast.error("Failed to fetch features details");
@@ -48,7 +45,6 @@ const FurnishingState = () => {
         `${apiUrl}/api/v1/agents/listings-attributes/featuresTags?page=${page}`,
         { withCredentials: true },
       );
-      console.log(response.data);
       setTags(response.data?.payload?.data || []);
     } catch (error) {
       toast.error("Failed to fetch tags. Please try again.");
@@ -57,15 +53,44 @@ const FurnishingState = () => {
     }
   };
 
+  const handleProceed = () => {
+    if (hasChanges()) {
+      postBasicFeatures();
+    } else {
+      // Skip API call if no changes and go directly to next step
+      const nextUrl = `/agent/addlisting/8${encodedItemId ? "?itemId=" + encodedItemId : ""}`;
+      navigate(nextUrl);
+    }
+  };
+
   const postBasicFeatures = async () => {
-    const storedDetails = JSON.parse(localStorage.getItem("basicDetails"));
+    const storedDetails = JSON.parse(
+      localStorage.getItem("basicDetails") || "{}",
+    );
     setLoading(true);
+
+    // Calculate only new tags that weren't initially selected
+    const newlySelectedTags = selectedTags.filter(
+      (tagId) => !initialTags.includes(tagId),
+    );
+
+    // Calculate removed tags that were initially selected
+    const removedTags = initialTags.filter(
+      (tagId) => !selectedTags.includes(tagId),
+    );
+
     try {
+      const baseUrl = `${apiUrl}/api/v1/agents/listings/`;
+      const listingId = encodedItemId ? itemId : storedDetails.listingId || "";
       const response = await axios.post(
-        `${apiUrl}/api/v1/agents/listings/${encodedItemId ? itemId + "/" : storedDetails.listingId + "/"}featureTags`,
-        { featureTagsIds: newSelectedTag },
+        `${baseUrl}${listingId}/featureTags`,
+        {
+          featureTagsIds: newlySelectedTags,
+          removedFeatureTagsIds: removedTags,
+        },
         { withCredentials: true },
       );
+
       if (response.data.status === "success") {
         toast.success("Features saved successfully!");
         setTimeout(
@@ -94,11 +119,21 @@ const FurnishingState = () => {
         ? prev.filter((id) => id !== tagId)
         : [...prev, tagId],
     );
-    setNewSelectedTag((prev) =>
-      prev.includes(tagId)
-        ? prev.filter((id) => id !== tagId)
-        : [...prev, tagId],
-    );
+  };
+
+  // Check if there are any changes compared to initial state
+  const hasChanges = () => {
+    return getNewlySelectedCount() > 0 || getRemovedCount() > 0;
+  };
+
+  // Get the count of newly added tags
+  const getNewlySelectedCount = () => {
+    return selectedTags.filter((tag) => !initialTags.includes(tag)).length;
+  };
+
+  // Get the count of removed tags
+  const getRemovedCount = () => {
+    return initialTags.filter((tag) => !selectedTags.includes(tag)).length;
   };
 
   useEffect(() => {
@@ -106,7 +141,7 @@ const FurnishingState = () => {
     if (encodedItemId) {
       fetchSelectedFeatures();
     }
-  }, [currentPage]);
+  }, [currentPage, encodedItemId]);
 
   return (
     <motion.div
@@ -120,6 +155,29 @@ const FurnishingState = () => {
       <p className="text-gray-600 font-medium">Step 7 of 13</p>
       <h2 className="mt-2 text-lg text-gray-800">Add Other Features</h2>
       <div className="w-full my-3 h-[1px] bg-gray-300"></div>
+
+      {hasChanges() && (
+        <div className="mb-4 p-3 bg-gray-100 rounded-md">
+          <p className="text-sm text-gray-700">
+            {getNewlySelectedCount() > 0 && (
+              <span className="text-green-600 font-medium">
+                {getNewlySelectedCount()} new feature
+                {getNewlySelectedCount() !== 1 ? "s" : ""} added
+              </span>
+            )}
+            {getNewlySelectedCount() > 0 && getRemovedCount() > 0 && (
+              <span className="mx-2">|</span>
+            )}
+            {getRemovedCount() > 0 && (
+              <span className="text-red-600 font-medium">
+                {getRemovedCount()} feature{getRemovedCount() !== 1 ? "s" : ""}{" "}
+                removed
+              </span>
+            )}
+          </p>
+        </div>
+      )}
+
       {isLoading ? (
         <div className="flex justify-center">
           <Spinner className="h-8 w-8 text-primaryPurple" />
@@ -140,7 +198,6 @@ const FurnishingState = () => {
               onClick={() => toggleTagSelection(tag.id)}
             >
               <div className="flex items-center gap-2 hover:text-white">
-                {/* Render the icon using the interface_icon_code */}
                 <i className={`${tag.interfaceIconCode}`}></i>
                 <span>{tag.name}</span>
               </div>
@@ -176,7 +233,7 @@ const FurnishingState = () => {
         </Button>
         <Button
           disabled={loading}
-          onClick={postBasicFeatures}
+          onClick={handleProceed}
           className={`${
             loading
               ? "bg-gray-200 text-gray-500"

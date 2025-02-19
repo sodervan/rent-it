@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { IconAlertCircle } from "@tabler/icons-react";
 
 const UploadTenancyAgreement = () => {
   const [file, setFile] = useState(null);
@@ -298,20 +299,21 @@ const UploadTenancyAgreement = () => {
             checked={agreeToTerms}
             onChange={() => setAgreeToTerms(!agreeToTerms)}
           />
-          <div className="my-2">
-            <ul>
-              <li className="text-sm text-gray-500">1) Property Address</li>
-              <li className="text-sm text-gray-500">2) Ownership Details</li>
-              <li className="text-sm text-gray-500">
-                3) Proposed Rental Amount
-              </li>
-              <li className="text-sm text-gray-500">
-                4) Responsibilities of Renters and Landlords
-              </li>
-              <li className="text-sm text-gray-500">
-                5) Signature of Landlord
-              </li>
-            </ul>
+          {/*GUIDELINES*/}
+          <div className="my-4 p-4 bg-blue-50 rounded-lg flex items-start gap-3">
+            <IconAlertCircle
+              className="text-blue-500 flex-shrink-0 mt-1"
+              size={20}
+            />
+            <div className="text-sm text-blue-700">
+              <p className="font-medium">Tenancy agreement requirements:</p>
+              <ul className="list-disc ml-4 mt-1">
+                <li>Property Address</li>
+                <li>Ownership Details</li>
+                <li>Proposed Rental Amount</li>
+                <li> Signature of Landlord</li>
+              </ul>
+            </div>
           </div>
         </div>
 

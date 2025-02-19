@@ -82,6 +82,7 @@ const ReviewListing = () => {
       if (response.status === 200) {
         toast.success("Listing published successfully!");
         setShowSuccessModal(true);
+        localStorage.clear();
       } else {
         toast.error("Failed to publish listing.");
       }
@@ -287,7 +288,7 @@ const ReviewListing = () => {
             </div>
 
             {/* Features */}
-            <div className="px-6 my-8 bg-[#E9D7FE] py-4 rounded-lg">
+            <div className="px-6 mx-6 my-8 bg-[#E9D7FE] py-4 rounded-lg">
               <h3 className="font-medium text-lg mb-4">Features</h3>
               <ul className="flex gap-3 whitespace-nowrap flex-wrap">
                 {reviewDetails?.featureTags?.length > 0
@@ -311,7 +312,7 @@ const ReviewListing = () => {
             </div>
 
             {/* Bills */}
-            <div className="px-6 my-8 bg-[#E9D7FE] py-4 rounded-lg">
+            <div className="px-6 my-8 mx-6 bg-[#E9D7FE] py-4 rounded-lg">
               <h3 className="font-medium text-lg mb-4">Bills</h3>
               <ul className="flex gap-3 whitespace-nowrap flex-wrap">
                 {reviewDetails?.billsTags?.length > 0
@@ -334,7 +335,7 @@ const ReviewListing = () => {
               </ul>
             </div>
             {/*LISTING FEATRUES*/}
-            <div className="px-6 my-8 bg-[#E9D7FE] py-4 rounded-lg">
+            <div className="px-6 my-8 mx-6 bg-[#E9D7FE] py-4 rounded-lg">
               {reviewDetails?.listingFeatures && (
                 <div>
                   <h3 className="font-medium text-lg mb-4">Listing Features</h3>
@@ -410,7 +411,7 @@ const ReviewListing = () => {
             </div>
             {/*LANDMARKS*/}
             <p className="text-center font-semibold text-gray-700">LANDMARKS</p>
-            <div className="px-6 mb-8 mt-4 bg-[#E9D7FE] py-4 rounded-lg">
+            <div className="px-6 mx-6 mb-8 mt-4 bg-[#E9D7FE] py-4 rounded-lg">
               <h3 className="font-medium text-lg mb-4">
                 Educational Institutions
               </h3>
@@ -441,7 +442,7 @@ const ReviewListing = () => {
             </div>
 
             {/* Healthcare Facilities */}
-            <div className="px-6 my-8 bg-[#E9D7FE] py-4 rounded-lg">
+            <div className="px-6 mx-6 my-8 bg-[#E9D7FE] py-4 rounded-lg">
               <h3 className="font-medium text-lg mb-4">
                 Healthcare Facilities
               </h3>
@@ -474,7 +475,7 @@ const ReviewListing = () => {
             </div>
 
             {/* Transportation */}
-            <div className="px-6 my-8 bg-[#E9D7FE] py-4 rounded-lg">
+            <div className="px-6 mx-6 my-8 bg-[#E9D7FE] py-4 rounded-lg">
               <h3 className="font-medium text-lg mb-4">Transportation</h3>
               <ul className="flex gap-3 whitespace-nowrap flex-wrap">
                 {reviewDetails?.location?.transportation?.length > 0 ? (

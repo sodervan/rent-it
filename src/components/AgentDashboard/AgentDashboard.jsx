@@ -458,7 +458,7 @@ const AgentDashboard = () => {
                 <p className="text-sm font-bold">{item.title}</p>
                 <div className="flex gap-1 items-center">
                   <p className="text-[15px] text-gray-600">
-                    {`₦ ${item.baseCost?.toLocaleString("en-NG") || "N/A"}`}
+                    {`₦ ${parseFloat(item.baseCost).toLocaleString() || "N/A"}`}
                   </p>
                   <p className="text-xs bg-[#D7D6FD] font-light px-2 rounded-full">
                     {item.paymentDuration || "N/A"}

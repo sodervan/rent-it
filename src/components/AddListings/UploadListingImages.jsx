@@ -343,11 +343,7 @@ const UploadListingImages = () => {
             <li>At least 4 images in total</li>
             <li>Maximum file size: 3MB per image</li>
             <li>Supported formats: JPEG, PNG</li>
-            <li>
-              {" "}
-              Organize images under tags. Drag to rearrange or place cover image
-              on top.
-            </li>
+            <li> Organize images under tags.</li>
           </ul>
         </div>
       </div>

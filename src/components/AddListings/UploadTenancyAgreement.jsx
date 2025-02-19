@@ -8,6 +8,7 @@ const UploadTenancyAgreement = () => {
   const [file, setFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [existingAgreement, setExistingAgreement] = useState(null);
 
@@ -63,10 +64,46 @@ const UploadTenancyAgreement = () => {
     setExistingAgreement(null);
   };
 
-  const removeFile = () => {
+  const removeFile = async () => {
+    // If it's an existing file, we need to delete it from the server
+    if (existingAgreement) {
+      setIsDeleting(true);
+      try {
+        const targetId = encodedItemId
+          ? itemId
+          : JSON.parse(localStorage.getItem("basicDetails"))?.listingId;
+
+        const response = await axios.delete(
+          `${apiUrl}/api/v1/agents/listings/${targetId}/tenancy-agreement`,
+          { withCredentials: true },
+        );
+        console.log(response);
+        if (response.status !== 204) {
+          throw new Error("Failed to delete tenancy agreement.");
+        }
+
+        toast.success("Tenancy agreement deleted successfully!");
+      } catch (error) {
+        console.error("Error deleting file:", error);
+        toast.error(
+          error.response?.data?.message ||
+            "An error occurred while deleting the file.",
+        );
+        return; // Don't clear the file if delete failed
+      } finally {
+        setIsDeleting(false);
+      }
+    }
+
+    // Clear the file from state
     setFile(null);
     setAgreeToTerms(false);
     setExistingAgreement(null);
+
+    // If there was a preview URL for a new file, revoke it to prevent memory leaks
+    if (file && !file.existingFile && file.preview) {
+      URL.revokeObjectURL(file.preview);
+    }
   };
 
   const handleFileInput = (event) => {
@@ -238,8 +275,15 @@ const UploadTenancyAgreement = () => {
                     <button
                       className="bg-black/60 text-white text-xs px-2 py-1 rounded-md hover:bg-black/70 transition-colors"
                       onClick={removeFile}
+                      disabled={isDeleting}
                     >
-                      Remove
+                      {isDeleting ? (
+                        <div className="flex items-center gap-1">
+                          <Spinner className="w-3 h-3" /> Removing...
+                        </div>
+                      ) : (
+                        "Remove"
+                      )}
                     </button>
                   </div>
                 </div>

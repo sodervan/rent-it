@@ -1,16 +1,60 @@
 import { Button } from "@material-tailwind/react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const Description = () => {
   const navigate = useNavigate();
   const [descriptionDetails, setDescriptionDetails] = useState("");
+  const [loading, setLoading] = useState(true);
   const [searchParams] = useSearchParams();
   const encodedItemId = searchParams.get("itemId");
+  const apiUrl = import.meta.env.VITE_API_URL;
+
+  const decodeId = (encodedId) => {
+    return atob(encodedId);
+  };
 
   useEffect(() => {
-    setDescriptionDetails(localStorage.getItem("descriptionDetails"));
-  }, []);
+    const fetchDescription = async () => {
+      // First check localStorage
+      const storedDescription = localStorage.getItem("descriptionDetails");
+
+      if (storedDescription) {
+        setDescriptionDetails(storedDescription);
+        setLoading(false);
+        return;
+      }
+
+      // If no stored description and we have an itemId, fetch from API
+      if (encodedItemId) {
+        try {
+          const listingId = decodeId(encodedItemId);
+          const response = await axios.get(
+            `${apiUrl}/api/v1/agents/listings/${listingId}/description`,
+            { withCredentials: true },
+          );
+
+          if (response.data.status === "success") {
+            const description = response.data.payload.description;
+            setDescriptionDetails(description);
+            // Also store in localStorage for future use
+            localStorage.setItem("descriptionDetails", description);
+          } else {
+            toast.error("Failed to fetch description");
+          }
+        } catch (error) {
+          toast.error(
+            error.response?.data?.message || "Error fetching description",
+          );
+        }
+      }
+      setLoading(false);
+    };
+
+    fetchDescription();
+  }, [encodedItemId, apiUrl]);
 
   return (
     <div>
@@ -26,10 +70,12 @@ const Description = () => {
             <p className="text-gray-500 mb-2">Preview Description</p>
             <div className="w-full">
               <div className="border border-gray-200 rounded-lg p-4">
-                {descriptionDetails ? (
+                {loading ? (
+                  <p className="text-gray-400">Loading description...</p>
+                ) : descriptionDetails ? (
                   <p>{descriptionDetails}</p>
                 ) : (
-                  <p>No description available</p>
+                  <p className="text-gray-400">No description available</p>
                 )}
               </div>
             </div>

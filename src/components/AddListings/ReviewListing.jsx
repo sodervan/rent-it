@@ -235,7 +235,8 @@ const ReviewListing = () => {
                   <div>
                     <p className="text-[14px]">
                       {`${reviewDetails?.currency?.symbol || "₦"} ${
-                        reviewDetails.baseCost
+                        parseFloat(reviewDetails.baseCost).toLocaleString() ||
+                        "0"
                       }`}
                     </p>
                   </div>

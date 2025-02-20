@@ -527,7 +527,7 @@ const ReviewListing = () => {
                 onClick={publishListing}
                 disabled={isUploading}
               >
-                {isUploading ? <Spinner className="w-5 h-5" /> : "Proceed"}
+                {isUploading ? <Spinner className="w-5 h-5" /> : "Publish"}
               </Button>
             </div>
           </div>

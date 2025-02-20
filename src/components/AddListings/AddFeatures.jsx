@@ -162,7 +162,9 @@ const FurnishingState = () => {
             {getNewlySelectedCount() > 0 && (
               <span className="text-green-600 font-medium">
                 {getNewlySelectedCount()} new feature
-                {getNewlySelectedCount() !== 1 ? "s" : ""} added
+                {getNewlySelectedCount() !== 1
+                  ? "s"
+                  : ""} added
               </span>
             )}
             {getNewlySelectedCount() > 0 && getRemovedCount() > 0 && (

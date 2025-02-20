@@ -256,7 +256,7 @@ const UploadListingVideos = () => {
         <div className="text-sm text-blue-700">
           <p className="font-medium">Video Upload Guidelines:</p>
           <ul className="list-disc ml-4 mt-1">
-            <li>Maximum 5 videos per listing</li>
+            <li>Maximum 2 videos per listing</li>
             <li>Maximum file size: 8MB per video</li>
             <li>Maximum duration: 3 minutes</li>
             <li>Supported formats: MP4, WebM, MOV</li>

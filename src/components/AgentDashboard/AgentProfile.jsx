@@ -154,39 +154,42 @@ const AgentProfile = () => {
     formData.append("profile", imageFile);
 
     try {
-      const response = await fetch(`${apiUrl}/api/v1/agents/profile-picture`, {
-        method: "POST",
-        body: formData,
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        },
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        const storedData = JSON.parse(localStorage.getItem("agentData"));
-        const updatedData = {
-          ...storedData,
-          payload: {
-            ...(storedData.payload || storedData),
-            profilePicLink: result.profilePicLink,
+      const response = await axios.post(
+        `${apiUrl}/api/v1/agents/profile-picture`,
+        formData,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "multipart/form-data",
           },
-        };
+        },
+      );
 
-        localStorage.setItem("agentData", JSON.stringify(updatedData));
-        setAgentData((prev) => ({
-          ...prev,
+      // Since axios automatically returns the parsed data
+      const result = response.data;
+
+      const storedData = JSON.parse(localStorage.getItem("agentData"));
+      const updatedData = {
+        ...storedData,
+        payload: {
+          ...(storedData.payload || storedData),
           profilePicLink: result.profilePicLink,
-        }));
+        },
+      };
 
-        toast.success("Profile image updated successfully!");
-      } else {
-        const error = await response.json();
-        toast.error(error.message || "Failed to update profile image");
-      }
+      localStorage.setItem("agentData", JSON.stringify(updatedData));
+      setAgentData((prev) => ({
+        ...prev,
+        profilePicLink: result.profilePicLink,
+      }));
+
+      toast.success("Profile image updated successfully!");
     } catch (error) {
       console.error("Profile Image Update Error:", error);
-      toast.error("Something went wrong. Please try again later.");
+      // Handle axios error response
+      const errorMessage =
+        error.response?.data?.message || "Failed to update profile image";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

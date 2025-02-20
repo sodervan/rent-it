@@ -7,6 +7,7 @@ import {
   Settings,
   LogOut,
   History,
+  User,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
@@ -45,10 +46,9 @@ const Sidebar = ({ firstname, loading }) => {
   ];
 
   const handleLogout = () => {
-    // Perform logout actions here, e.g., clear tokens, redirect to login page
-    localStorage.removeItem("token"); // Example: Clear token from localStorage
+    localStorage.removeItem("token");
     localStorage.clear();
-    navigate("/agent/login"); // Redirect to login page
+    navigate("/agent/login");
   };
 
   return (
@@ -56,18 +56,27 @@ const Sidebar = ({ firstname, loading }) => {
       <nav className="bg-white dark:bg-gray-950 h-screen w-60 border-r shadow-sm flex flex-col justify-between">
         <div>
           <div className="px-4 flex-1">
-            <div className="flex items-center justify-between mb-7 px-3">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
-                  HI,
-                </span>
-                <h2 className="text-lg font-medium text-gray-800 bg-gradient-to-r bg-clip-text">
-                  {loading ? "..." : firstname}
-                </h2>
+            {/* Enhanced Greeting Section */}
+            <div className="mb-7 px-3">
+              <div className="bg-gradient-to-r from-purple-50 to-purple-100 rounded-2xl p-4 shadow-sm border border-purple-100">
+                <div className="flex items-center gap-3">
+                  <div className="bg-white p-2 rounded-xl shadow-sm">
+                    <User className="w-5 h-5 text-purple-600" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-xs font-medium text-purple-600">
+                      Welcome back
+                    </span>
+                    <h2 className="text-lg font-semibold text-gray-800">
+                      {loading ? (
+                        <div className="animate-pulse bg-gray-200 h-6 w-24 rounded" />
+                      ) : (
+                        firstname
+                      )}
+                    </h2>
+                  </div>
+                </div>
               </div>
-              {/*<button className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">*/}
-              {/*  <Settings className="w-5 h-5 text-gray-500" />*/}
-              {/*</button>*/}
             </div>
 
             <ul className="space-y-3 px-2">

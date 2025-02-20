@@ -31,23 +31,27 @@ const Sidebar = ({ activeStep, steps, onStepClick, completedSteps = {} }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isMobileMenuOpen]);
 
-  // Calculate if a step should be accessible based on your new requirements
+  // Fixed step accessibility logic
   const isStepAccessible = (stepId) => {
     // If we have encodedItemId, all steps are accessible (editing mode)
     if (encodedItemId) return true;
 
-    // Otherwise, follow the sequential access logic:
     // First step is always accessible
     if (stepId === 1) return true;
+
     // Current step is accessible
     if (stepId === activeStep) return true;
+
     // Previous steps are accessible if completed
-    if (stepId < activeStep) return completedSteps[stepId];
-    // Next steps are accessible if all previous steps are completed
-    if (stepId > activeStep) {
-      // Check if all previous steps are completed
+    if (stepId < activeStep) return !!completedSteps[stepId];
+
+    // Next immediate step is accessible only if current step is completed
+    if (stepId === activeStep + 1) return !!completedSteps[activeStep];
+
+    // Other future steps are accessible only if all previous steps are completed
+    if (stepId > activeStep + 1) {
       for (let i = 1; i < stepId; i++) {
-        if (!completedSteps[i] && i !== activeStep) return false;
+        if (!completedSteps[i]) return false;
       }
       return true;
     }
@@ -70,7 +74,7 @@ const Sidebar = ({ activeStep, steps, onStepClick, completedSteps = {} }) => {
     <ul className={`space-y-2 ${isMobile ? "p-4" : "p-4"}`}>
       {steps.map((step, index) => {
         const isActive = step.id === activeStep;
-        const isCompleted = completedSteps[step.id];
+        const isCompleted = !!completedSteps[step.id];
         const isAccessible = isStepAccessible(step.id);
 
         return (
@@ -131,21 +135,27 @@ const Sidebar = ({ activeStep, steps, onStepClick, completedSteps = {} }) => {
     </ul>
   );
 
-  const ProgressIndicator = () => (
-    <div className="px-6 py-4 border-t border-purple-100">
-      <div className="w-full bg-gray-200 rounded-full h-2">
-        <div
-          className="bg-purple-600 h-2 rounded-full transition-all duration-500 ease-out"
-          style={{
-            width: `${(Object.keys(completedSteps).length / steps.length) * 100}%`,
-          }}
-        />
+  const ProgressIndicator = () => {
+    // Calculate completed steps count correctly
+    const completedStepsCount =
+      Object.values(completedSteps).filter(Boolean).length;
+
+    return (
+      <div className="px-6 py-4 border-t border-purple-100">
+        <div className="w-full bg-gray-200 rounded-full h-2">
+          <div
+            className="bg-purple-600 h-2 rounded-full transition-all duration-500 ease-out"
+            style={{
+              width: `${(completedStepsCount / steps.length) * 100}%`,
+            }}
+          />
+        </div>
+        <p className="text-xs text-purple-600 mt-2">
+          {completedStepsCount} of {steps.length} steps completed
+        </p>
       </div>
-      <p className="text-xs text-purple-600 mt-2">
-        {Object.keys(completedSteps).length} of {steps.length} steps completed
-      </p>
-    </div>
-  );
+    );
+  };
 
   return (
     <>

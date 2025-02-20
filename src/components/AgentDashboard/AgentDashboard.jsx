@@ -11,6 +11,8 @@ import ListingOptionsMenu from "@/components/AgentDashboard/ListingOptionsMenu.j
 import axios from "axios";
 import { Building2, ListFilter, Plus, RefreshCw, Search } from "lucide-react";
 
+const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
 const AgentDashboard = () => {
   const [activeTab, setActiveTab] = useState("published");
   const [hoveredIndex, setHoveredIndex] = useState(null);
@@ -18,14 +20,12 @@ const AgentDashboard = () => {
   const { tokenData } = useTokenData();
   const [agentData, setAgentData] = useState(null);
 
-  // Separate states for published listings
   const [publishedListings, setPublishedListings] = useState([]);
   const [publishedLoading, setPublishedLoading] = useState(false);
   const [publishedError, setPublishedError] = useState(null);
   const [publishedCursor, setPublishedCursor] = useState("");
   const [publishedHasMore, setPublishedHasMore] = useState(false);
 
-  // Separate states for unpublished listings
   const [unpublishedListings, setUnpublishedListings] = useState([]);
   const [unpublishedLoading, setUnpublishedLoading] = useState(false);
   const [unpublishedError, setUnpublishedError] = useState(null);
@@ -38,17 +38,47 @@ const AgentDashboard = () => {
   const [priceRange, setPriceRange] = useState("");
   const apiUrl = import.meta.env.VITE_API_URL;
 
-  const encodeId = (id) => {
-    return btoa(id.toString()); // Encode the ID to Base64
-  };
-
+  const encodeId = (id) => btoa(id.toString());
   const updateShareState = () => setShare(true);
   const closeShareModal = () => setShare(false);
 
-  // Separate fetch functions for published and unpublished listings
-  const fetchPublishedListings = async () => {
+  const getCachedData = (key) => {
+    const cached = localStorage.getItem(key);
+    if (!cached) return null;
+
+    const { data, timestamp } = JSON.parse(cached);
+    if (Date.now() - timestamp > CACHE_DURATION) {
+      localStorage.removeItem(key);
+      return null;
+    }
+
+    return data;
+  };
+
+  const setCachedData = (key, data) => {
+    localStorage.setItem(
+      key,
+      JSON.stringify({
+        data,
+        timestamp: Date.now(),
+      }),
+    );
+  };
+
+  const fetchPublishedListings = async (forceRefresh = false) => {
+    if (!forceRefresh) {
+      const cached = getCachedData("publishedListings");
+      if (cached) {
+        setPublishedListings(cached.listings);
+        setPublishedCursor(cached.cursor || "");
+        setPublishedHasMore(cached.hasMore || false);
+        return;
+      }
+    }
+
     setPublishedLoading(true);
     setPublishedError(null);
+
     try {
       const response = await axios.get(
         `${apiUrl}/api/v1/agents/listings/published`,
@@ -57,31 +87,47 @@ const AgentDashboard = () => {
           params: { limit: 10 },
         },
       );
-      console.log(response.data.payload.data);
-      setPublishedListings(response.data.payload.data || []);
-      if (response.data.payload.pagination?.next_cursor) {
-        setPublishedHasMore(true);
-        setPublishedCursor(response.data.payload.pagination.next_cursor);
-      } else {
-        setPublishedHasMore(false);
-      }
+
+      const listings = response.data.payload.data || [];
+      const cursor = response.data.payload.pagination?.next_cursor;
+      const hasMore = !!cursor;
+
+      setPublishedListings(listings);
+      setPublishedCursor(cursor || "");
+      setPublishedHasMore(hasMore);
+
+      setCachedData("publishedListings", {
+        listings,
+        cursor,
+        hasMore,
+      });
     } catch (error) {
-      if (error?.response.status === 404) {
+      if (error?.response?.status === 404) {
         setPublishedListings([]);
       } else {
         setPublishedError(
           "Failed to fetch published listings. Please try again.",
         );
       }
-      // console.error("Error fetching published listings:", error);
     } finally {
       setPublishedLoading(false);
     }
   };
 
-  const fetchUnpublishedListings = async () => {
+  const fetchUnpublishedListings = async (forceRefresh = false) => {
+    if (!forceRefresh) {
+      const cached = getCachedData("unpublishedListings");
+      if (cached) {
+        setUnpublishedListings(cached.listings);
+        setUnpublishedCursor(cached.cursor || "");
+        setUnpublishedHasMore(cached.hasMore || false);
+        return;
+      }
+    }
+
     setUnpublishedLoading(true);
     setUnpublishedError(null);
+
     try {
       const response = await axios.get(
         `${apiUrl}/api/v1/agents/listings/unpublished`,
@@ -91,15 +137,21 @@ const AgentDashboard = () => {
         },
       );
 
-      setUnpublishedListings(response.data.payload.data || []);
-      if (response.data.payload.pagination?.next_cursor) {
-        setUnpublishedHasMore(true);
-        setUnpublishedCursor(response.data.payload.pagination.next_cursor);
-      } else {
-        setUnpublishedHasMore(false);
-      }
+      const listings = response.data.payload.data || [];
+      const cursor = response.data.payload.pagination?.next_cursor;
+      const hasMore = !!cursor;
+
+      setUnpublishedListings(listings);
+      setUnpublishedCursor(cursor || "");
+      setUnpublishedHasMore(hasMore);
+
+      setCachedData("unpublishedListings", {
+        listings,
+        cursor,
+        hasMore,
+      });
     } catch (error) {
-      if (error?.response.status === 404) {
+      if (error?.response?.status === 404) {
         setUnpublishedListings([]);
       } else {
         setUnpublishedError(
@@ -111,13 +163,21 @@ const AgentDashboard = () => {
     }
   };
 
-  const fetchAgentDetails = async () => {
+  const fetchAgentDetails = async (forceRefresh = false) => {
+    if (!forceRefresh) {
+      const cached = getCachedData("agentData");
+      if (cached) {
+        setAgentData(cached);
+        return;
+      }
+    }
+
     try {
-      const agentResponse = await axios.get(`${apiUrl}/api/v1/agents`, {
+      const response = await axios.get(`${apiUrl}/api/v1/agents`, {
         withCredentials: true,
       });
-      setAgentData(agentResponse.data);
-      localStorage.setItem("agentData", JSON.stringify(agentResponse.data));
+      setAgentData(response.data);
+      setCachedData("agentData", response.data);
     } catch (error) {
       console.error("Error fetching agent details:", error);
     }
@@ -133,16 +193,25 @@ const AgentDashboard = () => {
 
       if (response.data.status === "success") {
         toast.success("Listing delisted successfully!");
-        setPublishedListings((prev) =>
-          prev.filter((listing) => listing.id !== listingId),
+
+        const updatedListings = publishedListings.filter(
+          (listing) => listing.id !== listingId,
         );
+        setPublishedListings(updatedListings);
+
+        const cached = getCachedData("publishedListings");
+        if (cached) {
+          setCachedData("publishedListings", {
+            ...cached,
+            listings: updatedListings,
+          });
+        }
       } else {
         toast.error(response.data.message || "Failed to delist listing.");
       }
     } catch (error) {
       console.error("Error delisting listing:", error);
       toast.error("Error delisting listing");
-      throw error;
     }
   };
 
@@ -155,21 +224,40 @@ const AgentDashboard = () => {
 
       if (response.data.status === "success") {
         toast.success("Listing deleted successfully!");
+
         if (activeTab === "published") {
-          setPublishedListings((prev) =>
-            prev.filter((listing) => listing.id !== listingId),
+          const updatedListings = publishedListings.filter(
+            (listing) => listing.id !== listingId,
           );
+          setPublishedListings(updatedListings);
+
+          const cached = getCachedData("publishedListings");
+          if (cached) {
+            setCachedData("publishedListings", {
+              ...cached,
+              listings: updatedListings,
+            });
+          }
         } else {
-          setUnpublishedListings((prev) =>
-            prev.filter((listing) => listing.id !== listingId),
+          const updatedListings = unpublishedListings.filter(
+            (listing) => listing.id !== listingId,
           );
+          setUnpublishedListings(updatedListings);
+
+          const cached = getCachedData("unpublishedListings");
+          if (cached) {
+            setCachedData("unpublishedListings", {
+              ...cached,
+              listings: updatedListings,
+            });
+          }
         }
       } else {
         toast.error(response.data.message || "Failed to delete listing.");
       }
     } catch (error) {
       console.error("Error deleting listing:", error);
-      throw error;
+      toast.error("Error deleting listing");
     }
   };
 
@@ -182,28 +270,21 @@ const AgentDashboard = () => {
 
       if (response.data.status === "success") {
         toast.success("Listing re-Published successfully!");
-        if (activeTab === "published") {
-          setPublishedListings((prev) =>
-            prev.filter((listing) => listing.id !== listingId),
-          );
-        } else {
-          setUnpublishedListings((prev) =>
-            prev.filter((listing) => listing.id !== listingId),
-          );
-        }
+        await Promise.all([
+          fetchPublishedListings(true),
+          fetchUnpublishedListings(true),
+        ]);
       } else {
         toast.error(response.data.message || "Failed to re-Publish listing.");
       }
     } catch (error) {
       toast.error(
-        error?.response.data.message || "Failed to re-Publish listing.",
+        error?.response?.data?.message || "Failed to re-Publish listing.",
       );
       console.error("Error publishing listing:", error);
-      throw error;
     }
   };
 
-  // Separate load more functions
   const fetchMorePublished = async () => {
     if (!publishedHasMore || isFetchingMore) return;
     setIsFetchingMore(true);
@@ -220,13 +301,22 @@ const AgentDashboard = () => {
       );
 
       const newListings = response.data.payload.data || [];
-      setPublishedListings((prev) => [...prev, ...newListings]);
+      const updatedListings = [...publishedListings, ...newListings];
+      setPublishedListings(updatedListings);
 
       if (response.data.payload.pagination?.next_cursor) {
         setPublishedCursor(response.data.payload.pagination.next_cursor);
+        setPublishedHasMore(true);
       } else {
         setPublishedHasMore(false);
       }
+
+      // Update cache with new data
+      setCachedData("publishedListings", {
+        listings: updatedListings,
+        cursor: response.data.payload.pagination?.next_cursor || "",
+        hasMore: !!response.data.payload.pagination?.next_cursor,
+      });
     } catch (error) {
       console.error("Error fetching more published listings:", error);
     } finally {
@@ -250,13 +340,22 @@ const AgentDashboard = () => {
       );
 
       const newListings = response.data.payload.data || [];
-      setUnpublishedListings((prev) => [...prev, ...newListings]);
+      const updatedListings = [...unpublishedListings, ...newListings];
+      setUnpublishedListings(updatedListings);
 
       if (response.data.payload.pagination?.next_cursor) {
         setUnpublishedCursor(response.data.payload.pagination.next_cursor);
+        setUnpublishedHasMore(true);
       } else {
         setUnpublishedHasMore(false);
       }
+
+      // Update cache with new data
+      setCachedData("unpublishedListings", {
+        listings: updatedListings,
+        cursor: response.data.payload.pagination?.next_cursor || "",
+        hasMore: !!response.data.payload.pagination?.next_cursor,
+      });
     } catch (error) {
       console.error("Error fetching more unpublished listings:", error);
     } finally {
@@ -267,7 +366,16 @@ const AgentDashboard = () => {
   useEffect(() => {
     fetchAgentDetails();
     fetchPublishedListings();
-    // fetchUnpublishedListings();
+    fetchUnpublishedListings();
+
+    const handleLogout = () => {
+      localStorage.removeItem("publishedListings");
+      localStorage.removeItem("unpublishedListings");
+      // localStorage.removeItem("agentData");
+    };
+
+    window.addEventListener("logout", handleLogout);
+    return () => window.removeEventListener("logout", handleLogout);
   }, []);
 
   const formatDate = (dateString) => {
@@ -275,7 +383,6 @@ const AgentDashboard = () => {
     return date.toLocaleString();
   };
 
-  // Filter and search functionality
   const currentListings =
     activeTab === "published" ? publishedListings : unpublishedListings;
   const currentLoading =
@@ -324,6 +431,7 @@ const AgentDashboard = () => {
     if (currentLoading) {
       return <Loader />;
     }
+
     if (currentError) {
       return (
         <div className="flex flex-col items-center justify-center gap-4 py-12">
@@ -331,8 +439,8 @@ const AgentDashboard = () => {
           <button
             onClick={
               activeTab === "published"
-                ? fetchPublishedListings
-                : fetchUnpublishedListings
+                ? () => fetchPublishedListings(true)
+                : () => fetchUnpublishedListings(true)
             }
             className="px-4 py-2 text-sm bg-primaryPurple text-white rounded-lg hover:bg-purple-700 transition-all"
           >
@@ -341,13 +449,7 @@ const AgentDashboard = () => {
         </div>
       );
     }
-    if (publishedListings.length === 0 && unpublishedListings.length === 0) {
-      return (
-        <div className="col-span-full text-center py-8">
-          <p className="text-gray-500">No listings available.</p>
-        </div>
-      );
-    }
+
     if (filteredListings.length === 0) {
       return (
         <div className="col-span-full text-center py-8">
@@ -363,132 +465,122 @@ const AgentDashboard = () => {
         </div>
       );
     }
+
     return (
       <div className="grid xl:grid-cols-3 lg:grid-cols-2 sm:grid-cols-1 md:grid-cols-2 gap-6 w-full mt-6 max-w-[1200px] mx-auto py-10">
-        {filteredListings.length > 0 ? (
-          filteredListings.map((item, index) => (
-            <div
-              key={item.id}
-              className="flex flex-col rounded-lg shadow-lg w-full h-[25rem] cursor-pointer hover:shadow-xl transition-shadow duration-300"
-              onMouseEnter={() => setHoveredIndex(index)}
-              onMouseLeave={() => setHoveredIndex(null)}
-            >
-              <div className="h-[60%] rounded-t-[15px] rounded-b-[20px] overflow-hidden relative">
-                <div className="flex items-center justify-between absolute top-2 left-3 w-full z-[100]">
-                  <div className="bg-[#F4EBFF] p-2 rounded-xl">
-                    <p className="text-[12px] font-[600] text-primaryPurple">
-                      {item.apartmentType?.name || "N/A"}
-                    </p>
-                  </div>
-                  <div className="flex gap-1 mr-5">
-                    {activeTab === "published" ? (
-                      <ListingOptionsMenu
-                        onDelist={() => handleDelist(item.id)}
-                        onDelete={() => handleDelete(item.id)}
-                        onBookings={() => {
-                          // Add your bookmark logic here
-                          console.log("Bookmark listing:", item.id);
-                        }}
-                      />
-                    ) : (
-                      <UnpublishedListingsOptionsMenu
-                        onEdit={(stepId) => {
-                          const encodedItemId = encodeId(item.id); // Encode the item.id
-                          window.location.href = `/agent/addlisting/${stepId}?itemId=${encodedItemId}`;
-                        }}
-                        onDelete={() => handleDelete(item.id)}
-                        onBookings={() => {
-                          // Add your bookmark logic here
-                          console.log("Bookmark listing:", item.id);
-                        }}
-                        onRepublish={() => handleRepublish(item.id)}
-                      />
-                    )}
-                    <button
-                      className="h-8 w-8 bg-[#F4EBFF] text-primaryPurple rounded-full flex items-center justify-center hover:bg-primaryPurple hover:text-white transition-all duration-300"
-                      onClick={updateShareState}
-                    >
-                      <i className="fi fi-rr-share text-[12px]"></i>
-                    </button>
-                  </div>
+        {filteredListings.map((item, index) => (
+          <div
+            key={item.id}
+            className="flex flex-col rounded-lg shadow-lg w-full h-[25rem] cursor-pointer hover:shadow-xl transition-shadow duration-300"
+            onMouseEnter={() => setHoveredIndex(index)}
+            onMouseLeave={() => setHoveredIndex(null)}
+          >
+            <div className="h-[60%] rounded-t-[15px] rounded-b-[20px] overflow-hidden relative">
+              <div className="flex items-center justify-between absolute top-2 left-3 w-full z-[100]">
+                <div className="bg-[#F4EBFF] p-2 rounded-xl">
+                  <p className="text-[12px] font-[600] text-primaryPurple">
+                    {item.apartmentType?.name || "N/A"}
+                  </p>
                 </div>
-                <div className="bg-[#F4EBFF] px-2 py-1 rounded-full mx-auto absolute z-[70] bottom-2 left-1/2 transform -translate-x-1/2 flex items-center justify-center">
-                  <div>
-                    <p className="text-[12px] text-primaryPurple whitespace-nowrap">
-                      Last updated{" "}
-                      <span className="text-sm font-semibold">
-                        {formatDate(item.updatedAt)}
-                      </span>
-                    </p>
-                  </div>
-                </div>
-                <Carousel
-                  className="rounded-xl"
-                  navigation={({ setActiveIndex, activeIndex, length }) => (
-                    <div className="absolute bottom-4 left-2/4 z-50 flex -translate-x-2/4 gap-2">
-                      {new Array(length).fill("").map((_, i) => (
-                        <span
-                          key={i}
-                          className={`block h-1 cursor-pointer rounded-2xl transition-all content-[''] ${
-                            activeIndex === i
-                              ? "w-8 bg-white"
-                              : "w-4 bg-white/50"
-                          }`}
-                          onClick={() => setActiveIndex(i)}
-                        />
-                      ))}
-                    </div>
-                  )}
-                >
-                  {item.pictures?.map((picture, idx) => (
-                    <img
-                      key={idx}
-                      src={picture.imageUrl || "path/to/fallback/image.jpg"}
-                      alt={`image ${idx + 1}`}
-                      className="w-full h-[15rem] object-cover"
+                <div className="flex gap-1 mr-5">
+                  {activeTab === "published" ? (
+                    <ListingOptionsMenu
+                      onDelist={() => handleDelist(item.id)}
+                      onDelete={() => handleDelete(item.id)}
+                      onBookings={() => {
+                        console.log("Bookmark listing:", item.id);
+                      }}
                     />
-                  ))}
-                </Carousel>
+                  ) : (
+                    <UnpublishedListingsOptionsMenu
+                      onEdit={(stepId) => {
+                        const encodedItemId = encodeId(item.id);
+                        window.location.href = `/agent/addlisting/${stepId}?itemId=${encodedItemId}`;
+                      }}
+                      onDelete={() => handleDelete(item.id)}
+                      onBookings={() => {
+                        console.log("Bookmark listing:", item.id);
+                      }}
+                      onRepublish={() => handleRepublish(item.id)}
+                    />
+                  )}
+                  <button
+                    className="h-8 w-8 bg-[#F4EBFF] text-primaryPurple rounded-full flex items-center justify-center hover:bg-primaryPurple hover:text-white transition-all duration-300"
+                    onClick={updateShareState}
+                  >
+                    <i className="fi fi-rr-share text-[12px]"></i>
+                  </button>
+                </div>
               </div>
-
-              <NavLink
-                to={`/listing-details-page/${item.id}/${index}`}
-                className="h-[40%] p-4 flex flex-col gap-2 justify-center"
+              <div className="bg-[#F4EBFF] px-2 py-1 rounded-full mx-auto absolute z-[70] bottom-2 left-1/2 transform -translate-x-1/2 flex items-center justify-center">
+                <div>
+                  <p className="text-[12px] text-primaryPurple whitespace-nowrap">
+                    Last updated{" "}
+                    <span className="text-sm font-semibold">
+                      {formatDate(item.updatedAt)}
+                    </span>
+                  </p>
+                </div>
+              </div>
+              <Carousel
+                className="rounded-xl"
+                navigation={({ setActiveIndex, activeIndex, length }) => (
+                  <div className="absolute bottom-4 left-2/4 z-50 flex -translate-x-2/4 gap-2">
+                    {new Array(length).fill("").map((_, i) => (
+                      <span
+                        key={i}
+                        className={`block h-1 cursor-pointer rounded-2xl transition-all content-[''] ${
+                          activeIndex === i ? "w-8 bg-white" : "w-4 bg-white/50"
+                        }`}
+                        onClick={() => setActiveIndex(i)}
+                      />
+                    ))}
+                  </div>
+                )}
               >
-                <p className="text-sm font-bold">{item.title}</p>
-                <div className="flex gap-1 items-center">
-                  <p className="text-[15px] text-gray-600">
-                    {`₦ ${parseFloat(item.baseCost).toLocaleString() || "N/A"}`}
-                  </p>
-                  <p className="text-xs bg-[#D7D6FD] font-light px-2 rounded-full">
-                    {item.paymentDuration || "N/A"}
-                  </p>
-                </div>
-                <div className="flex items-center gap-1">
-                  <i className="fi fi-rr-text-box text-[#FF3D3D]"></i>
-                  <p className="text-xs">
-                    Units Available: {item.unitsLeft || "N/A"}
-                  </p>
-                </div>
-                <div className="flex items-center gap-1">
-                  <i className="fi fi-rr-marker text-[#FF3D3D]"></i>
-                  <p className="text-xs">
-                    {item.location?.streetAddress || "N/A"}
-                  </p>
-                </div>
-              </NavLink>
+                {item.pictures?.map((picture, idx) => (
+                  <img
+                    key={idx}
+                    src={picture.imageUrl || "path/to/fallback/image.jpg"}
+                    alt={`image ${idx + 1}`}
+                    className="w-full h-[15rem] object-cover"
+                  />
+                ))}
+              </Carousel>
             </div>
-          ))
-        ) : (
-          <div className="col-span-full text-center py-8">
-            <p className="text-gray-500">
-              No {activeTab} listings found matching your criteria.
-            </p>
+
+            <NavLink
+              to={`/listing-details-page/${item.id}/${index}`}
+              className="h-[40%] p-4 flex flex-col gap-2 justify-center"
+            >
+              <p className="text-sm font-bold">{item.title}</p>
+              <div className="flex gap-1 items-center">
+                <p className="text-[15px] text-gray-600">
+                  {`₦ ${parseFloat(item.baseCost).toLocaleString() || "N/A"}`}
+                </p>
+                <p className="text-xs bg-[#D7D6FD] font-light px-2 rounded-full">
+                  {item.paymentDuration || "N/A"}
+                </p>
+              </div>
+              <div className="flex items-center gap-1">
+                <i className="fi fi-rr-text-box text-[#FF3D3D]"></i>
+                <p className="text-xs">
+                  Units Available: {item.unitsLeft || "N/A"}
+                </p>
+              </div>
+              <div className="flex items-center gap-1">
+                <i className="fi fi-rr-marker text-[#FF3D3D]"></i>
+                <p className="text-xs">
+                  {item.location?.streetAddress || "N/A"}
+                </p>
+              </div>
+            </NavLink>
           </div>
-        )}
+        ))}
       </div>
     );
   };
+
   return (
     <>
       <Sidebar
@@ -497,7 +589,6 @@ const AgentDashboard = () => {
       />
       <div className="content lg:ml-64 xl:ml-64 mt-24">
         <div className="px-5">
-          {/* Enhanced Header Section */}
           <div className="flex flex-col gap-6 mb-8">
             <div className="flex flex-col md:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-3">
@@ -507,27 +598,27 @@ const AgentDashboard = () => {
               <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
                 <button
                   onClick={() => {
-                    fetchPublishedListings();
-                    fetchUnpublishedListings();
+                    fetchPublishedListings(true);
+                    fetchUnpublishedListings(true);
                   }}
                   className="flex items-center justify-center gap-2 px-4 py-2 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 transition-all w-full sm:w-auto"
                 >
                   <RefreshCw className="h-4 w-4" />
                   Refresh
                 </button>
-                <button className="flex items-center justify-center gap-2 px-4 py-2 text-sm bg-primaryPurple text-white rounded-lg hover:bg-purple-700 transition-all w-full sm:w-auto">
+                <NavLink
+                  to="/agent/addlisting/1"
+                  className="flex items-center justify-center gap-2 px-4 py-2 text-sm bg-primaryPurple text-white rounded-lg hover:bg-purple-700 transition-all w-full sm:w-auto"
+                >
                   <Plus className="h-4 w-4" />
                   Add New Listing
-                </button>
+                </NavLink>
               </div>
             </div>
 
-            {/* Stats Overview */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
-                <p className="text-gray-500 text-sm">
-                  Total Listings (published + unpublished)
-                </p>
+                <p className="text-gray-500 text-sm">Total Listings</p>
                 <p className="text-2xl font-semibold">
                   {publishedListings.length + unpublishedListings.length}
                 </p>
@@ -546,7 +637,6 @@ const AgentDashboard = () => {
               </div>
             </div>
 
-            {/* Filters Section */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-4 rounded-lg shadow-sm border border-gray-100">
               <div className="flex flex-wrap items-center gap-2">
                 <ListFilter className="h-5 w-5 text-gray-500" />
@@ -584,7 +674,7 @@ const AgentDashboard = () => {
               </div>
             </div>
           </div>
-          {/*NAV*/}
+
           <div className="mb-6">
             <div className="border-b border-gray-200">
               <div className="flex space-x-8">
@@ -613,83 +703,29 @@ const AgentDashboard = () => {
               </div>
             </div>
           </div>
-          {/*STATS OVERVIEW*/}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
-              <p className="text-gray-500 text-sm">
-                {activeTab === "published" ? "Published" : "Unpublished"}{" "}
-                Listings
-              </p>
-              <p className="text-2xl font-semibold">
-                {filteredListings.length}
-              </p>
-            </div>
-            <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
-              <p className="text-gray-500 text-sm">Active Listings</p>
-              <p className="text-2xl font-semibold">{activeListings.length}</p>
-            </div>
-            <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
-              <p className="text-gray-500 text-sm">Total Units Available</p>
-              <p className="text-2xl font-semibold">{totalUnits}</p>
-            </div>
-          </div>
 
-          {/* Main Content */}
           <div className="relative">
             <div
               key={activeTab}
               className="transform transition-all duration-300 ease-in-out"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
             >
-              {currentLoading ? (
-                <Loader />
-              ) : currentError ? (
-                <div className="flex flex-col items-center justify-center gap-4 py-12">
-                  <p className="text-red-500 text-center">{currentError}</p>
+              {renderListings()}
+              {currentHasMore && filteredListings.length > 0 && (
+                <div className="flex justify-center my-6">
                   <button
-                    onClick={
-                      activeTab === "published"
-                        ? fetchPublishedListings
-                        : fetchUnpublishedListings
-                    }
-                    className="px-4 py-2 text-sm bg-primaryPurple text-white rounded-lg hover:bg-purple-700 transition-all"
+                    onClick={fetchMoreListings}
+                    disabled={isFetchingMore}
+                    className="bg-primaryPurple text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-all duration-300 disabled:opacity-50"
                   >
-                    Try Again
+                    {isFetchingMore ? "Loading..." : "Load More"}
                   </button>
                 </div>
-              ) : (
-                <>
-                  {renderListings()}
-                  {/* Load More Button */}
-                  {filteredListings.length > 0 && (
-                    <div className="flex justify-center my-6">
-                      {activeTab === "published" && publishedHasMore && (
-                        <button
-                          onClick={fetchMorePublished}
-                          disabled={isFetchingMore}
-                          className="bg-primaryPurple text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-all duration-300 disabled:opacity-50"
-                        >
-                          {isFetchingMore ? "Loading..." : "Load More"}
-                        </button>
-                      )}
-                      {activeTab === "unpublished" && unpublishedHasMore && (
-                        <button
-                          onClick={fetchMoreUnpublished}
-                          disabled={isFetchingMore}
-                          className="bg-primaryPurple text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-all duration-300 disabled:opacity-50"
-                        >
-                          {isFetchingMore ? "Loading..." : "Load More"}
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </>
               )}
             </div>
           </div>
         </div>
       </div>
+      {share && <ShareModal onClose={closeShareModal} />}
     </>
   );
 };

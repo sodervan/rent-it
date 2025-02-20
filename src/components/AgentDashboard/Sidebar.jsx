@@ -47,6 +47,7 @@ const Sidebar = ({ firstname, loading }) => {
   const handleLogout = () => {
     // Perform logout actions here, e.g., clear tokens, redirect to login page
     localStorage.removeItem("token"); // Example: Clear token from localStorage
+    localStorage.clear();
     navigate("/agent/login"); // Redirect to login page
   };
 

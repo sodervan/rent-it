@@ -56,11 +56,6 @@ const ListingLocation = () => {
       const storedDetails = JSON.parse(localStorage.getItem("basicDetails"));
       const listingId = encodedItemId ? itemId : storedDetails?.listingId;
 
-      if (!storedDetails?.listingId) {
-        setError("Missing listing details");
-        return;
-      }
-
       setIsLoading(true);
       setError(null);
 

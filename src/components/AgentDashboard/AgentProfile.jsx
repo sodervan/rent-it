@@ -7,6 +7,7 @@ import { Spinner } from "@material-tailwind/react";
 import { motion } from "framer-motion";
 import useTokenData from "../../../TokenHook.js";
 import Sidebar from "./Sidebar.jsx";
+import axios from "axios";
 
 const AgentProfile = () => {
   const filePickerRef = useRef();
@@ -28,6 +29,7 @@ const AgentProfile = () => {
   const [originalFormData, setOriginalFormData] = useState({});
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [loading, setIsLoading] = useState(false);
+  const [fetchingData, setFetchingData] = useState(false);
   const { clearToken } = useTokenData();
   const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -46,6 +48,8 @@ const AgentProfile = () => {
 
   const handleLogout = () => {
     clearToken();
+    localStorage.clear();
+    navigate("/login");
   };
 
   const handleInputChange = (e) => {
@@ -57,11 +61,58 @@ const AgentProfile = () => {
   };
 
   const hasChanges = () => {
-    return (
-      Object.keys(formData).some(
-        (key) => formData[key] !== originalFormData[key],
-      ) || imageFile !== null
+    return Object.keys(formData).some(
+      (key) => formData[key] !== originalFormData[key],
     );
+  };
+
+  const fetchAgentData = async () => {
+    setFetchingData(true);
+    try {
+      const response = await axios.get(`${apiUrl}/api/v1/agents`, {
+        withCredentials: true,
+      });
+      const data = response.data;
+      localStorage.setItem("agentData", JSON.stringify(data));
+      setAgentData(data.payload || data);
+      console.log(data);
+      initializeFormData(data.payload || data);
+    } catch (error) {
+      console.error(
+        "Error fetching agent data:",
+        error.response?.data || error.message,
+      );
+      toast.error("Failed to load profile data");
+    } finally {
+      setFetchingData(false);
+    }
+  };
+
+  const initializeFormData = (data) => {
+    if (!data) return;
+
+    // Handle both camelCase and lowercase field names
+    const initialFormData = {
+      phoneNumber: data.phoneNumber || data.phonenumber || "",
+      firstName: data.firstname || data.firstName || "",
+      lastName: data.lastname || data.lastName || "",
+      addressLine1: data.addressLine1 || data.addressline1 || "",
+      lga: data.lga || "",
+      state: data.state || "",
+    };
+
+    setFormData(initialFormData);
+    setOriginalFormData(initialFormData);
+
+    // Also update agentData to ensure consistent data structure
+    setAgentData((prev) => ({
+      ...prev,
+      ...data,
+      firstname: data.firstname || data.firstName,
+      lastname: data.lastname || data.lastName,
+      email: data.email,
+      profilePicLink: data.profilePicLink || data.profilepiclink,
+    }));
   };
 
   const handleSaveChanges = async () => {
@@ -69,31 +120,27 @@ const AgentProfile = () => {
 
     setIsLoading(true);
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
       const updatedData = {
         ...agentData,
-        ...formData,
-        profilePicLink: imageFile
-          ? URL.createObjectURL(imageFile)
-          : agentData.profilePicLink,
+        phoneNumber: formData.phoneNumber,
+        firstname: formData.firstName,
+        lastname: formData.lastName,
+        addressLine1: formData.addressLine1,
+        lga: formData.lga,
+        state: formData.state,
       };
 
-      localStorage.setItem("agentData", JSON.stringify(updatedData));
+      localStorage.setItem(
+        "agentData",
+        JSON.stringify({ payload: updatedData }),
+      );
       setAgentData(updatedData);
-      setOriginalFormData(formData);
-      setImageFile(null);
+      setOriginalFormData({ ...formData });
 
-      toast.success("Profile updated successfully!", {
-        position: "top-right",
-        autoClose: 3000,
-      });
+      toast.success("Profile updated successfully!");
     } catch (error) {
-      toast.error("Failed to update profile", {
-        position: "top-right",
-        autoClose: 3000,
-      });
+      console.error("Update profile error:", error);
+      toast.error("Failed to update profile");
     } finally {
       setIsLoading(false);
     }
@@ -117,12 +164,20 @@ const AgentProfile = () => {
 
       if (response.ok) {
         const result = await response.json();
-        const updatedAgentData = {
-          ...agentData,
-          profilePicLink: result.profilePicLink,
+        const storedData = JSON.parse(localStorage.getItem("agentData"));
+        const updatedData = {
+          ...storedData,
+          payload: {
+            ...(storedData.payload || storedData),
+            profilePicLink: result.profilePicLink,
+          },
         };
-        localStorage.setItem("agentData", JSON.stringify(updatedAgentData));
-        setAgentData(updatedAgentData);
+
+        localStorage.setItem("agentData", JSON.stringify(updatedData));
+        setAgentData((prev) => ({
+          ...prev,
+          profilePicLink: result.profilePicLink,
+        }));
 
         toast.success("Profile image updated successfully!");
       } else {
@@ -138,30 +193,45 @@ const AgentProfile = () => {
   };
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+
     const storedAgentData = localStorage.getItem("agentData");
+    console.log("Stored Agent Data:", storedAgentData); // Debugging
+
     if (storedAgentData) {
       try {
         const parsed = JSON.parse(storedAgentData);
-        const agentPayload = parsed?.payload;
+        console.log("Parsed Data:", parsed); // Debugging
+
+        // Handle both possible data structures
+        const agentPayload = parsed?.data.payload || parsed;
+        console.log("Agent Payload:", agentPayload); // Debugging
 
         if (agentPayload) {
-          setAgentData(agentPayload);
-          const initialFormData = {
-            phoneNumber: agentPayload.phoneNumber || "",
-            firstName: agentPayload.firstname || "",
-            lastName: agentPayload.lastname || "",
-            addressLine1: agentPayload.addressLine1 || "",
-            lga: agentPayload.lga || "",
-            state: agentPayload.state || "",
-          };
-          setFormData(initialFormData);
-          setOriginalFormData(initialFormData);
+          setAgentData(parsed?.data.payload);
+          initializeFormData(agentPayload);
+        } else {
+          fetchAgentData();
         }
       } catch (error) {
         console.error("Error parsing agentData:", error);
+        fetchAgentData();
       }
+    } else {
+      fetchAgentData();
     }
   }, []);
+
+  if (fetchingData) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Spinner className="h-12 w-12 text-purple-600" />
+        <span className="ml-3 text-lg text-gray-700">
+          Loading your profile...
+        </span>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -197,7 +267,11 @@ const AgentProfile = () => {
                 onClick={() => filePickerRef.current.click()}
               >
                 <motion.img
-                  src={imageFileUrl || agentData.profilePicLink}
+                  src={
+                    imageFileUrl ||
+                    agentData.profilePicLink ||
+                    "https://via.placeholder.com/150"
+                  }
                   alt="Profile"
                   className="object-cover border-4 border-gray-100 w-full h-full rounded-full"
                   initial={{ scale: 0.9 }}
@@ -219,7 +293,8 @@ const AgentProfile = () => {
             </motion.div>
 
             <h2 className="mt-4 font-semibold text-xl">
-              {agentData.lastName} {agentData.firstName}
+              {agentData.lastname || agentData.lastName}{" "}
+              {agentData.firstname || agentData.firstName}
             </h2>
             <p className="text-sm text-gray-500">{agentData.email}</p>
           </div>
@@ -310,7 +385,7 @@ const AgentProfile = () => {
                       value={formData.firstName}
                       onChange={handleInputChange}
                       className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-                      placeholder={agentData.firstname}
+                      placeholder="Enter your first name"
                     />
                   </div>
                   <div>
@@ -323,7 +398,7 @@ const AgentProfile = () => {
                       value={formData.lastName}
                       onChange={handleInputChange}
                       className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-                      placeholder={agentData.lastname}
+                      placeholder="Enter your last name"
                     />
                   </div>
                 </div>
@@ -434,7 +509,7 @@ const AgentProfile = () => {
             transition={{ duration: 0.3 }}
             className={toggle === 2 ? "block" : "hidden"}
           >
-            <form className="space-y-6">
+            <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
               <div className="space-y-6">
                 <h2 className="text-lg font-semibold text-gray-700">
                   Change Password

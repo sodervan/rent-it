@@ -100,7 +100,7 @@ const FurnishingState = () => {
         `${apiUrl}/api/v1/agents/listings/${listingId}/billTags`,
         {
           billTagsIds: newlySelectedTags,
-          removedBillTagsIds: removedTags,
+          // removedBillTagsIds: removedTags,
         },
         { withCredentials: true },
       );
@@ -181,7 +181,9 @@ const FurnishingState = () => {
               {getNewlySelectedCount() > 0 && (
                 <span className="text-green-600 font-medium">
                   {getNewlySelectedCount()} new bill
-                  {getNewlySelectedCount() !== 1 ? "s" : ""} added
+                  {getNewlySelectedCount() !== 1
+                    ? "s"
+                    : ""} added
                 </span>
               )}
               {getNewlySelectedCount() > 0 && getRemovedCount() > 0 && (

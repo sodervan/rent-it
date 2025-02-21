@@ -86,7 +86,7 @@ const FurnishingState = () => {
         `${baseUrl}${listingId}/featureTags`,
         {
           featureTagsIds: newlySelectedTags,
-          removedFeatureTagsIds: removedTags,
+          // removedFeatureTagsIds: removedTags,
         },
         { withCredentials: true },
       );

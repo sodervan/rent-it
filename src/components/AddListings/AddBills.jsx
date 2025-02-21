@@ -215,10 +215,10 @@ const FurnishingState = () => {
                     selectedTags.includes(tag.id)
                       ? "bg-primaryPurple text-white border-primaryPurple"
                       : "bg-white text-gray-700 border-gray-300"
-                  } hover:bg-primaryPurple hover:text-white`}
+                  }`}
                 onClick={() => toggleTagSelection(tag.id)}
               >
-                <div className="flex items-center gap-2 hover:text-white">
+                <div className="flex items-center gap-2">
                   <i className={`${tag.interfaceIconCode}`}></i>
                   <span>{tag.name}</span>
                 </div>

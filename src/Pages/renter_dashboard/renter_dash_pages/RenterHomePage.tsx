@@ -9,27 +9,39 @@ import {
 import { IconFilter, IconSearch } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 
-import { filterParams_atom, sideBarAtom } from "@/store/store";
-import { useAtom, useAtomValue } from "jotai";
-import { get_listing, getWithFilters, LISTINGRESPONSE } from "@/lib/api";
-import SearchCard from "../renter_dash_comps/QueryCard";
-import { useSearchParams } from "react-router-dom";
+import { sideBarAtom } from "@/store/store";
+import { useAtom } from "jotai";
+import { get_listing, LISTINGRESPONSE } from "@/lib/api";
+import QueryCard from "../renter_dash_comps/QueryCard";
+import { FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
 
-function SearchPage() {
+function RenterHomePage() {
 	const { data, isFetching, refetch } = useQuery<LISTINGRESPONSE>({
 		queryKey: ["test"],
 		queryFn: async () => await get_listing(),
 	});
 	const [opened, setOpened] = useAtom(sideBarAtom);
-
-	let [searchParams] = useSearchParams();
-	let searchString = searchParams.get("query");
-	let queryFilters = useAtomValue(filterParams_atom)
+	let navigate = useNavigate();
 
 	return (
 		<div className="isolate">
 			<div className="h-20 sticky top-0 z-10 bg-white">
-				<Flex className=" px-2 gap-2  h-full items-center">
+				<Flex
+					component="form"
+					onSubmit={(e: FormEvent<HTMLDivElement>) => {
+						e.preventDefault();
+						let form = new FormData(e.target as HTMLFormElement);
+						let queryString = form.get("search") as string;
+						if (queryString.length < 1) {
+							return;
+						}
+						navigate(
+							`/renter/dashboard/search?query=${queryString}`
+						);
+					}}
+					className=" px-2 gap-2  h-full items-center"
+				>
 					<div className=" md:hidden">
 						<Burger
 							opened={opened}
@@ -39,26 +51,19 @@ function SearchPage() {
 						/>
 					</div>
 					<TextInput
-						defaultValue={searchString ?? ""}
-						onKeyDown={(e) => {
-							console.log(e.key);
-						}}
+						name="search"
 						leftSection={<IconSearch />}
 						className="w-full"
 						placeholder="Seacrch here.."
 					/>
-					<Button type="submit" onClick={(e)=>{
-						e.preventDefault()
-						let val = getWithFilters({filters:queryFilters})
-						console.log(val)
-					}}>
+					<Button>
 						<IconFilter />
 					</Button>
 				</Flex>
 				<Divider />
 			</div>
 
-			<div className="flex p-2 gap-2 justify-center flex-wrap">
+			<div className=" grid grid-cols-[repeat(auto-fit,300px)] gap-2 justify-center">
 				{isFetching ? (
 					<div className="w-full flex items-center justify-center h-[calc(100dvh-100px)] bg-red-200">
 						<Loader />
@@ -67,7 +72,7 @@ function SearchPage() {
 					<>
 						{data?.payload.data.map((e) => {
 							return (
-								<SearchCard
+								<QueryCard
 									{...e}
 									key={e.id}
 								/>
@@ -82,4 +87,4 @@ function SearchPage() {
 	);
 }
 
-export default SearchPage;
+export default RenterHomePage;

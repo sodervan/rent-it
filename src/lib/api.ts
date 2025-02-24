@@ -147,6 +147,13 @@ let getWithQuery = async () => {
 	}
 };
 
+let getUserData = async () => {
+	try {
+		let resp = await axios.get("https://rent-it-api.onrender.com/api/v1/users")
+	} catch (err) {
+		throw new Error(JSON.stringify(err));
+	}
+};
 export { get_listing, getWithFilters };
 
 export type { LISTINGRESPONSE, LISTINGITEM };

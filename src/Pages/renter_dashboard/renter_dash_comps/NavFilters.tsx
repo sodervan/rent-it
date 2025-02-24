@@ -77,6 +77,10 @@ function NavFilters() {
 					max={4}
 				/>
 			</div>
+
+			<button className="p-2 bg-purple-500 bg-opacity-50 rounded-md mt-2 active:scale-95  duration-150">
+				Apply Filters
+			</button>
 		</div>
 	);
 }

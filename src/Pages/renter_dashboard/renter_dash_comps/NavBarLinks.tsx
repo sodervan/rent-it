@@ -1,37 +1,41 @@
-import { IconHome } from "@tabler/icons-react";
+import {
+	IconBookmark,
+	IconHeart,
+	IconHistory,
+	IconHome,
+} from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 
 let navLinkx = [
 	{
 		name: "Home",
-		to: "#",
+		to: "/renter/dashboard/home",
 		Icon: IconHome,
 	},
 	{
 		name: "History",
 		to: "#",
-		Icon: IconHome,
+		Icon: IconHistory,
 	},
 	{
 		name: "Bookings",
 		to: "#",
-		Icon: IconHome,
+		Icon: IconBookmark,
 	},
 	{
 		name: "Favorites",
 		to: "#",
-		Icon: IconHome,
+		Icon: IconHeart,
 	},
 ];
 function NavBarLinks() {
 	return (
-		<div className="flex flex-col gap-2">
-			<div></div>
+		<div className="flex flex-col gap-3">
 			{navLinkx.map((e) => {
 				return (
 					<Link
 						to={e.to}
-						className="duration-150 inline-flex gap-2 items-center text-lg hover:bg-purple-500 p-2 rounded-md hover:bg-opacity-50"
+						className="duration-150 inline-flex gap-2 items-center hover:bg-purple-500 p-2 text-md rounded-md hover:bg-opacity-50"
 					>
 						<e.Icon size={22} />
 						{e.name}

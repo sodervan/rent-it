@@ -1,64 +1,22 @@
-import {
-	Burger,
-	Button,
-	Divider,
-	Flex,
-	Loader,
-	TextInput,
-} from "@mantine/core";
-import { IconFilter, IconSearch } from "@tabler/icons-react";
+import { Loader } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 
-import { filterParams_atom, sideBarAtom } from "@/store/store";
-import { useAtom, useAtomValue } from "jotai";
-import { get_listing, getWithFilters, LISTINGRESPONSE } from "@/lib/api";
-import SearchCard from "../renter_dash_comps/QueryCard";
-import { useSearchParams } from "react-router-dom";
+import { get_listing, LISTINGRESPONSE } from "@/lib/api";
+import Searchbar from "../renter_dash_comps/Searchbar";
+import QueryCard from "../renter_dash_comps/QueryCard";
 
 function SearchPage() {
 	const { data, isFetching, refetch } = useQuery<LISTINGRESPONSE>({
 		queryKey: ["test"],
 		queryFn: async () => await get_listing(),
 	});
-	const [opened, setOpened] = useAtom(sideBarAtom);
-
-	let [searchParams] = useSearchParams();
-	let searchString = searchParams.get("query");
-	let queryFilters = useAtomValue(filterParams_atom)
-
 	return (
-		<div className="isolate">
-			<div className="h-20 sticky top-0 z-10 bg-white">
-				<Flex className=" px-2 gap-2  h-full items-center">
-					<div className=" md:hidden">
-						<Burger
-							opened={opened}
-							onClick={() => {
-								setOpened(!opened);
-							}}
-						/>
-					</div>
-					<TextInput
-						defaultValue={searchString ?? ""}
-						onKeyDown={(e) => {
-							console.log(e.key);
-						}}
-						leftSection={<IconSearch />}
-						className="w-full"
-						placeholder="Seacrch here.."
-					/>
-					<Button type="submit" onClick={(e)=>{
-						e.preventDefault()
-						let val = getWithFilters({filters:queryFilters})
-						console.log(val)
-					}}>
-						<IconFilter />
-					</Button>
-				</Flex>
-				<Divider />
+		<div className="isolate bg-gray-300">
+			<div className="h-20  z-10 ">
+				<Searchbar />
 			</div>
 
-			<div className="flex p-2 gap-2 justify-center flex-wrap">
+			<div className=" grid grid-cols-[repeat(auto-fit,300px)] gap-2 justify-center p-4 rounded-lg bg-white md:mx-8 shadow-xl">
 				{isFetching ? (
 					<div className="w-full flex items-center justify-center h-[calc(100dvh-100px)] bg-red-200">
 						<Loader />
@@ -67,7 +25,7 @@ function SearchPage() {
 					<>
 						{data?.payload.data.map((e) => {
 							return (
-								<SearchCard
+								<QueryCard
 									{...e}
 									key={e.id}
 								/>

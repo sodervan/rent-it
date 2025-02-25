@@ -32,7 +32,6 @@ const RenterSettings = () => {
 				className="mt-4 p-4 rounded-lg bg-white min-h-[578px] shadow-2xl"
 				onSubmit={onSubmit}
 			>
-				{/* <>{JSON.stringify(userInfo)}</> */}
 				{isFetching ? (
 					<div className="size-32">loading</div>
 				) : (

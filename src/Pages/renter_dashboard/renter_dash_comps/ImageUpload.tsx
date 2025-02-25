@@ -16,7 +16,7 @@ const ImageUpload = () => {
 			reader.readAsDataURL(file);
 		}
 	};
-	let queryCLient = useQueryClient()
+	let queryCLient = useQueryClient();
 	let onUpload = async () => {
 		try {
 			await toast.promise(uploadProfilePic(file), {
@@ -25,8 +25,8 @@ const ImageUpload = () => {
 				error: "failed to upload",
 			});
 			queryCLient.invalidateQueries({
-				queryKey:["userData"]
-			})
+				queryKey: ["userData"],
+			});
 		} catch (err) {
 			throw new Error("failed");
 		}

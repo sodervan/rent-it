@@ -5,6 +5,7 @@ import { Button, Checkbox, Modal, TextInput } from "@mantine/core";
 import { IconUser } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import ImageUpload from "../renter_dash_comps/ImageUpload";
+import Searchbar from "../renter_dash_comps/Searchbar";
 
 const RenterSettings = () => {
 	let { data: userInfo, isFetching } = useQuery<USERDETAILSPAYLOAD>({
@@ -19,6 +20,9 @@ const RenterSettings = () => {
 	const [opened, { open, close }] = useDisclosure(false);
 	return (
 		<div className="md:px-4 bg-gray-300  py-4">
+			<div className="mb-8">
+				<Searchbar />
+			</div>
 			<Modal
 				opened={opened}
 				onClose={close}
@@ -27,7 +31,7 @@ const RenterSettings = () => {
 			>
 				<ImageUpload />
 			</Modal>
-			<h2 className="text-xl font-bold">Account Information</h2>
+			<h2 className="text-2xl  font-bold">Account Information</h2>
 			<form
 				className="mt-4 p-4 rounded-lg bg-white min-h-[578px] shadow-2xl"
 				onSubmit={onSubmit}

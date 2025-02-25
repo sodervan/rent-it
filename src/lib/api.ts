@@ -201,7 +201,6 @@ let getUserData = async () => {
 			{ withCredentials: true }
 		);
 
-		console.log(await resp.data);
 		return resp.data;
 	} catch (err) {
 		throw new Error(JSON.stringify(err));
@@ -229,8 +228,24 @@ let uploadProfilePic = async (img: any) => {
 		throw new Error(JSON.stringify(error));
 	}
 };
+
+let get_favorites = async () => {
+	try {
+		let resp = await axios.get(
+			"https://rent-it-api.onrender.com/api/v1/listings/favourites",
+			{
+				withCredentials: true,
+			}
+		);
+		console.log(resp)
+		return resp.data;
+	} catch (err) {
+		throw new Error(JSON.stringify(err));
+	}
+};
 export {
 	get_listing,
+	get_favorites,
 	getWithFilters,
 	getUserData,
 	getWithQuery,

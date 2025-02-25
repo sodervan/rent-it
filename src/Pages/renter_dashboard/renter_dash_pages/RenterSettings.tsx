@@ -19,8 +19,8 @@ const RenterSettings = () => {
 	};
 	const [opened, { open, close }] = useDisclosure(false);
 	return (
-		<div className="md:px-4 bg-gray-300  py-4">
-			<div className="mb-8">
+		<div className=" bg-gray-300  pt-4">
+			<div className="">
 				<Searchbar />
 			</div>
 			<Modal
@@ -31,9 +31,9 @@ const RenterSettings = () => {
 			>
 				<ImageUpload />
 			</Modal>
-			<h2 className="text-2xl  font-bold">Account Information</h2>
+			<h2 className="text-2xl mx-4 mt-4 opacity-50 font-bold">Account Information</h2>
 			<form
-				className="mt-4 p-4 rounded-lg bg-white min-h-[578px] shadow-2xl"
+				className="mx-4 mt-4 p-4 rounded-lg bg-white min-h-[578px] shadow-2xl"
 				onSubmit={onSubmit}
 			>
 				{isFetching ? (
@@ -57,7 +57,7 @@ const RenterSettings = () => {
 						)}
 
 						<div className="flex flex-col  ml-2 h-full justify-center gap-2">
-							<h2 className="text-lg ">
+							<h2 className="text-2xl font-semibold ">
 								{userInfo?.payload.firstname}
 							</h2>
 							<Button

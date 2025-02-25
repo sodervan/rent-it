@@ -52,7 +52,7 @@ function Searchbar() {
 				size="lg"
 				leftSection={<IconSearch />}
 				className="w-full "
-				placeholder="Seacrch here.."
+				placeholder="Search here.."
 			/>
 			<button className="p-2 duration-150 hover:bg-gray-500 rounded-full hover:bg-opacity-50">
 				<IconBell />
@@ -94,10 +94,7 @@ function Searchbar() {
 							Settings
 						</Link>
 					</Menu.Item>
-					<Menu.Item leftSection={<IconLogout/>}>
-					Logout
-						
-					</Menu.Item>
+					<Menu.Item leftSection={<IconLogout />}>Logout</Menu.Item>
 				</Menu.Dropdown>
 			</Menu>
 

@@ -30,7 +30,7 @@ let navLinkx = [
 	},
 	{
 		name: "Favorites",
-		to: "#",
+		to: "/renter/dashboard/favourites",
 		Icon: IconHeart,
 	},
 ];

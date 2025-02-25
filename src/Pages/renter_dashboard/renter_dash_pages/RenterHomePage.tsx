@@ -14,7 +14,7 @@ function RenterHomePage() {
 	return (
 		<div className="isolate min-h-dvh bg-gray-300">
 			<div className="h-20  z-10  ">
-				<Searchbar/>
+				<Searchbar />
 			</div>
 
 			<div className=" grid grid-cols-[repeat(auto-fit,300px)] gap-2 justify-center p-4 rounded-lg bg-white md:mx-8 shadow-xl">

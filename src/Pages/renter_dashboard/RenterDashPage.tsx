@@ -1,4 +1,4 @@
-import { AppShell, Burger, Divider, Title, Button } from "@mantine/core";
+import { AppShell, Burger, Divider, Title } from "@mantine/core";
 import { Route, Routes } from "react-router-dom";
 import NavBarItems from "./renter_dash_comps/NavBarItems";
 import Popular from "./renter_dash_pages/Popular";
@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import useTokenData from "../../../TokenHook"; // Import the useTokenData hook
 import RenterHomePage from "./renter_dash_pages/RenterHomePage";
 import SearchPage from "./renter_dash_pages/SearchPage";
+import RenterFavorites from "./renter_dash_pages/RenterFavorites";
 
 function RenterDashPage() {
 	const { tokenData, isLoading, clearToken } = useTokenData(); // Get clearToken from the hook
@@ -62,15 +63,14 @@ function RenterDashPage() {
 				<NavBarItems />
 			</AppShell.Navbar>
 			<AppShell.Main className="">
-				<div style={{ position: "relative", top: 16, right: 16 }}>
+				{/* <div style={{ position: "relative", top: 16, right: 16 }}>
 					<Button
 						color="red"
 						onClick={handleLogout}
 					>
 						Logout
 					</Button>
-				</div>
-
+				</div> */}
 				<Routes>
 					<Route
 						path="/home"
@@ -87,6 +87,11 @@ function RenterDashPage() {
 					<Route
 						path="/transactions"
 						element={<TransactionHistory />}
+					/>
+					<Route
+
+						path="/favourites"
+						element={<RenterFavorites/>}
 					/>
           <Route
 						path="/search"

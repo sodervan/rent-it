@@ -3,6 +3,7 @@ import {
 	IconHeart,
 	IconHistory,
 	IconHome,
+	IconLocationBolt,
 } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 
@@ -11,6 +12,11 @@ let navLinkx = [
 		name: "Home",
 		to: "/renter/dashboard/home",
 		Icon: IconHome,
+	},
+	{
+		name: "Nearby",
+		to: "#",
+		Icon: IconLocationBolt,
 	},
 	{
 		name: "History",
@@ -27,6 +33,7 @@ let navLinkx = [
 		to: "#",
 		Icon: IconHeart,
 	},
+	
 ];
 function NavBarLinks() {
 	return (

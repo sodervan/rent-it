@@ -1,141 +1,111 @@
-import { Button, Input, Tabs } from "@mantine/core";
-import {
-	IconBell,
-	IconBookmark,
-	IconEdit,
-	IconLock,
-	IconSearch,
-} from "@tabler/icons-react";
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import RenterBookings from "../renter_dash_comps/RenterBookings";
+import { FormEvent, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getUserData, USERDETAILSPAYLOAD } from "@/lib/api";
+import { Button, Checkbox, TextInput } from "@mantine/core";
+import { IconUser } from "@tabler/icons-react";
 
 const RenterSettings = () => {
 	const [activeTab, setActiveTab] = useState<string | null>("first");
+
+	let { data: userInfo, isFetching } = useQuery<USERDETAILSPAYLOAD>({
+		queryKey: ["userData"],
+		queryFn: async () => await getUserData(),
+	});
+
+	let onSubmit = (e: FormEvent<HTMLFormElement>) => {
+		e.preventDefault()
+		let formData = new FormData(e.target as HTMLFormElement);
+
+		
+		};
 	return (
-		<div>
-			<div className="h-20 border-b w-full flex px-2">
-				<div className="flex items-center mr-auto w-full max-w-[500px]">
-					<Input
-						leftSection={<IconSearch />}
-						className="] w-full"
-					/>
-				</div>
-				<div className="flex items-center gap-4">
-					<Link to="/">Saved</Link>
-					<Link to="/">Listing</Link>
-					<Link to="/">
-						<IconBell />
-					</Link>
-				</div>
-			</div>
+		<div className="md:px-4 bg-gray-300  py-4">
+			<h2 className="text-xl font-bold">Account Information</h2>
+			<form
+				className="mt-4 p-4 rounded-lg bg-white min-h-[578px]"
+				onSubmit={onSubmit}
+			>
+				{/* <>{JSON.stringify(userInfo)}</> */}
+				{isFetching ? (
+					<>loading</>
+				) : (
+					<div className="size-32 bg-red-200 rounded-full">
+						<img
+							src={
+								userInfo?.payload.profilePicFileName ??
+								undefined
+							}
+							alt=""
+						/>
+					</div>
+				)}
 
-			<div className="p-2 flex gap-4 ">
-				<div className="max-w-[200px] w-full flex flex-col gap-1 sticky top-0 bg-red-400  items-center pt-2 h-fit">
-					<div className="h-24 w-24 rounded-full bg-red-200"></div>
-					<div>Name</div>
-					<div>Emails</div>
-				</div>
-				<div className="w-full p-2 flex flex-col ">
-					<h2>Profile</h2>
-					<div className="mt-4 max-w-[500px]">
-						<Tabs
-							value={activeTab}
-							onChange={setActiveTab}
-						>
-							<Tabs.List>
-								<Tabs.Tab
-									leftSection={<IconEdit />}
-									value="first"
-								>
-									Edit Profile
-								</Tabs.Tab>
-								<Tabs.Tab
-									leftSection={<IconBookmark />}
-									value="second"
-								>
-									Bookings
-								</Tabs.Tab>
-								<Tabs.Tab
-									leftSection={<IconLock />}
-									value="third"
-								>
-									Change Password
-								</Tabs.Tab>
-							</Tabs.List>
-
-							<Tabs.Panel value="first">
-								<div className="flex flex-col">
-									<h2 className="mt-4">Edit Profile</h2>
-									<div className="mt-4 flex flex-col gap-3">
-										<div className="">
-											<p className="text-gray-700 mb-2 text-sm ">
-												First Name
-											</p>
-											<Input placeholder="First Name" />
-										</div>
-										<div className="">
-											<p className="text-gray-700 mb-2 text-sm">
-												Last Name
-											</p>
-											<Input placeholder="Last Name" />
-										</div>
-										<div className="">
-											<p className="text-gray-700 mb-2 text-sm">
-												Email
-											</p>
-											<Input
-												type="email"
-												placeholder="Email"
-											/>
-										</div>
-										<div className="">
-											<p className="text-gray-700 mb-2 text-sm">
-												Mobile Number
-											</p>
-											<Input placeholder="Mobile Number" />
-										</div>
-										<Button className="!w-full">
-											Save Changes
-										</Button>
-									</div>
-								</div>
-							</Tabs.Panel>
-							<Tabs.Panel value="second">
-								<RenterBookings />
-							</Tabs.Panel>
-							<Tabs.Panel value="third">
-								<h2 className="mt-4">Change Password</h2>
-								<div className="mt-4 flex flex-col gap-4">
-									<div>
-										<p className="text-gray-600 mb-2 text-sm">
-											Current Password
-										</p>
-										<Input placeholder="Current Password" />
-									</div>
-									<div>
-										<p className="text-gray-600 mb-2 text-sm">
-											New Password
-										</p>
-										<Input placeholder="New Password" />
-									</div>
-									<div>
-										<p className="text-gray-600 mb-2 text-sm">
-											Confirm Password
-										</p>
-										<Input placeholder="Confirm  Password" />
-									</div>
-									<div>
-										<Button className="!w-full">
-											Save Changes
-										</Button>
-									</div>
-								</div>
-							</Tabs.Panel>
-						</Tabs>
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-2 justify-center mt-4">
+					<div className="py-2 flex flex-col  gap-2">
+						<label className=" opacity-70 font-bold">
+							FirstName
+						</label>
+						<TextInput
+							name="firstname"
+							rightSection={<IconUser size={16} />}
+							defaultValue={userInfo?.payload.firstname}
+						/>
+					</div>
+					<div className="py-2 flex flex-col  gap-2">
+						<label className=" opacity-70 font-bold">
+							LastName
+						</label>
+						<TextInput
+							rightSection={<IconUser size={16} />}
+							name="lastname"
+							defaultValue={userInfo?.payload.lastname}
+						/>
+					</div>
+					<div className="py-2 flex flex-col  gap-2">
+						<label className=" opacity-70 font-bold">E-mail</label>
+						<TextInput
+							rightSection={<IconUser size={16} />}
+							name="email"
+							type="email"
+							defaultValue={userInfo?.payload.email}
+						/>
+					</div>
+					<div className="py-2 flex flex-col  gap-2">
+						<label className=" opacity-70 font-bold">
+							Phone Number
+						</label>
+						<TextInput
+							rightSection={<IconUser size={16} />}
+							name="phone"
+							type="number"
+							defaultValue={
+								userInfo?.payload.phoneNumber ?? "000"
+							}
+						/>
+					</div>
+					<div className="py-2 flex flex-col  gap-2">
+						<label className=" opacity-70 font-bold">
+							Date Of Birth
+						</label>
+						<TextInput
+							rightSection={<IconUser size={16} />}
+							name="date"
+							type="number"
+							defaultValue={userInfo?.payload.phoneNumber}
+						/>
 					</div>
 				</div>
-			</div>
+				<div className="flex fle-col gap-2 mt-2 items-center">
+					<label className=" opacity-70 font-bold">Student</label>
+					<Checkbox
+						defaultValue={String(
+							userInfo?.payload.isStudent ?? false
+						)}
+					/>
+				</div>
+
+				<Button className="mt-4" type="submit">Update Info</Button>
+			</form>
 		</div>
 	);
 };

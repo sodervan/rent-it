@@ -147,13 +147,65 @@ let getWithQuery = async () => {
 	}
 };
 
+interface USERDETAILSPAYLOAD {
+	message:string,
+	payload:User,
+	status:string,statusCode:string
+}
+
+interface User {
+	id: string;
+	email: string;
+	phoneNumber: string;
+	schoolId: string | null;
+	firstname: string;
+	lastname: string;
+	profilePicFileName: string | null;
+	profilePicLink: string | null;
+	isverified: boolean;
+	isActive: boolean;
+	isStudent: boolean;
+	createdAt: string;
+	updatedAt: string;
+}
+
+interface RequestConfig {
+	transitional: {
+		silentJSONParsing: boolean;
+		forcedJSONParsing: boolean;
+		clarifyTimeoutError: boolean;
+	};
+	adapter: string[];
+	transformRequest: any[];
+	transformResponse: any[];
+	timeout: number;
+	xsrfCookieName: string;
+	xsrfHeaderName: string;
+	maxContentLength: number;
+	maxBodyLength: number;
+	env: object;
+	headers: {
+		Accept: string;
+	};
+	withCredentials: boolean;
+	method: string;
+	url: string;
+}
+
 let getUserData = async () => {
 	try {
-		let resp = await axios.get("https://rent-it-api.onrender.com/api/v1/users")
+		fetch("", { credentials: "include" });
+		let resp = await axios.get(
+			"https://rent-it-api.onrender.com/api/v1/users",
+			{ withCredentials:true}
+		);
+		
+		console.log(await resp.data)
+		return resp.data
 	} catch (err) {
 		throw new Error(JSON.stringify(err));
 	}
 };
-export { get_listing, getWithFilters };
+export { get_listing, getWithFilters, getUserData, getWithQuery };
 
-export type { LISTINGRESPONSE, LISTINGITEM };
+export type { LISTINGRESPONSE, LISTINGITEM, USERDETAILSPAYLOAD };

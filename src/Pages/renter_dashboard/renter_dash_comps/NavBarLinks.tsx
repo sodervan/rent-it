@@ -33,7 +33,6 @@ let navLinkx = [
 		to: "#",
 		Icon: IconHeart,
 	},
-	
 ];
 function NavBarLinks() {
 	return (

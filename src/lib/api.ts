@@ -148,9 +148,10 @@ let getWithQuery = async () => {
 };
 
 interface USERDETAILSPAYLOAD {
-	message:string,
-	payload:User,
-	status:string,statusCode:string
+	message: string;
+	payload: User;
+	status: string;
+	statusCode: string;
 }
 
 interface User {
@@ -197,15 +198,43 @@ let getUserData = async () => {
 		fetch("", { credentials: "include" });
 		let resp = await axios.get(
 			"https://rent-it-api.onrender.com/api/v1/users",
-			{ withCredentials:true}
+			{ withCredentials: true }
 		);
-		
-		console.log(await resp.data)
-		return resp.data
+
+		console.log(await resp.data);
+		return resp.data;
 	} catch (err) {
 		throw new Error(JSON.stringify(err));
 	}
 };
-export { get_listing, getWithFilters, getUserData, getWithQuery };
+
+let uploadProfilePic = async (img: any) => {
+	// console.log(img)
+	const formData = new FormData();
+	formData.append("profile", img);
+	try {
+		let resp = await axios.post(
+			"https://rent-it-api.onrender.com/api/v1/users/profile-picture",
+			formData,
+			{
+				withCredentials: true,
+				headers: {
+					"Content-Type": "multipart/form-data",
+				},
+			}
+		);
+
+		return resp;
+	} catch (error) {
+		throw new Error(JSON.stringify(error));
+	}
+};
+export {
+	get_listing,
+	getWithFilters,
+	getUserData,
+	getWithQuery,
+	uploadProfilePic,
+};
 
 export type { LISTINGRESPONSE, LISTINGITEM, USERDETAILSPAYLOAD };

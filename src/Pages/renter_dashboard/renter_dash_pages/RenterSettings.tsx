@@ -1,42 +1,70 @@
-import { FormEvent, useState } from "react";
+import { FormEvent } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getUserData, USERDETAILSPAYLOAD } from "@/lib/api";
-import { Button, Checkbox, TextInput } from "@mantine/core";
+import { Button, Checkbox, Modal, TextInput } from "@mantine/core";
 import { IconUser } from "@tabler/icons-react";
+import { useDisclosure } from "@mantine/hooks";
+import ImageUpload from "../renter_dash_comps/ImageUpload";
 
 const RenterSettings = () => {
-	const [activeTab, setActiveTab] = useState<string | null>("first");
-
 	let { data: userInfo, isFetching } = useQuery<USERDETAILSPAYLOAD>({
 		queryKey: ["userData"],
 		queryFn: async () => await getUserData(),
 	});
 
 	let onSubmit = (e: FormEvent<HTMLFormElement>) => {
-		e.preventDefault()
+		e.preventDefault();
 		let formData = new FormData(e.target as HTMLFormElement);
-
-		
-		};
+	};
+	const [opened, { open, close }] = useDisclosure(false);
 	return (
 		<div className="md:px-4 bg-gray-300  py-4">
+			<Modal
+				opened={opened}
+				onClose={close}
+				title="Authentication"
+				centered
+			>
+				<ImageUpload />
+			</Modal>
 			<h2 className="text-xl font-bold">Account Information</h2>
 			<form
-				className="mt-4 p-4 rounded-lg bg-white min-h-[578px]"
+				className="mt-4 p-4 rounded-lg bg-white min-h-[578px] shadow-2xl"
 				onSubmit={onSubmit}
 			>
 				{/* <>{JSON.stringify(userInfo)}</> */}
 				{isFetching ? (
-					<>loading</>
+					<div className="size-32">loading</div>
 				) : (
-					<div className="size-32 bg-red-200 rounded-full">
-						<img
-							src={
-								userInfo?.payload.profilePicFileName ??
-								undefined
-							}
-							alt=""
-						/>
+					<div className="h-32 flex  rounded-full">
+						{userInfo?.payload.profilePicFileName ? (
+							<img
+								className="w-32 h-32 rounded-full"
+								src={
+									userInfo?.payload.profilePicLink ??
+									undefined
+								}
+								alt=""
+							/>
+						) : (
+							<IconUser
+								size={128}
+								className="opacity-50"
+							/>
+						)}
+
+						<div className="flex flex-col  ml-2 h-full justify-center gap-2">
+							<h2 className="text-lg ">
+								{userInfo?.payload.firstname}
+							</h2>
+							<Button
+								onClick={() => {
+									open();
+								}}
+							>
+								upload Profile Pic
+							</Button>
+						</div>
 					</div>
 				)}
 
@@ -104,7 +132,12 @@ const RenterSettings = () => {
 					/>
 				</div>
 
-				<Button className="mt-4" type="submit">Update Info</Button>
+				<Button
+					className="mt-4"
+					type="submit"
+				>
+					Update Info
+				</Button>
 			</form>
 		</div>
 	);

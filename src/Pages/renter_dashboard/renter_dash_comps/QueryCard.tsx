@@ -12,6 +12,7 @@ function QueryCard(props: LISTINGITEM) {
 		>
 			<div className="w-full h-[200px]">
 				<img
+					loading="lazy"
 					src={props.pictures[0].imageUrl}
 					className="w-full h-full rounded-md"
 					alt=""

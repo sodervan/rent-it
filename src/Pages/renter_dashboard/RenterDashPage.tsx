@@ -1,9 +1,9 @@
-import { AppShell, Burger, Divider, Title } from "@mantine/core";
+import { AppShell, Burger, Divider, Drawer, Title } from "@mantine/core";
 import { Route, Routes } from "react-router-dom";
 import NavBarItems from "./renter_dash_comps/NavBarItems";
 import Popular from "./renter_dash_pages/Popular";
 import { useAtom } from "jotai";
-import { sideBarAtom } from "@/store/store";
+import { drawerOpenedAtom, sideBarAtom } from "@/store/store";
 import RenterSettings from "./renter_dash_pages/RenterSettings";
 import TransactionHistory from "./renter_dash_pages/TransactionHistory";
 import { useEffect } from "react";
@@ -12,6 +12,7 @@ import useTokenData from "../../../TokenHook"; // Import the useTokenData hook
 import RenterHomePage from "./renter_dash_pages/RenterHomePage";
 import SearchPage from "./renter_dash_pages/SearchPage";
 import RenterFavorites from "./renter_dash_pages/RenterFavorites";
+import DrawerItems from "./renter_dash_comps/DrawerItems";
 
 function RenterDashPage() {
 	const { tokenData, isLoading, clearToken } = useTokenData(); // Get clearToken from the hook
@@ -32,15 +33,26 @@ function RenterDashPage() {
 		clearToken(); // Call the clearToken function to clear the token and cookie
 		window.location.href = "/renter/login";
 	};
-
+	let [drawer, setDrawer] = useAtom(drawerOpenedAtom);
+	let close = () => {
+		setDrawer(false);
+	};
 	return (
 		<AppShell
 			navbar={{
 				width: 300,
 				breakpoint: "sm",
+
 				collapsed: { mobile: !opened },
 			}}
 		>
+			<Drawer
+				onClose={close}
+				opened={drawer}
+				position="right"
+			>
+				<DrawerItems />
+			</Drawer>
 			<AppShell.Navbar className="">
 				<div className="flex items-center">
 					<Title
@@ -89,13 +101,12 @@ function RenterDashPage() {
 						element={<TransactionHistory />}
 					/>
 					<Route
-
 						path="/favourites"
-						element={<RenterFavorites/>}
+						element={<RenterFavorites />}
 					/>
-          <Route
+					<Route
 						path="/search"
-						element={<SearchPage/>}
+						element={<SearchPage />}
 					/>
 				</Routes>
 			</AppShell.Main>

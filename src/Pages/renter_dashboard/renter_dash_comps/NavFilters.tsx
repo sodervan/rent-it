@@ -1,7 +1,7 @@
-import { filterParams_atom } from "@/store/store";
+import { drawerOpenedAtom, filterParams_atom } from "@/store/store";
 import { Input, Slider } from "@mantine/core";
 import { IconCurrencyNaira } from "@tabler/icons-react";
-import { useAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import { useState } from "react";
 
 let listingType = ["student", "non-student", "all"];
@@ -10,6 +10,7 @@ function NavFilters() {
 	let [listingParams, setParams] = useAtom(filterParams_atom);
 	let [val, setVal] = useState(1);
 
+	let setDrawer = useSetAtom(drawerOpenedAtom);
 	return (
 		<div className="duration 150 flex flex-col gap-3 pt-2">
 			{/* <h2 className="text-lg font-bold opacity-70">Filters:</h2> */}
@@ -78,7 +79,16 @@ function NavFilters() {
 				/>
 			</div>
 
-			<button className="p-2 bg-purple-500 bg-opacity-50 rounded-md mt-2 active:scale-95  duration-150">
+			<button
+				className="p-2 bg-purple-500 bg-opacity-50 rounded-md mt-2 active:scale-95  duration-150"
+				onClick={async () => {
+					try {
+						setDrawer(false)
+					} catch (error) {
+						
+					}
+				}}
+			>
 				Apply Filters
 			</button>
 		</div>

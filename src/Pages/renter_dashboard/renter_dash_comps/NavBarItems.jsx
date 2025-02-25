@@ -34,10 +34,7 @@ function NavBarItems() {
 			<NavBarRoute />
 			<div className="mt-auto"></div>
 
-			<div
-				classNam
-				e="mt-auto bg-red-200"
-			>
+			<div className="mt-auto ">
 				<div className="p-2 flex items-center gap-1 o">
 					<div className="p-2 bg-deep-orange-500 rounded-full aspect-square ">
 						<IconUser

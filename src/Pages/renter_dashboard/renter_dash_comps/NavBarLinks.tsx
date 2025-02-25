@@ -40,6 +40,7 @@ function NavBarLinks() {
 			{navLinkx.map((e) => {
 				return (
 					<Link
+						key={`side_nav${e.name}`}
 						to={e.to}
 						className="duration-150 inline-flex gap-2 items-center hover:bg-purple-500 p-2 text-md rounded-md hover:bg-opacity-50"
 					>

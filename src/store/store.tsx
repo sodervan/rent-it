@@ -19,5 +19,14 @@ let defaultFilter: DEFAULTFILTERPARAM = {
 	listingType: "all",
 };
 let filterParams_atom = atom(defaultFilter);
-export { countAtom, sideBarAtom, filterParams_atom ,defaultFilter};
-export type {DEFAULTFILTERPARAM}
+
+const drawerOpenedAtom = atom<boolean>(false);
+
+export {
+	countAtom,
+	sideBarAtom,
+	filterParams_atom,
+	defaultFilter,
+	drawerOpenedAtom,
+};
+export type { DEFAULTFILTERPARAM };

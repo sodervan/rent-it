@@ -31,7 +31,9 @@ const RenterSettings = () => {
 			>
 				<ImageUpload />
 			</Modal>
-			<h2 className="text-2xl mx-4 mt-4 opacity-50 font-bold">Account Information</h2>
+			<h2 className="text-2xl mx-4 mt-4 opacity-50 font-bold">
+				Account Information
+			</h2>
 			<form
 				className="mx-4 mt-4 p-4 rounded-lg bg-white min-h-[578px] shadow-2xl"
 				onSubmit={onSubmit}
@@ -130,9 +132,9 @@ const RenterSettings = () => {
 					<Checkbox
 						defaultValue={String(
 							userInfo?.payload.isStudent ?? false
-						)}/>
+						)}
+					/>
 					<label className=" opacity-70 font-bold">Student</label>
-					
 				</div>
 
 				<Button

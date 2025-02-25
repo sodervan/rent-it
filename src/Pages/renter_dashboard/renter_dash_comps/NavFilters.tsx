@@ -83,10 +83,8 @@ function NavFilters() {
 				className="p-2 bg-purple-500 bg-opacity-50 rounded-md mt-2 active:scale-95  duration-150"
 				onClick={async () => {
 					try {
-						setDrawer(false)
-					} catch (error) {
-						
-					}
+						setDrawer(false);
+					} catch (error) {}
 				}}
 			>
 				Apply Filters

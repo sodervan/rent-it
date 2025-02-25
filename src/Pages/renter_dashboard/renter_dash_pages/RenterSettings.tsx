@@ -127,12 +127,12 @@ const RenterSettings = () => {
 					</div>
 				</div>
 				<div className="flex fle-col gap-2 mt-2 items-center">
-					<label className=" opacity-70 font-bold">Student</label>
 					<Checkbox
 						defaultValue={String(
 							userInfo?.payload.isStudent ?? false
-						)}
-					/>
+						)}/>
+					<label className=" opacity-70 font-bold">Student</label>
+					
 				</div>
 
 				<Button

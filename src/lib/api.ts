@@ -237,13 +237,40 @@ let get_favorites = async () => {
 				withCredentials: true,
 			}
 		);
-		console.log(resp)
+		console.log(resp);
 		return resp.data;
 	} catch (err) {
 		throw new Error(JSON.stringify(err));
 	}
 };
+
+interface PROFILEDATA {
+	firstname: string;
+	lastname: string;
+	phoneNumber: string;
+	schoolId: number;
+	isStudent: boolean;
+}
+let updateProfile = async (profileData: PROFILEDATA) => {
+	let parsed = JSON.stringify(profileData);
+	console.log(parsed);
+	try {
+		let resp = await axios.post(
+			"https://rent-it-api.onrender.com/api/v1/users/profile",
+			parsed,
+			{
+				withCredentials: true,
+				headers: { "Content-Type": "application/json" },
+			}
+		);
+
+		return resp.data;
+	} catch (error:any) {
+		throw new Error(error);
+	}
+};
 export {
+	updateProfile,
 	get_listing,
 	get_favorites,
 	getWithFilters,
@@ -252,4 +279,4 @@ export {
 	uploadProfilePic,
 };
 
-export type { LISTINGRESPONSE, LISTINGITEM, USERDETAILSPAYLOAD };
+export type { LISTINGRESPONSE, LISTINGITEM, USERDETAILSPAYLOAD, PROFILEDATA };

@@ -1,23 +1,54 @@
-import { FormEvent } from "react";
+import { FormEvent, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getUserData, USERDETAILSPAYLOAD } from "@/lib/api";
-import { Button, Checkbox, Modal, TextInput } from "@mantine/core";
+import {
+	getUserData,
+	PROFILEDATA,
+	updateProfile,
+	USERDETAILSPAYLOAD,
+} from "@/lib/api";
+import { Button, Modal, TextInput } from "@mantine/core";
 import { IconUser } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import ImageUpload from "../renter_dash_comps/ImageUpload";
 import Searchbar from "../renter_dash_comps/Searchbar";
+import { toast } from "react-toastify";
 
 const RenterSettings = () => {
-	let { data: userInfo, isFetching } = useQuery<USERDETAILSPAYLOAD>({
+	let {
+		data: userInfo,
+		isFetching,
+		refetch,
+	} = useQuery<USERDETAILSPAYLOAD>({
 		queryKey: ["userData"],
 		queryFn: async () => await getUserData(),
 	});
 
-	let onSubmit = (e: FormEvent<HTMLFormElement>) => {
+	let onSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		let formData = new FormData(e.target as HTMLFormElement);
+		let profileData: PROFILEDATA = {
+			firstname: formData.get("firstname") as string,
+			lastname: formData.get("lastname") as string,
+			phoneNumber: formData.get("phoneNumber") as string,
+			schoolId: Number(formData.get("schoolId")),
+			isStudent: Boolean(formData.get("isStudent")),
+		};
+		toast
+			.promise(updateProfile(profileData), {
+				pending: "Updating",
+				error: "Error",
+				success: "Profile Updated",
+			})
+			.then((resp) => {
+				refetch();
+			});
+		console.log(profileData);
 	};
 	const [opened, { open, close }] = useDisclosure(false);
+
+	let [checkState, setCheck] = useState<boolean>(
+		Boolean(userInfo?.payload.isStudent) ?? false
+	);
 	return (
 		<div className=" bg-gray-300  pt-4">
 			<div className="">
@@ -109,7 +140,7 @@ const RenterSettings = () => {
 						</label>
 						<TextInput
 							rightSection={<IconUser size={16} />}
-							name="phone"
+							name="phoneNumber"
 							type="number"
 							defaultValue={
 								userInfo?.payload.phoneNumber ?? "000"
@@ -127,12 +158,34 @@ const RenterSettings = () => {
 							defaultValue={userInfo?.payload.phoneNumber}
 						/>
 					</div>
+					<div className="py-2 flex flex-col  gap-2">
+						<label className=" opacity-70 font-bold">
+							SchoolId
+						</label>
+						<TextInput
+							rightSection={<IconUser size={16} />}
+							name="schoolId"
+							type="number"
+							defaultValue={userInfo?.payload.schoolId ?? ""}
+						/>
+					</div>
 				</div>
 				<div className="flex fle-col gap-2 mt-2 items-center">
-					<Checkbox
+					{/* <Checkbox
+						name="isStudent"
 						defaultValue={String(
 							userInfo?.payload.isStudent ?? false
 						)}
+					/> */}
+					<input
+						type="checkbox"
+						name="isStudent"
+						id=""
+						value={"true"}
+						checked={checkState}
+						onClick={() => {
+							setCheck(!checkState);
+						}}
 					/>
 					<label className=" opacity-70 font-bold">Student</label>
 				</div>

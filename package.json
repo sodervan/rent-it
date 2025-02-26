@@ -26,7 +26,7 @@
     "dayjs": "^1.11.13",
     "embla-carousel-autoplay": "^7.1.0",
     "embla-carousel-react": "^7.1.0",
-    "framer-motion": "^11.15.0",
+    "framer-motion": "^11.18.0",
     "jose": "^5.9.6",
     "jotai": "^2.10.4",
     "js-cookie": "^3.0.5",

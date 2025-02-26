@@ -10,7 +10,6 @@ import UserRolesShowcase from "@/components/HomeComponents/UserRolesShowcase";
 import RenterOrAgent from "@/components/HomeComponents/RenterOrAgent";
 import RecentSearches from "@/components/RecentSearches";
 // import { useOutletContext } from "react-router-dom";
-
 const HomePage = () => {
   const [id, setId] = useState<string | null>(null);
 

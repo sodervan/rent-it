@@ -2,17 +2,18 @@ import { Loader } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 
 import { get_listing, LISTINGRESPONSE } from "@/lib/api";
-import Searchbar from "../renter_dash_comps/Searchbar";
 import QueryCard from "../renter_dash_comps/QueryCard";
+import Searchbar from "../renter_dash_comps/Searchbar";
 
-function SearchPage() {
+function RenterHomePage() {
 	const { data, isFetching, refetch } = useQuery<LISTINGRESPONSE>({
 		queryKey: ["test"],
 		queryFn: async () => await get_listing(),
 	});
+
 	return (
-		<div className="isolate bg-gray-300">
-			<div className="h-20  z-10 ">
+		<div className="isolate min-h-dvh bg-gray-300">
+			<div className="h-20  z-10  ">
 				<Searchbar />
 			</div>
 
@@ -40,4 +41,4 @@ function SearchPage() {
 	);
 }
 
-export default SearchPage;
+export default RenterHomePage;

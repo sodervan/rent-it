@@ -1,141 +1,203 @@
-import { Button, Input, Tabs } from "@mantine/core";
+import { FormEvent, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import {
-	IconBell,
-	IconBookmark,
-	IconEdit,
-	IconLock,
-	IconSearch,
-} from "@tabler/icons-react";
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import RenterBookings from "../renter_dash_comps/RenterBookings";
+	getUserData,
+	PROFILEDATA,
+	updateProfile,
+	USERDETAILSPAYLOAD,
+} from "@/lib/api";
+import { Button, Modal, TextInput } from "@mantine/core";
+import { IconUser } from "@tabler/icons-react";
+import { useDisclosure } from "@mantine/hooks";
+import ImageUpload from "../renter_dash_comps/ImageUpload";
+import Searchbar from "../renter_dash_comps/Searchbar";
+import { toast } from "react-toastify";
 
 const RenterSettings = () => {
-	const [activeTab, setActiveTab] = useState<string | null>("first");
+	let {
+		data: userInfo,
+		isFetching,
+		refetch,
+	} = useQuery<USERDETAILSPAYLOAD>({
+		queryKey: ["userData"],
+		queryFn: async () => await getUserData(),
+	});
+
+	let onSubmit = async (e: FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		let formData = new FormData(e.target as HTMLFormElement);
+		let profileData: PROFILEDATA = {
+			firstname: formData.get("firstname") as string,
+			lastname: formData.get("lastname") as string,
+			phoneNumber: formData.get("phoneNumber") as string,
+			schoolId: Number(formData.get("schoolId")),
+			isStudent: Boolean(formData.get("isStudent")),
+		};
+		toast
+			.promise(updateProfile(profileData), {
+				pending: "Updating",
+				error: "Error",
+				success: "Profile Updated",
+			})
+			.then((_) => {
+				refetch();
+			});
+		console.log(profileData);
+	};
+	const [opened, { open, close }] = useDisclosure(false);
+
+	let [checkState, setCheck] = useState<boolean>(
+		Boolean(userInfo?.payload.isStudent) ?? false
+	);
 	return (
-		<div>
-			<div className="h-20 border-b w-full flex px-2">
-				<div className="flex items-center mr-auto w-full max-w-[500px]">
-					<Input
-						leftSection={<IconSearch />}
-						className="] w-full"
-					/>
-				</div>
-				<div className="flex items-center gap-4">
-					<Link to="/">Saved</Link>
-					<Link to="/">Listing</Link>
-					<Link to="/">
-						<IconBell />
-					</Link>
-				</div>
+		<div className=" bg-gray-300  pt-4">
+			<div className="">
+				<Searchbar />
 			</div>
+			<Modal
+				opened={opened}
+				onClose={close}
+				title="Authentication"
+				centered
+			>
+				<ImageUpload />
+			</Modal>
+			<h2 className="text-2xl mx-4 mt-4 opacity-50 font-bold">
+				Account Information
+			</h2>
+			<form
+				className="mx-4 mt-4 p-4 rounded-lg bg-white min-h-[578px] shadow-2xl"
+				onSubmit={onSubmit}
+			>
+				{isFetching ? (
+					<div className="size-32">loading</div>
+				) : (
+					<div className="h-32 flex  rounded-full">
+						{userInfo?.payload.profilePicFileName ? (
+							<img
+								className="w-32 h-32 rounded-full"
+								src={
+									userInfo?.payload.profilePicLink ??
+									undefined
+								}
+								alt=""
+							/>
+						) : (
+							<IconUser
+								size={128}
+								className="opacity-50"
+							/>
+						)}
 
-			<div className="p-2 flex gap-4 ">
-				<div className="max-w-[200px] w-full flex flex-col gap-1 sticky top-0 bg-red-400  items-center pt-2 h-fit">
-					<div className="h-24 w-24 rounded-full bg-red-200"></div>
-					<div>Name</div>
-					<div>Emails</div>
-				</div>
-				<div className="w-full p-2 flex flex-col ">
-					<h2>Profile</h2>
-					<div className="mt-4 max-w-[500px]">
-						<Tabs
-							value={activeTab}
-							onChange={setActiveTab}
-						>
-							<Tabs.List>
-								<Tabs.Tab
-									leftSection={<IconEdit />}
-									value="first"
-								>
-									Edit Profile
-								</Tabs.Tab>
-								<Tabs.Tab
-									leftSection={<IconBookmark />}
-									value="second"
-								>
-									Bookings
-								</Tabs.Tab>
-								<Tabs.Tab
-									leftSection={<IconLock />}
-									value="third"
-								>
-									Change Password
-								</Tabs.Tab>
-							</Tabs.List>
+						<div className="flex flex-col  ml-2 h-full justify-center gap-2">
+							<h2 className="text-2xl font-semibold ">
+								{userInfo?.payload.firstname}
+							</h2>
+							<Button
+							size="xs"
+								onClick={() => {
+									open();
+								}}
+							>
+								upload Profile Pic
+							</Button>
+						</div>
+					</div>
+				)}
 
-							<Tabs.Panel value="first">
-								<div className="flex flex-col">
-									<h2 className="mt-4">Edit Profile</h2>
-									<div className="mt-4 flex flex-col gap-3">
-										<div className="">
-											<p className="text-gray-700 mb-2 text-sm ">
-												First Name
-											</p>
-											<Input placeholder="First Name" />
-										</div>
-										<div className="">
-											<p className="text-gray-700 mb-2 text-sm">
-												Last Name
-											</p>
-											<Input placeholder="Last Name" />
-										</div>
-										<div className="">
-											<p className="text-gray-700 mb-2 text-sm">
-												Email
-											</p>
-											<Input
-												type="email"
-												placeholder="Email"
-											/>
-										</div>
-										<div className="">
-											<p className="text-gray-700 mb-2 text-sm">
-												Mobile Number
-											</p>
-											<Input placeholder="Mobile Number" />
-										</div>
-										<Button className="!w-full">
-											Save Changes
-										</Button>
-									</div>
-								</div>
-							</Tabs.Panel>
-							<Tabs.Panel value="second">
-								<RenterBookings />
-							</Tabs.Panel>
-							<Tabs.Panel value="third">
-								<h2 className="mt-4">Change Password</h2>
-								<div className="mt-4 flex flex-col gap-4">
-									<div>
-										<p className="text-gray-600 mb-2 text-sm">
-											Current Password
-										</p>
-										<Input placeholder="Current Password" />
-									</div>
-									<div>
-										<p className="text-gray-600 mb-2 text-sm">
-											New Password
-										</p>
-										<Input placeholder="New Password" />
-									</div>
-									<div>
-										<p className="text-gray-600 mb-2 text-sm">
-											Confirm Password
-										</p>
-										<Input placeholder="Confirm  Password" />
-									</div>
-									<div>
-										<Button className="!w-full">
-											Save Changes
-										</Button>
-									</div>
-								</div>
-							</Tabs.Panel>
-						</Tabs>
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-2 justify-center mt-4">
+					<div className="py-2 flex flex-col  gap-2">
+						<label className=" opacity-70 font-bold">
+							FirstName
+						</label>
+						<TextInput
+							name="firstname"
+							rightSection={<IconUser size={16} />}
+							defaultValue={userInfo?.payload.firstname}
+						/>
+					</div>
+					<div className="py-2 flex flex-col  gap-2">
+						<label className=" opacity-70 font-bold">
+							LastName
+						</label>
+						<TextInput
+							rightSection={<IconUser size={16} />}
+							name="lastname"
+							defaultValue={userInfo?.payload.lastname}
+						/>
+					</div>
+					<div className="py-2 flex flex-col  gap-2">
+						<label className=" opacity-70 font-bold">E-mail</label>
+						<TextInput
+							rightSection={<IconUser size={16} />}
+							name="email"
+							type="email"
+							defaultValue={userInfo?.payload.email}
+						/>
+					</div>
+					<div className="py-2 flex flex-col  gap-2">
+						<label className=" opacity-70 font-bold">
+							Phone Number
+						</label>
+						<TextInput
+							rightSection={<IconUser size={16} />}
+							name="phoneNumber"
+							type="number"
+							defaultValue={
+								userInfo?.payload.phoneNumber ?? "000"
+							}
+						/>
+					</div>
+					<div className="py-2 flex flex-col  gap-2">
+						<label className=" opacity-70 font-bold">
+							Date Of Birth
+						</label>
+						<TextInput
+							rightSection={<IconUser size={16} />}
+							name="date"
+							type="number"
+							defaultValue={userInfo?.payload.phoneNumber}
+						/>
+					</div>
+					<div className="py-2 flex flex-col  gap-2">
+						<label className=" opacity-70 font-bold">
+							SchoolId
+						</label>
+						<TextInput
+							rightSection={<IconUser size={16} />}
+							name="schoolId"
+							type="number"
+							defaultValue={userInfo?.payload.schoolId ?? ""}
+						/>
 					</div>
 				</div>
-			</div>
+				<div className="flex fle-col gap-2 mt-2 items-center">
+					{/* <Checkbox
+						name="isStudent"
+						defaultValue={String(
+							userInfo?.payload.isStudent ?? false
+						)}
+					/> */}
+					<input
+						type="checkbox"
+						name="isStudent"
+						id=""
+						value={"true"}
+						checked={checkState}
+						onChange={() => {
+							setCheck(!checkState);
+						}}
+					/>
+					<label className=" opacity-70 font-bold">Student</label>
+				</div>
+
+				<Button
+					className="mt-4"
+					type="submit"
+				>
+					Update Info
+				</Button>
+			</form>
 		</div>
 	);
 };

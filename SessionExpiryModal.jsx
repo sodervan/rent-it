@@ -67,6 +67,7 @@ const SessionExpiredModal = ({ isOpen, onConfirm, userRole }) => {
           <button
             onClick={() => {
               localStorage.removeItem("token");
+              localStorage.clear();
               onConfirm();
               window.location.href = loginPath;
             }}

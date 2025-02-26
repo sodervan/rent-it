@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
 import { Button, Spinner, Input } from "@material-tailwind/react";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify"; // For toast notifications
-import axios from "axios"; // Import Axios
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 const containerStyle = {
   width: "100%",
@@ -27,7 +27,19 @@ const ListingLocation = () => {
     healthFacilities: [],
     educationalInstitutions: [],
   });
+  const [fetchedData, setFetchedData] = useState({
+    transportation: [],
+    healthFacilities: [],
+    educationalInstitutions: [],
+  });
   const [isSaving, setIsSaving] = useState(false);
+  const [searchParams] = useSearchParams();
+  const encodedItemId = searchParams.get("itemId");
+
+  const decodeId = (encodedId) => {
+    return atob(encodedId);
+  };
+  const itemId = encodedItemId ? decodeId(encodedItemId) : null;
   const navigate = useNavigate();
   const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -42,23 +54,17 @@ const ListingLocation = () => {
   useEffect(() => {
     const fetchLocationData = async () => {
       const storedDetails = JSON.parse(localStorage.getItem("basicDetails"));
-
-      if (!storedDetails?.listingId) {
-        setError("Missing listing details");
-        return;
-      }
+      const listingId = encodedItemId ? itemId : storedDetails?.listingId;
 
       setIsLoading(true);
       setError(null);
 
       try {
         const response = await axios.get(
-          `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/location`,
-          { withCredentials: true }, // Include cookies in the request
+          `${apiUrl}/api/v1/agents/listings/${listingId}/location`,
+          { withCredentials: true },
         );
-
-        console.log("Location Data Response:", response); // Log the full response
-
+        console.log(response);
         const data = response.data;
 
         if (
@@ -91,29 +97,30 @@ const ListingLocation = () => {
           formattedAddress: address,
         });
 
-        // Set initial form data if available
-        if (
-          location.postalCode ||
-          location.transportation ||
-          location.healthFacilities ||
-          location.educationalInstitutions
-        ) {
-          setFormData({
-            postalCode: location.postalCode || "",
-            transportation: location.transportation || [],
-            healthFacilities: location.healthFacilities || [],
-            educationalInstitutions: location.educationalInstitutions || [],
-          });
-        }
+        // Set both form data and fetched data
+        const initialFormData = {
+          postalCode: location.postalCode || "",
+          transportation: [],
+          healthFacilities: [],
+          educationalInstitutions: [],
+        };
+
+        const initialFetchedData = {
+          transportation: location.transportation || [],
+          healthFacilities: location.healthFacilities || [],
+          educationalInstitutions: location.educationalInstitutions || [],
+        };
+
+        setFormData(initialFormData);
+        setFetchedData(initialFetchedData);
 
         if (geocodedLocation.lat && geocodedLocation.lng) {
           await fetchLandmarks(geocodedLocation.lat, geocodedLocation.lng);
         }
       } catch (err) {
-        console.error("Error fetching location data:", err); // Log the full error object
-        console.error("Error Response Data:", err.response?.data); // Log the error response data
+        console.error("Error fetching location data:", err);
         setError(err.message || "Failed to fetch location data");
-        toast.error("Failed to fetch location data. Please try again."); // Error toast
+        toast.error("Failed to fetch location data. Please try again.");
       } finally {
         setIsLoading(false);
       }
@@ -183,11 +190,18 @@ const ListingLocation = () => {
     }
   };
 
-  const handleRemoveLandmark = (type, index) => {
-    setFormData((prev) => ({
-      ...prev,
-      [type]: prev[type].filter((_, i) => i !== index),
-    }));
+  const handleRemoveLandmark = (type, index, isFetched = false) => {
+    if (isFetched) {
+      setFetchedData((prev) => ({
+        ...prev,
+        [type]: prev[type].filter((_, i) => i !== index),
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [type]: prev[type].filter((_, i) => i !== index),
+      }));
+    }
   };
 
   const LandmarkInput = ({ type, label, placeholder }) => {
@@ -214,22 +228,47 @@ const ListingLocation = () => {
             Add
           </Button>
         </div>
-        <div className="flex flex-wrap gap-2">
-          {formData[type].map((item, index) => (
-            <div
-              key={index}
-              className="bg-gray-100 px-3 py-1 rounded-full flex items-center gap-2"
-            >
-              <span className="text-sm">{item}</span>
-              <button
-                onClick={() => handleRemoveLandmark(type, index)}
-                className="text-gray-500 hover:text-red-500"
-              >
-                ×
-              </button>
+        {/* Display fetched items */}
+        {fetchedData[type].length > 0 && (
+          <div className="mb-2">
+            <p className="text-sm text-gray-600 mb-1">Existing {label}:</p>
+            <div className="flex flex-wrap gap-2">
+              {fetchedData[type].map((item, index) => (
+                <div
+                  key={`fetched-${index}`}
+                  className="bg-blue-50 px-3 py-1 rounded-full flex items-center gap-2"
+                >
+                  <span className="text-sm">{item}</span>
+                  <button
+                    onClick={() => handleRemoveLandmark(type, index, true)}
+                    className="text-gray-500 hover:text-red-500"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </div>
+        )}
+        {/* Display newly added items */}
+        {formData[type].length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {formData[type].map((item, index) => (
+              <div
+                key={`new-${index}`}
+                className="bg-gray-100 px-3 py-1 rounded-full flex items-center gap-2"
+              >
+                <span className="text-sm">{item}</span>
+                <button
+                  onClick={() => handleRemoveLandmark(type, index)}
+                  className="text-gray-500 hover:text-red-500"
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     );
   };
@@ -237,10 +276,11 @@ const ListingLocation = () => {
   const handleSubmit = async () => {
     setIsSaving(true);
     const storedDetails = JSON.parse(localStorage.getItem("basicDetails"));
+    const listingId = encodedItemId ? itemId : storedDetails?.listingId;
 
     try {
       const response = await axios.put(
-        `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/location`,
+        `${apiUrl}/api/v1/agents/listings/${listingId}/location`,
         {
           streetAddress: locationData.streetAddress || "",
           localGovernmentAreaId: locationData.localGovernmentArea?.id,
@@ -252,25 +292,36 @@ const ListingLocation = () => {
             y: locationData.lat,
           },
           postalCode: formData.postalCode,
-          transportation: formData.transportation,
-          healthFacilities: formData.healthFacilities,
-          educationalInstitutions: formData.educationalInstitutions,
+          transportation: [
+            ...fetchedData.transportation,
+            ...formData.transportation,
+          ],
+          healthFacilities: [
+            ...fetchedData.healthFacilities,
+            ...formData.healthFacilities,
+          ],
+          educationalInstitutions: [
+            ...fetchedData.educationalInstitutions,
+            ...formData.educationalInstitutions,
+          ],
         },
-        { withCredentials: true }, // Include cookies in the request
+        { withCredentials: true },
       );
 
-      console.log("Success Response:", response.data); // Log the full response
-      toast.success("Location data saved successfully!"); // Success toast
-      setTimeout(() => {
-        navigate("/agent/addlisting/12");
-      }, 500);
+      toast.success("Location data saved successfully!");
+      setTimeout(
+        () =>
+          navigate(
+            `/agent/addlisting/12${encodedItemId ? "?itemId=" + encodedItemId : ""}`,
+          ),
+        500,
+      );
     } catch (err) {
-      console.error("Error saving location data:", err); // Log the full error object
-      console.error("Error Response Data:", err.response?.data); // Log the error response data
+      console.error("Error saving location data:", err);
       toast.error(
         err.response?.data?.message ||
           "An error occurred while saving location data.",
-      ); // Error toast
+      );
     } finally {
       setIsSaving(false);
     }
@@ -421,7 +472,11 @@ const ListingLocation = () => {
         <div className="flex justify-between my-8 gap-4 px-6">
           <Button
             className="font-poppins bg-secondaryPurple text-primaryPurple w-full font-medium"
-            onClick={() => navigate("/agent/addlisting/10")}
+            onClick={() => {
+              navigate(
+                `/agent/addlisting/10${encodedItemId ? `?itemId=${encodedItemId}` : ""}`,
+              );
+            }}
           >
             Previous
           </Button>

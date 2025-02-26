@@ -32,12 +32,18 @@ const AllSteps = () => {
     { id: 13, label: "Review Listing" },
   ];
   const step = useParams().step;
-  useEffect(() => {}, []);
+  useEffect(() => {
+    localStorage.clear();
+  }, []);
+  useEffect(() => {
+    // Scroll to top when step changes
+    window.scrollTo(0, 0);
+  }, [step]);
   return (
     <>
       <div className="mt-24 flex gap-5">
         <SideBar activeStep={parseInt(step)} steps={steps} />
-        <div className="md:ml-[26%] w-full max-w-[900px]">
+        <div className="md:ml-[26%] md:w-[74%] w-full max-w-[900px]">
           {step == 1 && <BasicDetails />}
           {step == 2 && <CostBreakdown />}
           {step == 3 && <CostBreakdownPreview />}

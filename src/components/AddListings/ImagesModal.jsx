@@ -172,7 +172,7 @@ const ImageModal = ({ images, open, onClose }) => {
                 </div>
               )}
               <img
-                src={selectedImage?.cloudinaryUrl}
+                src={selectedImage?.imageUrl}
                 alt={selectedImage?.alt || `Image ${selectedIndex + 1}`}
                 className={`max-h-full max-w-full object-contain transition-transform duration-300 cursor-zoom-in
                   ${isZoomed ? "scale-150" : "scale-100"}`}
@@ -207,9 +207,7 @@ const ImageModal = ({ images, open, onClose }) => {
                   <ZoomIn className="w-6 h-6 text-white" />
                 </button>
                 <button
-                  onClick={() =>
-                    window.open(selectedImage.cloudinaryUrl, "_blank")
-                  }
+                  onClick={() => window.open(selectedImage.imageUrl, "_blank")}
                   className="p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors"
                 >
                   <Download className="w-6 h-6 text-white" />
@@ -229,7 +227,7 @@ const ImageModal = ({ images, open, onClose }) => {
                   className="relative group cursor-pointer rounded-lg overflow-hidden bg-gray-900 aspect-square"
                 >
                   <img
-                    src={image?.cloudinaryUrl}
+                    src={image?.imageUrl}
                     alt={image?.alt || `Image ${index + 1}`}
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />

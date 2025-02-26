@@ -68,10 +68,6 @@ const ElectricityAndWater = () => {
     try {
       const storedDetails = JSON.parse(localStorage.getItem("basicDetails")); // Get data from cookies
 
-      if (!storedDetails || !storedDetails.listingId) {
-        throw new Error("Invalid basicDetails or listingId missing.");
-      }
-
       const data = {
         electricityPaymentType: paymentType.toLowerCase(),
         electricityAccessType: accessType.toLowerCase(),
@@ -84,7 +80,7 @@ const ElectricityAndWater = () => {
       };
 
       const response = await axios.post(
-        `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/features`,
+        `${apiUrl}/api/v1/agents/listings/${encodedItemId ? itemId + "/" : storedDetails.listingId + "/"}features`,
         data,
         { withCredentials: true }, // Include cookies in the request
       );

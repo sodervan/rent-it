@@ -10,7 +10,7 @@ import {
   IconPool,
 } from "@tabler/icons-react";
 import { Button, Spinner, Checkbox } from "@material-tailwind/react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import MapReview from "./MapReview";
 import { IconSchool, IconAmbulance, IconBus } from "@tabler/icons-react";
 import axios from "axios";
@@ -28,6 +28,13 @@ const ReviewListing = () => {
   const [showVideoModal, setShowVideoModal] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
   const apiUrl = import.meta.env.VITE_API_URL;
+  const [searchParams] = useSearchParams();
+  const encodedItemId = searchParams.get("itemId");
+
+  const decodeId = (encodedId) => {
+    return atob(encodedId);
+  };
+  const itemId = encodedItemId ? decodeId(encodedItemId) : null;
 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: "AIzaSyBJYIthIF1IdQuGVe5bqpDGec2z6aKJ7lc",
@@ -36,10 +43,11 @@ const ReviewListing = () => {
   const getData = async () => {
     setIsLoading(true);
     const storedDetails = JSON.parse(localStorage.getItem("basicDetails"));
+    const listingId = encodedItemId ? itemId : storedDetails?.listingId;
 
     try {
       const response = await axios.get(
-        `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/review?listingId=${storedDetails.listingId}`,
+        `${apiUrl}/api/v1/agents/listings/${listingId}/review?listingId=${listingId}`,
         { withCredentials: true },
       );
 
@@ -61,10 +69,11 @@ const ReviewListing = () => {
   const publishListing = async () => {
     setIsUploading(true);
     const storedDetails = JSON.parse(localStorage.getItem("basicDetails"));
+    const listingId = encodedItemId ? itemId : storedDetails?.listingId;
 
     try {
       const response = await axios.get(
-        `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/publish`,
+        `${apiUrl}/api/v1/agents/listings/${listingId}/publish`,
         { withCredentials: true },
       );
 
@@ -73,6 +82,7 @@ const ReviewListing = () => {
       if (response.status === 200) {
         toast.success("Listing published successfully!");
         setShowSuccessModal(true);
+        localStorage.clear();
       } else {
         toast.error("Failed to publish listing.");
       }
@@ -103,7 +113,7 @@ const ReviewListing = () => {
                 <div className="h-[60%] rounded-t-[15px] rounded-b-[20px] overflow-hidden relative">
                   <div className="flex items-center justify-between absolute top-2 left-3 w-full z-[100]">
                     <div className="bg-[#F4EBFF] p-2 rounded-xl">
-                      <p className="text-[12px] font-[600] text-[#1D2939]">
+                      <p className="text-[12px] font-[600] text-primaryPurple">
                         {reviewDetails?.apartmentType?.name || "Apartment Type"}
                       </p>
                     </div>
@@ -123,7 +133,7 @@ const ReviewListing = () => {
                   </div>
                   <img
                     src={
-                      reviewDetails?.pictures?.[0]?.cloudinaryUrl ||
+                      reviewDetails?.pictures?.[0]?.imageUrl ||
                       "/placeholder.jpg"
                     }
                     alt="Listing"
@@ -167,9 +177,9 @@ const ReviewListing = () => {
               <div className="w-full md:w-[600px] flex justify-center items-center">
                 {reviewDetails?.video &&
                 reviewDetails.video.length > 0 &&
-                reviewDetails.video[0]?.cloudinaryUrl ? (
+                reviewDetails.video[0]?.videoUrl ? (
                   <video
-                    src={reviewDetails.video[0].cloudinaryUrl}
+                    src={reviewDetails.video[0].videoUrl}
                     controls
                     className="rounded-lg shadow-lg w-full h-[350px] max-w-[600px]"
                   >
@@ -225,7 +235,8 @@ const ReviewListing = () => {
                   <div>
                     <p className="text-[14px]">
                       {`${reviewDetails?.currency?.symbol || "₦"} ${
-                        reviewDetails.baseCost
+                        parseFloat(reviewDetails.baseCost).toLocaleString() ||
+                        "0"
                       }`}
                     </p>
                   </div>
@@ -278,7 +289,7 @@ const ReviewListing = () => {
             </div>
 
             {/* Features */}
-            <div className="px-6 my-8 bg-[#E9D7FE] py-4 rounded-lg">
+            <div className="px-6 mx-6 my-8 bg-[#E9D7FE] py-4 rounded-lg">
               <h3 className="font-medium text-lg mb-4">Features</h3>
               <ul className="flex gap-3 whitespace-nowrap flex-wrap">
                 {reviewDetails?.featureTags?.length > 0
@@ -302,7 +313,7 @@ const ReviewListing = () => {
             </div>
 
             {/* Bills */}
-            <div className="px-6 my-8 bg-[#E9D7FE] py-4 rounded-lg">
+            <div className="px-6 my-8 mx-6 bg-[#E9D7FE] py-4 rounded-lg">
               <h3 className="font-medium text-lg mb-4">Bills</h3>
               <ul className="flex gap-3 whitespace-nowrap flex-wrap">
                 {reviewDetails?.billsTags?.length > 0
@@ -311,6 +322,9 @@ const ReviewListing = () => {
                         key={index}
                         className="flex gap-2 items-center py-2 px-3 border border-gray-300 rounded-full bg-white"
                       >
+                        <i
+                          className={`${bill.billTag.interfaceIconCode} text-primaryPurple text-sm shadow-inner`}
+                        ></i>
                         <div>
                           <p className="text-sm text-gray-600">
                             {bill.billTag.name || "Bill Name"}
@@ -322,7 +336,7 @@ const ReviewListing = () => {
               </ul>
             </div>
             {/*LISTING FEATRUES*/}
-            <div className="px-6 my-8 bg-[#E9D7FE] py-4 rounded-lg">
+            <div className="px-6 my-8 mx-6 bg-[#E9D7FE] py-4 rounded-lg">
               {reviewDetails?.listingFeatures && (
                 <div>
                   <h3 className="font-medium text-lg mb-4">Listing Features</h3>
@@ -398,7 +412,7 @@ const ReviewListing = () => {
             </div>
             {/*LANDMARKS*/}
             <p className="text-center font-semibold text-gray-700">LANDMARKS</p>
-            <div className="px-6 mb-8 mt-4 bg-[#E9D7FE] py-4 rounded-lg">
+            <div className="px-6 mx-6 mb-8 mt-4 bg-[#E9D7FE] py-4 rounded-lg">
               <h3 className="font-medium text-lg mb-4">
                 Educational Institutions
               </h3>
@@ -429,7 +443,7 @@ const ReviewListing = () => {
             </div>
 
             {/* Healthcare Facilities */}
-            <div className="px-6 my-8 bg-[#E9D7FE] py-4 rounded-lg">
+            <div className="px-6 mx-6 my-8 bg-[#E9D7FE] py-4 rounded-lg">
               <h3 className="font-medium text-lg mb-4">
                 Healthcare Facilities
               </h3>
@@ -462,7 +476,7 @@ const ReviewListing = () => {
             </div>
 
             {/* Transportation */}
-            <div className="px-6 my-8 bg-[#E9D7FE] py-4 rounded-lg">
+            <div className="px-6 mx-6 my-8 bg-[#E9D7FE] py-4 rounded-lg">
               <h3 className="font-medium text-lg mb-4">Transportation</h3>
               <ul className="flex gap-3 whitespace-nowrap flex-wrap">
                 {reviewDetails?.location?.transportation?.length > 0 ? (
@@ -500,7 +514,11 @@ const ReviewListing = () => {
             <div className="flex justify-between my-8 gap-4 px-6">
               <Button
                 className="font-poppins bg-secondaryPurple text-primaryPurple w-full font-medium"
-                onClick={() => navigate(`/agent/addlisting/12`)}
+                onClick={() => {
+                  navigate(
+                    `/agent/addlisting/12${encodedItemId ? `?itemId=${encodedItemId}` : ""}`,
+                  );
+                }}
               >
                 Previous
               </Button>
@@ -509,7 +527,7 @@ const ReviewListing = () => {
                 onClick={publishListing}
                 disabled={isUploading}
               >
-                {isUploading ? <Spinner className="w-5 h-5" /> : "Proceed"}
+                {isUploading ? <Spinner className="w-5 h-5" /> : "Publish"}
               </Button>
             </div>
           </div>

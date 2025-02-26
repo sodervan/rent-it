@@ -2,18 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
-import {
-  Button,
-  Input,
-  Option,
-  Select,
-  Spinner,
-} from "@material-tailwind/react";
+import { Button, Input, Spinner } from "@material-tailwind/react";
+import SelectComponent from "@/components/AddListings/SelectComponent.jsx";
 
 const CostBreakdown = () => {
   const navigate = useNavigate();
   const [feesTypes, setFeesTypes] = useState([]);
-  const [selectedFeeType, setSelectedFeeType] = useState("");
+  const [selectedFeeType, setSelectedFeeType] = useState("annum");
   const [baseRentFee, setBaseRentFee] = useState("");
   const [agentFee, setAgentFee] = useState("0");
   const [legalFee, setLegalFee] = useState("0");
@@ -22,6 +17,12 @@ const CostBreakdown = () => {
   const apiUrl = import.meta.env.VITE_API_URL;
   const [searchParams] = useSearchParams();
   const encodedItemId = searchParams.get("itemId");
+
+  // Options for the fee type select
+  const feeTypeOptions = [
+    { value: "month", label: "Monthly" },
+    { value: "annum", label: "Per-Annum" },
+  ];
 
   const decodeId = (encodedId) => {
     return atob(encodedId); // Decode the Base64 string
@@ -76,14 +77,11 @@ const CostBreakdown = () => {
     try {
       const storedDetails = JSON.parse(localStorage.getItem("basicDetails"));
 
-      if (!storedDetails || !storedDetails.listingId) {
-        throw new Error("Invalid basicDetails or listingId missing.");
-      }
-
       // Convert numeric values to strings
       const data = {
         baseCost: String(baseRentFee), // Convert to string
         minBaseCostDeposit: String(rentFeeDeposit), // Convert to string
+        paymentDuration: String(selectedFeeType),
         fees: [
           {
             feesTypeId: 1,
@@ -97,7 +95,7 @@ const CostBreakdown = () => {
       };
 
       const response = await axios.post(
-        `${apiUrl}/api/v1/agents/listings/${storedDetails.listingId}/fees`,
+        `${apiUrl}/api/v1/agents/listings/${encodedItemId ? itemId + "/" : storedDetails.listingId + "/"}fees`,
         data,
         { withCredentials: true },
       );
@@ -180,25 +178,25 @@ const CostBreakdown = () => {
               onChange={handleBaseRentFee}
             />
             <div className="relative w-full mt-2">
-              <Select
-                label="Select Fee Type"
+              <SelectComponent
+                options={feeTypeOptions}
                 value={selectedFeeType}
-                onChange={(value) => {
-                  setSelectedFeeType(value);
-                }}
-              >
-                <Option>per annum</Option>
-                <Option>weekly</Option>
-              </Select>
+                onChange={setSelectedFeeType}
+                label="Fee Type"
+                placeholder="Select Fee Type"
+              />
             </div>
           </div>
+
+          {/* Rest of your JSX remains the same */}
+
           {/*AGENT FEE*/}
           <div className="my-3">
             <p className="text-gray-700 mb-2">Agent Fee</p>
             <Input
               label="NGN"
-              value={`N ${agentFee.toLocaleString()}`} // Display as formatted string
-              disabled // Disable the input field
+              value={`₦ ${agentFee.toLocaleString()}`}
+              disabled
             />
             <p className="text-gray-700 text-sm">10% of annual rent fee</p>
           </div>
@@ -208,11 +206,12 @@ const CostBreakdown = () => {
             <p className="text-gray-700 mb-2">Legal Fee</p>
             <Input
               label="NGN"
-              value={`N ${legalFee.toLocaleString()}`} // Display as formatted string
-              disabled // Disable the input field
+              value={`₦ ${legalFee.toLocaleString()}`}
+              disabled
             />
             <p className="text-gray-700 text-sm">12.5% of annual rent fee</p>
           </div>
+
           {/*RENT FEE DEPOSIT*/}
           <div className="my-3">
             <p className="text-gray-700 mb-2">Rent Fee Deposit (Optional)</p>
@@ -226,6 +225,7 @@ const CostBreakdown = () => {
               This is the minimum amount to secure the apartment
             </p>
           </div>
+
           <div className="my-8 flex items-center gap-4">
             <Button
               className="capitalize font-medium text-[20px] bg-secondaryPurple text-primaryPurple w-full text-[15px] font-poppins"
@@ -244,9 +244,7 @@ const CostBreakdown = () => {
                   : "bg-primaryPurple text-white w-full text-[15px] font-poppins flex justify-center items-center"
               }`}
               disabled={loading}
-              onClick={() => {
-                postFeesDetails();
-              }}
+              onClick={postFeesDetails}
             >
               {loading ? <Spinner className="h-4 w-4" /> : "Proceed"}
             </Button>

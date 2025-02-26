@@ -94,6 +94,7 @@ const RenterSettings = () => {
 								{userInfo?.payload.firstname}
 							</h2>
 							<Button
+							size="xs"
 								onClick={() => {
 									open();
 								}}

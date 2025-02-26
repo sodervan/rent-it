@@ -20,6 +20,7 @@ function NavFilters() {
 				<div className="flex items-center gap-2 flex-wrap">
 					{listingType.map((e, i) => (
 						<button
+							key={"button" + i}
 							onClick={() => {
 								setParams((prev: any) => {
 									return { ...prev, listingType: e };

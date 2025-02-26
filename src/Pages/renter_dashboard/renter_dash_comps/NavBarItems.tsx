@@ -70,8 +70,8 @@ function NavBarItems() {
 						<p className="text-xs">{userData?.payload.email}</p>
 					</div>
 
-					<button
-						className="!w-fit duration-150  ml-auto p-2 hover:bg-gray-500 rounded-full bg-opacity-50"
+					<div
+						className="!w-fit duration-150  ml-auto p-2 hover:bg-gray-500 rounded-full bg-opacity-50 cursor-pointer"
 						onClick={() => {
 							navigate("/renter/dashboard/settings");
 							if (sidebar) {
@@ -80,7 +80,7 @@ function NavBarItems() {
 						}}
 					>
 						<IconSettings size={24} />
-					</button>
+					</div>
 				</div>
 			</button>
 		</div>

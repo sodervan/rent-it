@@ -39,7 +39,7 @@ const RenterSettings = () => {
 				error: "Error",
 				success: "Profile Updated",
 			})
-			.then((resp) => {
+			.then((_) => {
 				refetch();
 			});
 		console.log(profileData);
@@ -183,7 +183,7 @@ const RenterSettings = () => {
 						id=""
 						value={"true"}
 						checked={checkState}
-						onClick={() => {
+						onChange={() => {
 							setCheck(!checkState);
 						}}
 					/>

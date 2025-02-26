@@ -1,3 +1,4 @@
+import { sideBarAtom } from "@/store/store";
 import {
 	IconBookmark,
 	IconHeart,
@@ -5,6 +6,7 @@ import {
 	IconHome,
 	IconLocationBolt,
 } from "@tabler/icons-react";
+import { useSetAtom } from "jotai";
 import { Link } from "react-router-dom";
 
 let navLinkx = [
@@ -35,6 +37,8 @@ let navLinkx = [
 	},
 ];
 function NavBarLinks() {
+
+	let setNavbar =useSetAtom(sideBarAtom)
 	return (
 		<div className="flex flex-col gap-3">
 			{navLinkx.map((e) => {
@@ -42,6 +46,9 @@ function NavBarLinks() {
 					<Link
 						key={`side_nav${e.name}`}
 						to={e.to}
+						onClick={()=>{
+							setNavbar(false)
+						}}
 						className="duration-150 inline-flex gap-2 items-center hover:bg-purple-500 p-2 text-md rounded-md hover:bg-opacity-50"
 					>
 						<e.Icon size={22} />

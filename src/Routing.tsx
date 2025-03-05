@@ -24,13 +24,14 @@ import VerifyEmail from "@/components/VerifyEmail";
 import RenterVerificationEmail from "@/components/RenterVerificationEmail";
 import SessionExpiredModal from "../SessionExpiryModal";
 import AgentPasswordReset from "@/components/ForgotPassword/AgentPasswordReset";
+import { FullscreenLoader } from "@/FullScreenLoader";
 
 // Protected Route Components
 const ProtectedRoute = ({ children, allowedRoles, redirectPath }) => {
   const { tokenData, isLoading } = useTokenData();
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <FullscreenLoader />;
   }
 
   if (!tokenData || !allowedRoles.includes(tokenData?.role)) {
@@ -75,7 +76,7 @@ function Routing() {
 
   // Handle loading state
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <FullscreenLoader />;
   }
 
   return (

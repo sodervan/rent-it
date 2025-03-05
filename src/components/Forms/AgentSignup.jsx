@@ -8,6 +8,8 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { GoogleLogin } from "@react-oauth/google";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import axios from "axios";
+import SelectComponent from "@/components/AddListings/SelectComponent.jsx";
 
 const AgentSignup = () => {
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -22,6 +24,10 @@ const AgentSignup = () => {
     confirmPassword: "",
     institution: "",
   });
+  const [states, setStates] = useState([]);
+  const [universities, setUniversities] = useState([]);
+  const [selectedState, setSelectedState] = useState("");
+  const [selectedInstitution, setSelectedInstitution] = useState("");
   const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
   const [isAccurate, setIsAccurate] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -40,55 +46,107 @@ const AgentSignup = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const stateOptions = states.map((type) => ({
+    value: String(type.id),
+    label: type.name,
+  }));
+
+  const institutionOptions = universities.map((type) => ({
+    value: String(type.id),
+    label: type.name,
+  }));
+  useEffect(() => {
+    getStates();
+  }, []);
+  useEffect(() => {
+    const getUniversities = async () => {
+      console.log(selectedState);
+      // e.preventDefault();
+      // setIsLoading(true);
+      try {
+        const response = await axios.get(
+          `${apiUrl}/api/v1/locations/states/${selectedState}/universities`,
+          {
+            withCredentials: true,
+          },
+        );
+        const result = response.data;
+        setUniversities(result?.payload);
+        console.log(result);
+      } catch (err) {
+        const errorMessage =
+          err.response?.data?.message || "Failed to get universities!";
+        console.log(errorMessage);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    getUniversities();
+  }, [selectedState]);
+
+  const getStates = async () => {
+    // e.preventDefault();
+    // setIsLoading(true);
+    try {
+      const response = await axios.get(
+        `${apiUrl}/api/v1/locations/states?country_id=1`,
+        {
+          withCredentials: true,
+        },
+      );
+      const result = response.data;
+      setStates(result?.payload);
+      // console.log(result);
+    } catch (err) {
+      const errorMessage =
+        err.response?.data?.message || "Failed to get states!";
+      console.log(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   // Handle Google Login Success
   const handleGoogleSuccess = async (credentialResponse) => {
     setIsLoading(true);
     try {
-      const response = await fetch(`${apiUrl}/api/v1/agents/google`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+      const response = await axios.post(
+        `${apiUrl}/api/v1/agents/google`,
+        {
           token: credentialResponse.credential,
-        }),
+        },
+        {
+          withCredentials: true,
+        },
+      );
+
+      console.log(response.data);
+
+      toast.success("Google login successful! Redirecting...", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
       });
 
-      const result = await response.json();
-      console.log(result);
+      // Optional: Store token or other auth data
+      // if (response.data.token) {
+      //   localStorage.setItem("token", response.data.token);
+      // }
 
-      if (response.ok) {
-        console.log(response);
-        toast.success("Google login successful! Redirecting...", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
-
-        // localStorage.setItem("role", "agent");
-        // You might want to store the token or other auth data here
-        // if (result.token) {
-        //   localStorage.setItem("token", result.token);
-        // }
-        setTimeout(() => {
-          navigate("/agent/dashboard");
-        }, 500);
-      } else {
-        toast.error(result.message || "Google login failed!", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
-      }
+      setTimeout(() => {
+        navigate("/agent/dashboard");
+      }, 500);
     } catch (error) {
       console.error("Error during Google login:", error);
-      toast.error("Something went wrong with Google login. Please try again.", {
+
+      const errorMessage =
+        error.response?.data?.message ||
+        "Something went wrong with Google login. Please try again.";
+
+      toast.error(errorMessage, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -139,7 +197,7 @@ const AgentSignup = () => {
           email: formData.email,
           password: formData.password,
           phoneNumber: formData.phoneNumber,
-          school: isStudent ? formData.institution : "none",
+          schoolId: isStudent ? selectedInstitution : "none",
           firstname: formData.firstName,
           lastname: formData.lastName,
           isStudent,
@@ -260,29 +318,54 @@ const AgentSignup = () => {
                   label="Confirm Password"
                   name="confirmPassword"
                   value={formData.confirmPassword}
+                  error={!isAccurate && formData.confirmPassword}
                   onChange={handleChange}
                   type="password"
                   required
                 />
               </div>
 
-              {!isAccurate && formData.confirmPassword && (
-                <Typography
-                  variant="small"
-                  className="text-red-500 text-sm text-center"
-                >
-                  Passwords do not match.
-                </Typography>
-              )}
-
+              {/*STUDENT OPTION*/}
               {isStudent && (
-                <Input
-                  label="Institution"
-                  name="institution"
-                  value={formData.institution}
-                  onChange={handleChange}
-                  required
-                />
+                <div className="flex flex-col items-center gap-6 border border-gray-200 rounded-xl p-6 shadow-md bg-white">
+                  <h3 className="text-lg font-medium text-gray-800 self-start">
+                    Student Information
+                  </h3>
+
+                  {/* STATE SELECTION */}
+                  <div className="flex flex-col w-full space-y-2">
+                    <div className="flex items-center gap-3 px-4 py-2 rounded-lg hover:border-primaryPurple transition-colors">
+                      <i className="fi fi-rr-map-marker text-primaryPurple"></i>
+                      <SelectComponent
+                        options={stateOptions}
+                        value={selectedState}
+                        onChange={setSelectedState}
+                        placeholder="Select your state"
+                        className="w-full"
+                      />
+                    </div>
+                  </div>
+
+                  {/* INSTITUTION SELECTION */}
+                  <div className="flex flex-col w-full space-y-2">
+                    <div className="flex items-center gap-3 px-4 py-2 rounded-lg hover:border-primaryPurple transition-colors">
+                      <i className="fi fi-rr-building text-primaryPurple"></i>
+                      <SelectComponent
+                        options={institutionOptions}
+                        value={selectedInstitution}
+                        onChange={setSelectedInstitution}
+                        placeholder="Select your institution"
+                        className="w-full"
+                        isDisabled={!selectedState}
+                      />
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-gray-500 self-start mt-2">
+                    Your student information helps us personalize your
+                    experience
+                  </p>
+                </div>
               )}
 
               <div className="space-y-4">

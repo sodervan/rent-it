@@ -122,7 +122,7 @@ const BasicDetails = () => {
   const getStates = async () => {
     try {
       const response = await axios.get(
-        `${apiUrl}/api/v1/location/states?country_id=1`,
+        `${apiUrl}/api/v1/locations/states?country_id=1`,
         { withCredentials: true },
       );
       setStates(response.data.payload || []);
@@ -197,7 +197,7 @@ const BasicDetails = () => {
   const getCities = async (stateId) => {
     try {
       const response = await axios.get(
-        `${apiUrl}/api/v1/location/cities?state_id=${stateId}`,
+        `${apiUrl}/api/v1/locations/cities?state_id=${stateId}`,
         { withCredentials: true },
       );
       console.log(response);
@@ -211,7 +211,7 @@ const BasicDetails = () => {
   const getLgas = async (stateId) => {
     try {
       const response = await axios.get(
-        `${apiUrl}/api/v1/location/lgas?state_id=${stateId}`,
+        `${apiUrl}/api/v1/locations/lgas?state_id=${stateId}`,
         { withCredentials: true },
       );
       setLgas(response.data.payload || []);

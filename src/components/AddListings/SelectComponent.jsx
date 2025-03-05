@@ -42,7 +42,10 @@ const SelectComponent = ({
       {/* Select Trigger */}
       <motion.button
         whileTap={{ scale: 0.98 }}
-        onClick={() => !disabled && setIsOpen(!isOpen)}
+        onClick={(e) => {
+          e.preventDefault();
+          !disabled && setIsOpen(!isOpen);
+        }}
         className={`
           w-full flex items-center justify-between 
           border rounded-lg px-4 py-2.5 text-left

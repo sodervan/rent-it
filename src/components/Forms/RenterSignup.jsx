@@ -5,6 +5,8 @@ import { useState, useEffect } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
+import SelectComponent from "@/components/AddListings/SelectComponent.jsx";
+import axios from "axios";
 
 const RenterSignup = () => {
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -15,6 +17,10 @@ const RenterSignup = () => {
   const [isConfirmPassword, setIsConfirmPassword] = useState("");
   const [isAccurate, setIsAccurate] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [states, setStates] = useState([]);
+  const [universities, setUniversities] = useState([]);
+  const [selectedState, setSelectedState] = useState("");
+  const [selectedInstitution, setSelectedInstitution] = useState("");
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -39,45 +45,112 @@ const RenterSignup = () => {
       isPassword && isConfirmPassword && isPassword === isConfirmPassword,
     );
   }, [isPassword, isConfirmPassword]);
+  useEffect(() => {
+    getStates();
+  }, []);
+
+  const stateOptions = states.map((type) => ({
+    value: String(type.id),
+    label: type.name,
+  }));
+
+  const institutionOptions = universities.map((type) => ({
+    value: String(type.id),
+    label: type.name,
+  }));
+
+  useEffect(() => {
+    const getUniversities = async () => {
+      console.log(selectedState);
+      // e.preventDefault();
+      // setIsLoading(true);
+      try {
+        const response = await axios.get(
+          `${apiUrl}/api/v1/locations/states/${selectedState}/universities`,
+          {
+            withCredentials: true,
+          },
+        );
+        const result = response.data;
+        setUniversities(result?.payload);
+        console.log(result);
+      } catch (err) {
+        const errorMessage =
+          err.response?.data?.message || "Failed to get universities!";
+        console.log(errorMessage);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    getUniversities();
+  }, [selectedState]);
+
+  const getStates = async () => {
+    // e.preventDefault();
+    // setIsLoading(true);
+    try {
+      const response = await axios.get(
+        `${apiUrl}/api/v1/locations/states?country_id=1`,
+        {
+          withCredentials: true,
+        },
+      );
+      const result = response.data;
+      setStates(result?.payload);
+      // console.log(result);
+    } catch (err) {
+      const errorMessage =
+        err.response?.data?.message || "Failed to get states!";
+      console.log(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
       setIsLoading(true);
 
-      const response = await fetch(`${apiUrl}/api/v1/users/google`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+      const response = await axios.post(
+        `${apiUrl}/api/v1/users/google`,
+        {
           token: credentialResponse.credential,
-        }),
+        },
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      const result = response.data;
+
+      toast.success("Registration with Google successful!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
       });
 
-      const result = await response.json();
+      localStorage.setItem("role", "user");
 
-      if (response.ok) {
-        toast.success("Registration with Google successful!", {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
-
-        localStorage.setItem("role", "user");
-
-        navigate("/renter/signup/verifyemail", {
-          state: { email: result.email },
-        });
-      } else {
-        throw new Error(result.message || "Registration failed");
-      }
+      navigate("/renter/signup/studentInfo", {
+        state: { email: result.email },
+      });
     } catch (error) {
       console.error("Google signup error:", error);
-      toast.error(error.message || "Failed to register with Google", {
+
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to register with Google";
+
+      toast.error(errorMessage, {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -121,50 +194,41 @@ const RenterSignup = () => {
 
     setIsLoading(true);
     try {
-      const response = await fetch(`${apiUrl}/api/v1/users/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+      const response = await axios.post(
+        `${apiUrl}/api/v1/users/register`,
+        {
           email: formData.email,
           password: isPassword,
           phoneNumber: formData.phoneNumber,
-          school: isStudent ? formData.institution : "none",
+          schoolId: isStudent ? selectedInstitution : "none",
           firstname: formData.firstName,
           lastname: formData.lastName,
           isStudent: isStudent,
-        }),
-      });
+        },
+        {
+          withCredentials: true,
+        },
+      );
 
-      const result = await response.json();
-      if (response.ok) {
-        toast.success("Registration successful!", {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
-        navigate("/renter/signup/verifyemail", {
-          state: { email: formData.email },
-        });
-        localStorage.setItem("role", "user");
-      } else {
-        toast.error(result.message || "Registration failed!", {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
-      }
+      const result = response.data;
+      console.log(result);
+      toast.success("Registration successful!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      navigate("/renter/signup/verifyemail", {
+        state: { email: formData.email },
+      });
+      localStorage.setItem("role", "user");
     } catch (err) {
-      toast.error("Something went wrong. Please try again later.", {
+      const errorMessage =
+        err.response?.data?.message || "Registration failed!";
+      toast.error(errorMessage, {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -244,6 +308,7 @@ const RenterSignup = () => {
               <i className="fi fi-rr-envelope text-primaryPurple"></i>
               <Input
                 label="Email"
+                f
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
@@ -283,30 +348,53 @@ const RenterSignup = () => {
                 <Input
                   label="Confirm Password"
                   value={isConfirmPassword}
+                  error={isAccurate === false}
                   onChange={(e) => setIsConfirmPassword(e.target.value)}
                   type="password"
                   required
                   className="bg-transparent focus:ring-0 w-full"
                 />
               </div>
-              {isAccurate === false && (
-                <p className="text-xs text-red-500 mt-1">
-                  Passwords do not match.
-                </p>
-              )}
             </div>
-
+            {/*STUDENT OPTION*/}
             {isStudent && (
-              <div className="flex items-center gap-3 px-4 rounded-lg">
-                <i className="fi fi-rr-school text-primaryPurple"></i>
-                <Input
-                  label="Institution Name"
-                  name="institution"
-                  value={formData.institution}
-                  onChange={handleChange}
-                  required
-                  className="bg-transparent focus:ring-0 w-full"
-                />
+              <div className="flex flex-col items-center gap-6 border border-gray-200 rounded-xl p-6 shadow-md bg-white">
+                <h3 className="text-lg font-medium text-gray-800 self-start">
+                  Student Information
+                </h3>
+
+                {/* STATE SELECTION */}
+                <div className="flex flex-col w-full space-y-2">
+                  <div className="flex items-center gap-3 px-4 py-2 rounded-lg hover:border-primaryPurple transition-colors">
+                    <i className="fi fi-rr-map-marker text-primaryPurple"></i>
+                    <SelectComponent
+                      options={stateOptions}
+                      value={selectedState}
+                      onChange={setSelectedState}
+                      placeholder="Select your state"
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+
+                {/* INSTITUTION SELECTION */}
+                <div className="flex flex-col w-full space-y-2">
+                  <div className="flex items-center gap-3 px-4 py-2 rounded-lg hover:border-primaryPurple transition-colors">
+                    <i className="fi fi-rr-building text-primaryPurple"></i>
+                    <SelectComponent
+                      options={institutionOptions}
+                      value={selectedInstitution}
+                      onChange={setSelectedInstitution}
+                      placeholder="Select your institution"
+                      className="w-full"
+                      isDisabled={!selectedState}
+                    />
+                  </div>
+                </div>
+
+                <p className="text-xs text-gray-500 self-start mt-2">
+                  Your student information helps us personalize your experience
+                </p>
               </div>
             )}
 

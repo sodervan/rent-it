@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { Button } from "@material-tailwind/react";
+import { CheckCircle, AlertTriangle, AlertCircle, Loader2 } from "lucide-react";
 
 const VerificationEmail = () => {
   const [status, setStatus] = useState("loading");
@@ -65,81 +67,111 @@ const VerificationEmail = () => {
     switch (status) {
       case "loading":
         return (
-          <div className="flex items-center justify-center space-x-2">
-            <div className="w-8 h-8 border-4 border-primaryPurple border-t-transparent rounded-full animate-spin" />
-            <p className="text-lg text-gray-600">Verifying your email...</p>
+          <div className="flex flex-col items-center justify-center space-y-4">
+            <Loader2
+              className="animate-spin text-primaryPurple"
+              size={48}
+              strokeWidth={2}
+            />
+            <p className="text-lg text-gray-600 text-center">
+              Verifying your email address...
+            </p>
           </div>
         );
 
       case "success":
         return (
-          <div className="text-center space-y-4">
-            <div className="w-16 h-16 mx-auto bg-green-100 rounded-full flex items-center justify-center">
-              <svg
-                className="w-8 h-8 text-green-500"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M5 13l4 4L19 7"
+          <div className="space-y-6 text-center">
+            <div className="flex justify-center mb-4">
+              <div className="bg-green-100 rounded-full p-4">
+                <CheckCircle
+                  className="text-green-600"
+                  size={56}
+                  strokeWidth={1.5}
                 />
-              </svg>
+              </div>
             </div>
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-              <h3 className="text-green-800 font-semibold">Success!</h3>
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+              <h3 className="text-xl font-semibold text-green-800 mb-2">
+                Verification Successful
+              </h3>
               <p className="text-green-700">{message}</p>
             </div>
-            <a href={role === "agent" ? "/agent/login" : "/renter/login"}
-              className="w-full px-6 py-3 text-white bg-primaryPurple rounded-lg hover:bg-opacity-90 transition-all duration-200"
+            <Button
+              color="green"
+              className="w-full"
+              onClick={() =>
+                navigate(role === "agent" ? "/agent/login" : "/renter/login")
+              }
             >
               Proceed to Login
-            </a>
+            </Button>
           </div>
         );
 
       case "error":
         return (
-          <div className="text-center space-y-4">
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-              <h3 className="text-red-800 font-semibold">
+          <div className="space-y-6 text-center">
+            <div className="flex justify-center mb-4">
+              <div className="bg-red-100 rounded-full p-4">
+                <AlertCircle
+                  className="text-red-600"
+                  size={56}
+                  strokeWidth={1.5}
+                />
+              </div>
+            </div>
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+              <h3 className="text-xl font-semibold text-red-800 mb-2">
                 Verification Failed
               </h3>
               <p className="text-red-700">{message}</p>
             </div>
-            <div className="flex flex-col gap-3">
-              <button
+            <div className="space-y-3">
+              <Button
+                color="purple"
+                className="w-full"
                 onClick={() => navigate("/")}
-                className="px-6 py-3 text-white bg-primaryPurple rounded-lg hover:bg-opacity-90 transition-all"
               >
                 Request New Verification
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="outlined"
+                color="purple"
+                className="w-full"
                 onClick={handleLogout}
-                className="px-6 py-3 text-primaryPurple bg-secondaryPurple rounded-lg hover:bg-opacity-90 transition-all"
               >
                 Return Home
-              </button>
+              </Button>
             </div>
           </div>
         );
 
       case "expired":
         return (
-          <div className="text-center space-y-4">
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-              <h3 className="text-yellow-800 font-semibold">Link Expired</h3>
+          <div className="space-y-6 text-center">
+            <div className="flex justify-center mb-4">
+              <div className="bg-yellow-100 rounded-full p-4">
+                <AlertTriangle
+                  className="text-yellow-600"
+                  size={56}
+                  strokeWidth={1.5}
+                />
+              </div>
+            </div>
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+              <h3 className="text-xl font-semibold text-yellow-800 mb-2">
+                Verification Link Expired
+              </h3>
               <p className="text-yellow-700">{message}</p>
             </div>
-            <button
+            <Button
+              color="yellow"
+              className="w-full"
               onClick={() => navigate("/resend-verification")}
-              className="w-full px-6 py-3 text-white bg-yellow-600 rounded-lg hover:bg-yellow-700 transition-all"
             >
               Request New Link
-            </button>
+            </Button>
           </div>
         );
 

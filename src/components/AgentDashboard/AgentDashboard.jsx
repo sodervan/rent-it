@@ -654,6 +654,7 @@ const AgentDashboard = () => {
                 <select
                   className="border rounded-md px-3 py-1.5 text-sm"
                   value={priceRange}
+                  agent
                   onChange={(e) => setPriceRange(e.target.value)}
                 >
                   <option value="">Price Range</option>

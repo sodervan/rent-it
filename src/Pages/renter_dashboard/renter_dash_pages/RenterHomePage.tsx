@@ -729,9 +729,15 @@ const NearbyListings = ({ data, isFetching }) => {
         <MapPin size={20} className="text-primaryPurple" />
         Listings Near You
       </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mx-auto w-full px-4 sm:px-0">
         {data.payload.data.map((listing) => (
-          <EnhancedQueryCard {...listing} key={listing.id} />
+          <div className="flex justify-center w-full">
+            <EnhancedQueryCard
+              {...listing}
+              key={listing.id}
+              className="w-full max-w-full"
+            />
+          </div>
         ))}
       </div>
     </div>

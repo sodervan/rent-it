@@ -204,33 +204,3 @@ function Routing() {
 }
 
 export default Routing;
-{
-  /* <Route
-                                                        path="/search-results"
-                                                        element={<SearchResultsPage />}
-                                                    /> */
-}
-{
-  /*
-                                
-                                
-                                
-                                
-                                                    <Route
-                                                        path="/agent/profile"
-                                                        element={<AgentProfilePage />}
-                                                    />
-                                                    <Route
-                                                        path="/renter/profile"
-                                                        element={<RenterProfilePage />}
-                                                    />
-                                
-                                
-                                
-                                                    <Route
-                                                        path="/agent/agentdashboard"
-                                                        element={<AgentDashboard />}
-                                                    />
-                                
-                                 */
-}

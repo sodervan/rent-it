@@ -166,9 +166,9 @@ const RenterSignup = () => {
         progress: undefined,
       });
 
-      // setTimeout(() => {
-      //   window.location.href = "/renter/dashboard";
-      // }, 500);
+      setTimeout(() => {
+        window.location.href = "/renter/dashboard";
+      }, 500);
     } catch (error) {
       console.error("Login error details:", {
         message: error.message,

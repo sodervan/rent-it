@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   ChevronLeft,
   ChevronRight,
@@ -61,6 +61,118 @@ type NigerianState = {
     name: string;
     propertyCount: number;
   }[];
+};
+// HORIZONTAL SCROLL VIEW
+
+const HorizontalScrollContainer = ({
+  title,
+  icon,
+  children,
+  description,
+  childrenTwo,
+}) => {
+  const scrollRef = useRef(null);
+  const [showLeftShadow, setShowLeftShadow] = useState(false);
+  const [showRightShadow, setShowRightShadow] = useState(true);
+
+  const handleScroll = () => {
+    if (scrollRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+      setShowLeftShadow(scrollLeft > 0);
+      setShowRightShadow(scrollLeft < scrollWidth - clientWidth - 10);
+    }
+  };
+
+  const scrollLeft = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: -300, behavior: "smooth" });
+    }
+  };
+
+  const scrollRight = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: 300, behavior: "smooth" });
+    }
+  };
+
+  useEffect(() => {
+    const currentRef = scrollRef.current;
+    if (currentRef) {
+      currentRef.addEventListener("scroll", handleScroll);
+      // Initialize shadow state
+      handleScroll();
+    }
+
+    return () => {
+      if (currentRef) {
+        currentRef.removeEventListener("scroll", handleScroll);
+      }
+    };
+  }, []);
+
+  return (
+    <div className="mb-8 relative">
+      {/* Title with icon */}
+      {title && (
+        <div className="flex-col items-center mb-4">
+          <h2 className="text-xl font-medium text-gray-800 flex items-center gap-2">
+            {icon && <span className="text-primaryPurple">{icon}</span>}
+            {title}
+          </h2>
+          <p className="text-gray-500 my-3">{description}</p>
+        </div>
+      )}
+      {childrenTwo}
+      {/* Scroll container with gradient shadows on sides */}
+      <div className="relative">
+        {/* Left gradient shadow */}
+        {showLeftShadow && (
+          <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-gray-100 to-transparent z-10 pointer-events-none" />
+        )}
+
+        {/* Scroll buttons */}
+        {showLeftShadow && (
+          <button
+            onClick={scrollLeft}
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-white rounded-full shadow-md p-2 border border-gray-200 hover:bg-gray-50 transition-all"
+            aria-label="Scroll left"
+          >
+            <ChevronLeft size={20} />
+          </button>
+        )}
+
+        {showRightShadow && (
+          <button
+            onClick={scrollRight}
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-white rounded-full shadow-md p-2 border border-gray-200 hover:bg-gray-50 transition-all"
+            aria-label="Scroll right"
+          >
+            <ChevronRight size={20} />
+          </button>
+        )}
+
+        {/* Scrollable content */}
+        <div
+          ref={scrollRef}
+          className="flex overflow-x-auto pb-4 gap-6 scrollbar-hide"
+          style={{
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+            WebkitOverflowScrolling: "touch",
+            paddingLeft: "4px",
+            paddingRight: "4px",
+          }}
+        >
+          {children}
+        </div>
+
+        {/* Right gradient shadow */}
+        {showRightShadow && (
+          <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-gray-100 to-transparent z-10 pointer-events-none" />
+        )}
+      </div>
+    </div>
+  );
 };
 
 // Property Type Filter component
@@ -134,19 +246,16 @@ const RecentlyViewedListings = () => {
   }
 
   return (
-    <div className="mb-6 border-b border-gray-400 pb-8 mt-14">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-medium text-gray-800 flex items-center gap-2">
-          <Clock size={20} className="text-primaryPurple" />
-          Continue Where You Left Off
-        </h2>
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {recentListings.slice(0, 4).map((listing) => (
-          <QueryCard {...listing} key={listing.id} />
-        ))}
-      </div>
-    </div>
+    <HorizontalScrollContainer
+      title="Continue Where You Left Off"
+      icon={<Clock size={20} />}
+    >
+      {recentListings.map((listing) => (
+        <div className="min-w-64 md:min-w-72 flex-shrink-0" key={listing.id}>
+          <QueryCard {...listing} />
+        </div>
+      ))}
+    </HorizontalScrollContainer>
   );
 };
 
@@ -191,30 +300,28 @@ const PopularLocations = () => {
   ];
 
   return (
-    <div className="mt-6">
-      <h3 className="text-lg font-semibold text-gray-800 mb-4">
-        Popular Locations Near You
-      </h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-        {popularLocations.map((location) => (
-          <div
-            key={location.id}
-            className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-100 cursor-pointer"
-          >
-            <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 bg-blue-50 rounded-full text-blue-500">
-                {location.icon}
-              </div>
-              <h4 className="font-medium">{location.name}</h4>
+    <HorizontalScrollContainer
+      title="Popular Locations Near You"
+      icon={<MapPin size={20} />}
+    >
+      {popularLocations.map((location) => (
+        <div
+          key={location.id}
+          className="min-w-64 flex-shrink-0 bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-100 cursor-pointer"
+        >
+          <div className="flex items-center gap-3 mb-2">
+            <div className="p-2 bg-blue-50 rounded-full text-blue-500">
+              {location.icon}
             </div>
-            <p className="text-sm text-gray-600 mb-2">{location.description}</p>
-            <p className="text-sm text-blue-600">
-              {location.propertyCount} properties
-            </p>
+            <h4 className="font-medium">{location.name}</h4>
           </div>
-        ))}
-      </div>
-    </div>
+          <p className="text-sm text-gray-600 mb-2">{location.description}</p>
+          <p className="text-sm text-blue-600">
+            {location.propertyCount} properties
+          </p>
+        </div>
+      ))}
+    </HorizontalScrollContainer>
   );
 };
 
@@ -288,15 +395,15 @@ const NigerianStatesAndCities = () => {
         />
       </div>
 
-      {/* States row */}
-      <div className="flex items-center gap-4 overflow-x-auto no-scrollbar pb-4 mb-4 border-b border-gray-100">
+      {/* States row - horizontal scrollable */}
+      <HorizontalScrollContainer>
         {nigerianStates.map((state) => (
           <button
             key={state.id}
             onClick={() =>
               setSelectedState(state.id === selectedState ? null : state.id)
             }
-            className={`flex items-center gap-2 px-4 py-2 rounded-full transition-colors whitespace-nowrap ${
+            className={`flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-full transition-colors whitespace-nowrap ${
               selectedState === state.id
                 ? "border-[2px] border-primaryPurple shadow-inner"
                 : "border-[1px] shadow-inner"
@@ -306,17 +413,17 @@ const NigerianStatesAndCities = () => {
             <span>{state.name}</span>
           </button>
         ))}
-      </div>
+      </HorizontalScrollContainer>
 
-      {/* Cities grid */}
+      {/* Cities - horizontal scrollable */}
       {selectedState && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        <HorizontalScrollContainer>
           {nigerianStates
             .find((state) => state.id === selectedState)
             ?.cities.map((city) => (
               <div
                 key={city.id}
-                className="bg-white p-3 rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-100 cursor-pointer"
+                className="min-w-48 flex-shrink-0 bg-white p-3 rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-100 cursor-pointer"
               >
                 <h4 className="font-medium mb-1">{city.name}</h4>
                 <p className="text-sm text-gray-500">
@@ -324,7 +431,7 @@ const NigerianStatesAndCities = () => {
                 </p>
               </div>
             ))}
-        </div>
+        </HorizontalScrollContainer>
       )}
     </div>
   );
@@ -335,18 +442,11 @@ const PopularCities = () => {
   const [userState, setUserState] = useState("Lagos"); // Default state
 
   useEffect(() => {
-    // Try to get user's location - this is a simplified example
-    // In a real app, you'd use the Geolocation API with proper error handling
-    // and reverse geocoding to get the actual state
     const getUserLocation = async () => {
       try {
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(
             (position) => {
-              // In a real app, you would use reverse geocoding here to get the state
-              // For now, we'll use the default state
-              // This is where you'd make an API call to a service like Google Maps Geocoding API
-              // For example: reverseGeocode(position.coords.latitude, position.coords.longitude)
               setUserState("Lagos"); // This would be replaced with the actual state from geocoding
             },
             () => {
@@ -399,20 +499,17 @@ const PopularCities = () => {
   ];
 
   return (
-    <div className="flex items-center gap-4 overflow-x-auto no-scrollbar pb-2">
-      <span className="text-gray-700 font-medium whitespace-nowrap">
-        Popular in {userState}:
-      </span>
+    <HorizontalScrollContainer>
       {popularCities.map((city) => (
         <button
           key={city.id}
-          className="flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-gray-200 hover:bg-gray-50 transition-colors whitespace-nowrap shadow-sm"
+          className="flex-shrink-0 flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-gray-200 hover:bg-gray-50 transition-colors whitespace-nowrap shadow-sm"
         >
           <MapPin className="text-primaryPurple" />
           <span>{city.name}</span>
         </button>
       ))}
-    </div>
+    </HorizontalScrollContainer>
   );
 };
 
@@ -675,101 +772,43 @@ function RenterHomePage() {
         {/* Nigerian States and Cities */}
         <NigerianStatesAndCities />
 
-        {/* Enhanced Find Your Perfect Home section */}
-        {/*<div className="rounded-xl mb-6">*/}
-        {/*  <div className="border-b border-gray-100">*/}
-        {/*    <div className="flex items-center justify-between mb-4">*/}
-        {/*      <h2 className="text-xl font-bold text-gray-800">*/}
-        {/*        Find Your Perfect Home*/}
-        {/*      </h2>*/}
-        {/*      <button*/}
-        {/*        onClick={() => setIsFilterOpen(!isFilterOpen)}*/}
-        {/*        className="flex items-center gap-1 text-primaryPurple"*/}
-        {/*      >*/}
-        {/*        <Filter size={18} />*/}
-        {/*        <span className="hidden md:inline">Filters</span>*/}
-        {/*      </button>*/}
-        {/*    </div>*/}
+        {/* Main Listings */}
+        <div className="rounded-xl mt-24">
+          {/* Popular Cities component (replacing map/list toggle) */}
 
-        {/*    /!* Quick action buttons *!/*/}
-        {/*    <div className="flex flex-wrap gap-3 mb-4">*/}
-        {/*      {quickActions.map((action, index) => (*/}
-        {/*        <button*/}
-        {/*          key={index}*/}
-        {/*          className="flex items-center gap-2 px-4 py-2 bg-purple-50 text-primaryPurple rounded-full hover:bg-purple-200 transition-colors"*/}
-        {/*        >*/}
-        {/*          {action.icon}*/}
-        {/*          <span>{action.label}</span>*/}
-        {/*        </button>*/}
-        {/*      ))}*/}
-        {/*    </div>*/}
-
-        {/*    /!* Property type filter *!/*/}
-        {/*    <PropertyTypeFilter*/}
-        {/*      activeType={activeType}*/}
-        {/*      setActiveType={setActiveType}*/}
-        {/*    />*/}
-        {/*  </div>*/}
-
-        {/*  /!* Additional filters - hidden by default on mobile *!/*/}
-        {/*  {isFilterOpen && (*/}
-        {/*    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 border-b border-gray-100">*/}
-        {/*      /!* Price Range Filter *!/*/}
-        {/*      <div className="space-y-2">*/}
-        {/*        <label className="block text-sm font-medium text-gray-700">*/}
-        {/*          Price Range*/}
-        {/*        </label>*/}
-        {/*        <div className="flex items-center gap-2">*/}
-        {/*          <input*/}
-        {/*            type="number"*/}
-        {/*            placeholder="Min"*/}
-        {/*            className="w-full p-2 border border-gray-300 rounded-md"*/}
-        {/*          />*/}
-        {/*          <span>-</span>*/}
-        {/*          <input*/}
-        {/*            type="number"*/}
-        {/*            placeholder="Max"*/}
-        {/*            className="w-full p-2 border border-gray-300 rounded-md"*/}
-        {/*          />*/}
-        {/*        </div>*/}
-        {/*      </div>*/}
-
-        {/*      /!* Bedrooms Filter *!/*/}
-        {/*      <div className="space-y-2">*/}
-        {/*        <label className="block text-sm font-medium text-gray-700">*/}
-        {/*          Bedrooms*/}
-        {/*        </label>*/}
-        {/*        <select className="w-full p-2 border border-gray-300 rounded-md">*/}
-        {/*          <option value="">Any</option>*/}
-        {/*          <option value="1">1+</option>*/}
-        {/*          <option value="2">2+</option>*/}
-        {/*          <option value="3">3+</option>*/}
-        {/*          <option value="4">4+</option>*/}
-        {/*        </select>*/}
-        {/*      </div>*/}
-
-        {/*      /!* Bathrooms Filter *!/*/}
-        {/*      <div className="space-y-2">*/}
-        {/*        <label className="block text-sm font-medium text-gray-700">*/}
-        {/*          Bathrooms*/}
-        {/*        </label>*/}
-        {/*        <select className="w-full p-2 border border-gray-300 rounded-md">*/}
-        {/*          <option value="">Any</option>*/}
-        {/*          <option value="1">1+</option>*/}
-        {/*          <option value="2">2+</option>*/}
-        {/*          <option value="3">3+</option>*/}
-        {/*        </select>*/}
-        {/*      </div>*/}
-        {/*    </div>*/}
-        {/*  )}*/}
-
-        {/*  /!* Popular locations section *!/*/}
-        {/*  <div className="p-4">*/}
-        {/*    <PopularLocations />*/}
-        {/*  </div>*/}
-        {/*</div>*/}
-
-        {/* Results count and Popular Cities */}
+          {isFetching ? (
+            <div className="w-full flex items-center justify-center p-12 mt-4">
+              <Loader />
+            </div>
+          ) : (
+            <HorizontalScrollContainer
+              title="Properties around Lagos"
+              icon={<Home size={20} />}
+              description="Surf accomodations around your current state"
+              childrenTwo={<PopularCities />}
+            >
+              {/*<PopularCities />*/}
+              {data?.payload.data.length > 0 ? (
+                data.payload.data.map((listing) => (
+                  <div
+                    className="min-w-64 md:min-w-72 flex-shrink-0"
+                    key={listing.id}
+                  >
+                    <EnhancedQueryCard {...listing} />
+                  </div>
+                ))
+              ) : (
+                <div className="col-span-full flex flex-col items-center justify-center py-12">
+                  <p className="text-xl font-medium text-gray-700 mb-2">
+                    No properties found
+                  </p>
+                  <p className="text-gray-500">Try adjusting your filters</p>
+                </div>
+              )}
+            </HorizontalScrollContainer>
+          )}
+        </div>
+        {/*LISTINGS NEAR YOU*/}
         <div className="flex flex-col gap-4 mb-6">
           <div className="flex items-center justify-between">
             <p className="text-gray-600 font-medium">
@@ -787,33 +826,6 @@ function RenterHomePage() {
 
         {/* Nearby Listings section */}
         <NearbyListings data={data} isFetching={isFetching} />
-
-        {/* Main Listings */}
-        <div className="rounded-xl mt-24">
-          {/* Popular Cities component (replacing map/list toggle) */}
-          <PopularCities />
-          {isFetching ? (
-            <div className="w-full flex items-center justify-center p-12 mt-4">
-              <Loader />
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-4">
-              {data?.payload.data.map((listing) => (
-                <EnhancedQueryCard {...listing} key={listing.id} />
-              ))}
-
-              {/* No results message */}
-              {data?.payload.data.length === 0 && (
-                <div className="col-span-full flex flex-col items-center justify-center py-12">
-                  <p className="text-xl font-medium text-gray-700 mb-2">
-                    No properties found
-                  </p>
-                  <p className="text-gray-500">Try adjusting your filters</p>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
       </div>
     </div>
   );

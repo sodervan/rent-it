@@ -89,7 +89,7 @@ function QueryCard(props: LISTINGITEM) {
   return (
     <Link
       to={`/property/${props.id}`}
-      className="block w-full max-w-[280px] p-2 bg-white rounded-[20px] overflow-hidden shadow-md hover:shadow-lg transition-shadow"
+      className="block w-full p-2 bg-white rounded-[20px] overflow-hidden shadow-md hover:shadow-lg transition-shadow"
       onClick={saveToRecentlyViewed}
     >
       {/* Image container with badge */}

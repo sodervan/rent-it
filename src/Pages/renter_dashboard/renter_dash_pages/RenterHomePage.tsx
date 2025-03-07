@@ -732,7 +732,7 @@ const NearbyListings = ({ data, isFetching }) => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mx-auto w-full px-4 sm:px-0">
         {data.payload.data.map((listing) => (
           <div className="flex justify-center w-full">
-            <EnhancedQueryCard
+            <QueryCard
               {...listing}
               key={listing.id}
               className="w-full max-w-full"

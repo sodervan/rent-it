@@ -89,7 +89,7 @@ function QueryCard(props: LISTINGITEM) {
   return (
     <Link
       to={`/property/${props.id}`}
-      className="block w-full max-w-[280px] p-2 bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow"
+      className="block w-full max-w-[280px] p-2 bg-white rounded-[20px] overflow-hidden shadow-md hover:shadow-lg transition-shadow"
       onClick={saveToRecentlyViewed}
     >
       {/* Image container with badge */}
@@ -138,7 +138,10 @@ function QueryCard(props: LISTINGITEM) {
             {props.bedrooms} Beds, {props.bathrooms} Baths, {props.size} sqft
           </p>
           <p className="flex items-start gap-1 text-gray-500">
-            <MapPin size={14} className="mt-0.5 flex-shrink-0" />
+            <MapPin
+              size={14}
+              className="mt-0.5 flex-shrink-0 text-primaryPurple"
+            />
             <span className="line-clamp-1">{props.location.streetAddress}</span>
           </p>
         </div>

@@ -43,11 +43,12 @@ function RenterDashPage() {
     if (!isLoading) {
       if (!tokenData || tokenData.role !== "user") {
         navigate("/renter/login");
-      } else {
+      } else if (location.pathname === "/renter/dashboard") {
+        // Only redirect to home if they're at the dashboard root
         navigate("/renter/dashboard/home", { replace: true });
       }
     }
-  }, [tokenData, isLoading, navigate]);
+  }, [tokenData, isLoading, navigate, location.pathname]);
 
   const [opened, setOpened] = useAtom(sideBarAtom);
   const [drawer, setDrawer] = useAtom(drawerOpenedAtom);

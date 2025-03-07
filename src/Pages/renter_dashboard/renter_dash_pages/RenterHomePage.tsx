@@ -111,18 +111,20 @@ const HorizontalScrollContainer = ({
   }, []);
 
   return (
-    <div className="mb-8 relative">
+    <div className=" relative">
       {/* Title with icon */}
       {title && (
-        <div className="flex-col items-center mb-4">
-          <h2 className="text-xl font-medium text-gray-800 flex items-center gap-2">
-            {icon && <span className="text-primaryPurple">{icon}</span>}
-            {title}
-          </h2>
-          <p className="text-gray-500 my-3">{description}</p>
-        </div>
+        <>
+          <div className="flex-col items-center mb-4">
+            <h2 className="text-xl font-medium text-gray-800 flex items-center gap-2">
+              {icon && <span className="text-primaryPurple">{icon}</span>}
+              {title}
+            </h2>
+            <p className="text-gray-500 my-3">{description}</p>
+          </div>
+          {childrenTwo}
+        </>
       )}
-      {childrenTwo}
       {/* Scroll container with gradient shadows on sides */}
       <div className="relative">
         {/* Left gradient shadow */}
@@ -722,7 +724,7 @@ const NearbyListings = ({ data, isFetching }) => {
   }
 
   return (
-    <div className="rounded-xl mb-6">
+    <div className="border-b border-gray-400 mt-14 pb-6 mb-6">
       <h2 className="text-xl font-medium text-gray-800 mb-4 flex items-center gap-2">
         <MapPin size={20} className="text-primaryPurple" />
         Listings Near You
@@ -773,7 +775,7 @@ function RenterHomePage() {
         <NigerianStatesAndCities />
 
         {/* Main Listings */}
-        <div className="rounded-xl mt-24">
+        <div className="mt-14 border-b border-gray-400 pb-6">
           {/* Popular Cities component (replacing map/list toggle) */}
 
           {isFetching ? (
@@ -807,21 +809,6 @@ function RenterHomePage() {
               )}
             </HorizontalScrollContainer>
           )}
-        </div>
-        {/*LISTINGS NEAR YOU*/}
-        <div className="flex flex-col gap-4 mb-6">
-          <div className="flex items-center justify-between">
-            <p className="text-gray-600 font-medium">
-              {!isFetching && data
-                ? `${data.payload.data.length} Properties Found`
-                : "Finding properties..."}
-            </p>
-            <select className="p-2 border border-gray-300 rounded-md text-sm">
-              <option value="newest">Newest</option>
-              <option value="price_asc">Price: Low to High</option>
-              <option value="price_desc">Price: High to Low</option>
-            </select>
-          </div>
         </div>
 
         {/* Nearby Listings section */}

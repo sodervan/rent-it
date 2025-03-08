@@ -440,81 +440,241 @@ const NigerianStatesAndCities = () => {
 };
 
 // Popular Cities component that replaces the Map/List toggle
-const PopularCities = () => {
-  const [userState, setUserState] = useState("Lagos"); // Default state
+const PopularCities = ({ selectedState, onCitySelect, selectedCity }) => {
+  const [cities, setCities] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const getUserLocation = async () => {
+    const fetchCities = async () => {
+      if (!selectedState) return;
+
+      setIsLoading(true);
+      setError(null);
+
       try {
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(
-            (position) => {
-              setUserState("Lagos"); // This would be replaced with the actual state from geocoding
+        // Using GeoDB Cities API (available with free tier on RapidAPI)
+        const response = await fetch(
+          `https://wft-geo-db.p.rapidapi.com/v1/geo/cities?countryIds=NG&namePrefix=${encodeURIComponent(selectedState)}&radius=100&limit=10&sort=-population`,
+          {
+            headers: {
+              "X-RapidAPI-Key":
+                "8882c190f6msh82ffd59b63eb1b2p11ca1fjsn7178c8da7682",
+              "X-RapidAPI-Host": "wft-geo-db.p.rapidapi.com",
             },
-            () => {
-              console.log("Unable to retrieve location");
-              setUserState("Lagos"); // Fallback
-            },
-          );
+          },
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch cities");
         }
+
+        const data = await response.json();
+
+        // Transform the data to match our required format
+        const formattedCities = data.data.map((city, index) => ({
+          id: `city${index + 1}`,
+          name: city.name,
+          propertyCount: Math.floor(Math.random() * 100) + 50, // Mock property count
+          latitude: city.latitude,
+          longitude: city.longitude,
+        }));
+
+        setCities(formattedCities);
       } catch (error) {
-        console.error("Error getting user location:", error);
-        setUserState("Lagos"); // Fallback
+        console.error("Error fetching cities:", error);
+        setError(error.message);
+
+        // Fallback to hardcoded cities based on state
+        const fallbackCities = getFallbackCitiesByState(selectedState);
+        setCities(fallbackCities);
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    getUserLocation();
-  }, []);
+    fetchCities();
+  }, [selectedState]);
 
-  // Sample popular cities based on the user's state (In this case, Lagos)
-  const popularCities: PopularCity[] = [
-    {
-      id: "city1",
-      name: "Lekki",
-      propertyCount: 156,
-      imageUrl: "/api/placeholder/200/100",
-    },
-    {
-      id: "city2",
-      name: "Ikeja",
-      propertyCount: 124,
-      imageUrl: "/api/placeholder/200/100",
-    },
-    {
-      id: "city3",
-      name: "Victoria Island",
-      propertyCount: 98,
-      imageUrl: "/api/placeholder/200/100",
-    },
-    {
-      id: "city4",
-      name: "Yaba",
-      propertyCount: 83,
-      imageUrl: "/api/placeholder/200/100",
-    },
-    {
-      id: "city5",
-      name: "Ikoyi",
-      propertyCount: 76,
-      imageUrl: "/api/placeholder/200/100",
-    },
-  ];
+  // Fallback function to get cities by state when API fails
+  const getFallbackCitiesByState = (state) => {
+    const citiesByState = {
+      Lagos: [
+        {
+          id: "city1",
+          name: "Lekki",
+          propertyCount: 156,
+          latitude: 6.4698,
+          longitude: 3.5852,
+        },
+        {
+          id: "city2",
+          name: "Ikeja",
+          propertyCount: 124,
+          latitude: 6.6018,
+          longitude: 3.3515,
+        },
+        {
+          id: "city3",
+          name: "Victoria Island",
+          propertyCount: 98,
+          latitude: 6.4281,
+          longitude: 3.4219,
+        },
+        {
+          id: "city4",
+          name: "Yaba",
+          propertyCount: 83,
+          latitude: 6.5154,
+          longitude: 3.387,
+        },
+        {
+          id: "city5",
+          name: "Ikoyi",
+          propertyCount: 76,
+          latitude: 6.45,
+          longitude: 3.4333,
+        },
+      ],
+      Abuja: [
+        {
+          id: "city6",
+          name: "Wuse",
+          propertyCount: 112,
+          latitude: 9.0765,
+          longitude: 7.4943,
+        },
+        {
+          id: "city7",
+          name: "Maitama",
+          propertyCount: 95,
+          latitude: 9.0909,
+          longitude: 7.5,
+        },
+        {
+          id: "city8",
+          name: "Asokoro",
+          propertyCount: 87,
+          latitude: 9.05,
+          longitude: 7.5333,
+        },
+        {
+          id: "city9",
+          name: "Gwarinpa",
+          propertyCount: 76,
+          latitude: 9.118,
+          longitude: 7.3947,
+        },
+        {
+          id: "city10",
+          name: "Garki",
+          propertyCount: 65,
+          latitude: 9.0267,
+          longitude: 7.4833,
+        },
+      ],
+      Rivers: [
+        {
+          id: "city11",
+          name: "Port Harcourt",
+          propertyCount: 143,
+          latitude: 4.8156,
+          longitude: 7.0498,
+        },
+        {
+          id: "city12",
+          name: "Obio/Akpor",
+          propertyCount: 89,
+          latitude: 4.8581,
+          longitude: 7.0588,
+        },
+        {
+          id: "city13",
+          name: "Eleme",
+          propertyCount: 67,
+          latitude: 4.7833,
+          longitude: 7.1167,
+        },
+      ],
+      Kano: [
+        {
+          id: "city14",
+          name: "Kano",
+          propertyCount: 132,
+          latitude: 12.0,
+          longitude: 8.5167,
+        },
+        {
+          id: "city15",
+          name: "Fagge",
+          propertyCount: 75,
+          latitude: 12.0,
+          longitude: 8.52,
+        },
+        {
+          id: "city16",
+          name: "Dala",
+          propertyCount: 68,
+          latitude: 12.0444,
+          longitude: 8.4853,
+        },
+      ],
+      // Add more states as needed
+    };
+
+    return citiesByState[state] || citiesByState["Lagos"];
+  };
+
+  // Handle city selection
+  const handleCitySelect = (city) => {
+    onCitySelect(city.name);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center py-4">
+        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primaryPurple"></div>
+      </div>
+    );
+  }
+
+  if (error && cities.length === 0) {
+    return (
+      <div className="text-red-500 py-2">
+        Error loading cities. Please try again later.
+      </div>
+    );
+  }
 
   return (
     <HorizontalScrollContainer>
-      {popularCities.map((city) => (
+      {cities.map((city) => (
         <button
           key={city.id}
-          className="flex-shrink-0 flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-gray-200 hover:bg-gray-50 transition-colors whitespace-nowrap shadow-sm"
+          className={`flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-full border transition-colors whitespace-nowrap ${
+            selectedCity === city.name
+              ? "bg-primaryPurple text-white border-primaryPurple"
+              : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50"
+          }`}
+          onClick={() => {
+            handleCitySelect(city);
+          }}
         >
-          <MapPin className="text-primaryPurple" />
+          <MapPin
+            size={16}
+            className={
+              selectedCity === city.name ? "text-white" : "text-primaryPurple"
+            }
+          />
           <span>{city.name}</span>
+          <span className="text-xs ml-1 opacity-75">
+            ({city.propertyCount})
+          </span>
         </button>
       ))}
     </HorizontalScrollContainer>
   );
 };
-
 // Featured Properties Carousel component
 const FeaturedPropertiesCarousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -580,7 +740,7 @@ const FeaturedPropertiesCarousel = () => {
   const current = featuredProperties[currentIndex];
 
   return (
-    <div className="relative w-full h-64 md:h-80 lg:h-96 rounded-xl overflow-hidden shadow-lg mb-6">
+    <div className="relative w-full h-64 md:h-80 lg:h-96 rounded-xl overflow-hidden shadow-lg mb-10">
       {/* Main carousel image */}
       <div
         className="w-full h-full bg-cover bg-center transition-opacity duration-500"
@@ -692,12 +852,7 @@ const EnhancedQueryCard = (props) => {
     // Save to recently viewed
     handleClick();
 
-    // Here you would typically use router.push or window.location
-    // Since we don't have access to the router, we'll simulate navigation
-    // In a real app, you'd replace this with your navigation code
     console.log(`Navigating to listing page for ID: ${props.id}`);
-    // Example: router.push(`/listings/${props.id}`);
-    // or: window.location.href = `/listings/${props.id}`;
   };
   return <QueryCard {...props} onClick={navigateToListing} />;
 };
@@ -747,11 +902,122 @@ const NearbyListings = ({ data, isFetching }) => {
 function RenterHomePage() {
   const [activeType, setActiveType] = useState("all");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [userState, setUserState] = useState("");
+  const [isLoadingLocation, setIsLoadingLocation] = useState(true);
+  const [selectedCity, setSelectedCity] = useState("");
+  const [userCoordinates, setUserCoordinates] = useState(null);
 
-  const { data, isFetching, refetch } = useQuery<LISTINGRESPONSE>({
-    queryKey: ["listings", activeType],
+  // Effect to get user's location and determine state
+  useEffect(() => {
+    const getUserLocation = async () => {
+      try {
+        setIsLoadingLocation(true);
+        // console.log(userState);
+        // Check if we already have the state stored in localStorage
+        const storedState = localStorage.getItem("userState");
+        const storedCoords = localStorage.getItem("userCoordinates");
+
+        if (storedState && storedCoords) {
+          setUserState(storedState);
+          setUserCoordinates(JSON.parse(storedCoords));
+          setIsLoadingLocation(false);
+          return;
+        }
+
+        // If not in storage, get location using browser geolocation
+        navigator.geolocation.getCurrentPosition(
+          async (position) => {
+            const { latitude, longitude } = position.coords;
+
+            // Save coordinates for potential use with city selection
+            const coordinates = { latitude, longitude };
+            setUserCoordinates(coordinates);
+            localStorage.setItem(
+              "userCoordinates",
+              JSON.stringify(coordinates),
+            );
+
+            // Using OpenCage Geocoding API (free tier available)
+            const apiKey = "8263763109a646fbac5c6127dcdadd34";
+            const response = await fetch(
+              `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=${apiKey}&language=en&countrycode=ng`,
+            );
+
+            const data = await response.json();
+            console.log("Geocoding response:", data);
+
+            let detectedState = "";
+
+            if (data.results && data.results.length > 0) {
+              // Try to extract state from components
+              const components = data.results[0].components;
+
+              // OpenCage might return state as state, state_district, or county
+              detectedState =
+                components.state ||
+                components.state_district ||
+                components.county ||
+                "";
+
+              // Clean up state name if it contains "State" suffix
+              detectedState = detectedState.replace(" State", "");
+
+              // Verify it's in Nigeria
+              if (!components.country?.includes("Nigeria")) {
+                detectedState = "Lagos"; // Default for non-Nigerian locations
+              }
+            } else {
+              detectedState = "Lagos"; // Default fallback
+            }
+
+            // Store in state and localStorage
+            setUserState(detectedState);
+            console.log(userState);
+            localStorage.setItem("userState", detectedState);
+            setIsLoadingLocation(false);
+          },
+          (error) => {
+            console.error("Geolocation error:", error);
+            // Default to Lagos if location access is denied
+            setUserState("Lagos");
+            localStorage.setItem("userState", "Lagos");
+            setIsLoadingLocation(false);
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 86400000, // Cache for 1 day
+          },
+        );
+      } catch (error) {
+        console.error("Error getting location:", error);
+        setUserState("Lagos");
+        localStorage.setItem("userState", "Lagos");
+        setIsLoadingLocation(false);
+      }
+    };
+
+    getUserLocation();
+  }, []);
+
+  // Handle city selection
+  const handleCitySelect = (cityName) => {
+    setSelectedCity(cityName);
+    console.log("Selected city in RenterHomePage:", cityName);
+    // You could add additional logic here, like filtering listings by city
+  };
+
+  // Modified query to include state as a parameter and city if selected
+  const { data, isFetching, refetch } = useQuery({
+    queryKey: ["listings", activeType, userState, selectedCity],
     queryFn: async () =>
-      await get_listing(activeType !== "all" ? { type: activeType } : {}),
+      await get_listing({
+        ...(activeType !== "all" ? { type: activeType } : {}),
+        ...(userState ? { state: userState } : {}),
+        ...(selectedCity ? { city: selectedCity } : {}),
+      }),
+    // Only run query when we have the user's state
+    enabled: !isLoadingLocation,
   });
 
   // Quick actions for the Find Your Perfect Home section
@@ -778,25 +1044,36 @@ function RenterHomePage() {
         <RecentlyViewedListings />
 
         {/* Nigerian States and Cities */}
-        <NigerianStatesAndCities />
+        <NigerianStatesAndCities
+          currentState={userState}
+          onStateChange={(newState) => {
+            setUserState(newState);
+            localStorage.setItem("userState", newState);
+            // Reset selected city when state changes
+            setSelectedCity("");
+          }}
+        />
 
         {/* Main Listings */}
         <div className="mt-14 border-b border-gray-400 pb-6">
-          {/* Popular Cities component (replacing map/list toggle) */}
-
-          {isFetching ? (
+          {isFetching || isLoadingLocation ? (
             <div className="w-full flex items-center justify-center p-12 mt-4">
               <Loader />
             </div>
           ) : (
             <HorizontalScrollContainer
-              title="Properties around Lagos"
-              icon={<Home size={20} />}
-              description="Surf accomodations around your current state"
-              childrenTwo={<PopularCities />}
+              title={`Properties around ${userState || "Your Area"}`}
+              icon={<MapPin size={20} />}
+              description={`Surf accommodations around ${userState || "your current state"}`}
+              childrenTwo={
+                <PopularCities
+                  selectedState={userState}
+                  onCitySelect={handleCitySelect}
+                  selectedCity={selectedCity}
+                />
+              }
             >
-              {/*<PopularCities />*/}
-              {data?.payload.data.length > 0 ? (
+              {data?.payload.data && data.payload.data.length > 0 ? (
                 data.payload.data.map((listing) => (
                   <div
                     className="min-w-64 md:min-w-72 flex-shrink-0"
@@ -806,11 +1083,16 @@ function RenterHomePage() {
                   </div>
                 ))
               ) : (
-                <div className="col-span-full flex flex-col items-center justify-center py-12">
+                <div className="w-full flex flex-col items-center justify-center py-12">
                   <p className="text-xl font-medium text-gray-700 mb-2">
-                    No properties found
+                    No properties found in{" "}
+                    {selectedCity ? `${selectedCity}, ` : ""}
+                    {userState || "this area"}
                   </p>
-                  <p className="text-gray-500">Try adjusting your filters</p>
+                  <p className="text-gray-500">
+                    Try selecting a different {selectedCity ? "city or " : ""}
+                    state
+                  </p>
                 </div>
               )}
             </HorizontalScrollContainer>
@@ -818,7 +1100,12 @@ function RenterHomePage() {
         </div>
 
         {/* Nearby Listings section */}
-        <NearbyListings data={data} isFetching={isFetching} />
+        <NearbyListings
+          data={data}
+          isFetching={isFetching || isLoadingLocation}
+          userState={userState}
+          selectedCity={selectedCity}
+        />
       </div>
     </div>
   );

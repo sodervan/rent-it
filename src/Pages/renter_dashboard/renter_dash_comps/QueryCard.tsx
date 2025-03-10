@@ -127,7 +127,7 @@ function QueryCard(props: LISTINGITEM) {
 
   return (
     <Link
-      to={`/property/${props.id}`}
+      to={`/listing/${props.id}`}
       className="block w-full max-w-[300px] p-2 bg-white rounded-[20px] overflow-hidden shadow-md hover:shadow-lg transition-shadow"
       onClick={saveToRecentlyViewed}
     >

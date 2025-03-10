@@ -196,6 +196,14 @@ function Routing() {
                 </RenterRoute>
               }
             />
+            <Route
+              path="/listing/:listingId"
+              element={
+                <RenterRoute>
+                  <ListingDetailsPage />
+                </RenterRoute>
+              }
+            />
           </Route>
         </Routes>
       </BrowserRouter>

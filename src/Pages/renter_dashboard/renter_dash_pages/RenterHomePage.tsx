@@ -249,16 +249,18 @@ const RecentlyViewedListings = () => {
   }
 
   return (
-    <HorizontalScrollContainer
-      title="Continue Where You Left Off"
-      icon={<Clock size={20} />}
-    >
-      {recentListings.map((listing) => (
-        <div className="min-w-64 md:min-w-72 flex-shrink-0" key={listing.id}>
-          <QueryCard {...listing} />
-        </div>
-      ))}
-    </HorizontalScrollContainer>
+    <div className="border-b border-gray-400 pb-6">
+      <HorizontalScrollContainer
+        title="Continue Where You Left Off"
+        icon={<Clock size={20} />}
+      >
+        {recentListings.map((listing) => (
+          <div className="min-w-64 md:min-w-72 flex-shrink-0" key={listing.id}>
+            <QueryCard {...listing} />
+          </div>
+        ))}
+      </HorizontalScrollContainer>
+    </div>
   );
 };
 
@@ -816,7 +818,7 @@ const FeaturedPropertiesCarousel = () => {
   const current = featuredProperties[currentIndex];
 
   return (
-    <div className="relative w-full h-64 md:h-80 lg:h-96 rounded-xl overflow-hidden shadow-lg mb-10">
+    <div className="relative w-full h-64 md:h-80 lg:h-96 rounded-xl overflow-hidden shadow-lg mb-12">
       {/* Main carousel image */}
       <div
         className="w-full h-full bg-cover bg-center transition-opacity duration-500"

@@ -16,6 +16,7 @@ import {
   Train,
   Clock,
   Utensils,
+  ChevronDown,
 } from "lucide-react";
 import Loader from "../../../components/Loaders/Loader";
 import { get_listing, LISTINGRESPONSE } from "@/lib/api";
@@ -329,112 +330,187 @@ const PopularLocations = () => {
 
 // Nigerian States and Cities component
 const NigerianStatesAndCities = () => {
-  const [selectedState, setSelectedState] = useState(null);
-
-  // Sample Nigerian states and cities data
-  const nigerianStates: NigerianState[] = [
-    {
-      id: "state1",
-      name: "Lagos",
-      cities: [
-        { id: "city1", name: "Lekki", propertyCount: 156 },
-        { id: "city2", name: "Ikeja", propertyCount: 124 },
-        { id: "city3", name: "Victoria Island", propertyCount: 98 },
-        { id: "city4", name: "Yaba", propertyCount: 83 },
-        { id: "city5", name: "Ikoyi", propertyCount: 76 },
-        { id: "city6", name: "Ajah", propertyCount: 64 },
-      ],
-    },
-    {
-      id: "state2",
-      name: "Abuja",
-      cities: [
-        { id: "city7", name: "Maitama", propertyCount: 87 },
-        { id: "city8", name: "Wuse", propertyCount: 75 },
-        { id: "city9", name: "Garki", propertyCount: 63 },
-        { id: "city10", name: "Asokoro", propertyCount: 52 },
-      ],
-    },
-    {
-      id: "state3",
-      name: "Rivers",
-      cities: [
-        { id: "city11", name: "Port Harcourt", propertyCount: 94 },
-        { id: "city12", name: "Obio-Akpor", propertyCount: 41 },
-        { id: "city13", name: "Eleme", propertyCount: 22 },
-      ],
-    },
-    {
-      id: "state4",
-      name: "Oyo",
-      cities: [
-        { id: "city14", name: "Ibadan", propertyCount: 89 },
-        { id: "city15", name: "Ogbomosho", propertyCount: 35 },
-        { id: "city16", name: "Oyo", propertyCount: 29 },
-      ],
-    },
-    {
-      id: "state5",
-      name: "Kano",
-      cities: [
-        { id: "city17", name: "Kano", propertyCount: 73 },
-        { id: "city18", name: "Nassarawa", propertyCount: 32 },
-        { id: "city19", name: "Tarauni", propertyCount: 25 },
-      ],
-    },
+  // Expanded list of Nigerian states
+  const nigerianStates = [
+    { id: "state1", name: "Lagos", featured: true },
+    { id: "state2", name: "Abuja", featured: true },
+    { id: "state3", name: "Rivers", featured: true },
+    { id: "state4", name: "Kano", featured: true },
+    { id: "state5", name: "Oyo", featured: true },
+    { id: "state6", name: "Enugu", featured: false },
+    { id: "state7", name: "Kaduna", featured: false },
+    { id: "state8", name: "Delta", featured: false },
+    { id: "state9", name: "Edo", featured: false },
+    { id: "state10", name: "Anambra", featured: false },
+    { id: "state11", name: "Imo", featured: false },
+    { id: "state12", name: "Akwa Ibom", featured: false },
+    { id: "state13", name: "Plateau", featured: false },
+    { id: "state14", name: "Ogun", featured: false },
+    { id: "state15", name: "Borno", featured: false },
+    { id: "state16", name: "Cross River", featured: false },
+    { id: "state17", name: "Bayelsa", featured: false },
+    { id: "state18", name: "Abia", featured: false },
+    { id: "state19", name: "Osun", featured: false },
+    { id: "state20", name: "Ekiti", featured: false },
   ];
 
+  const [selectedState, setSelectedState] = useState("state1"); // Default to Lagos
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [selectedCity, setSelectedCity] = useState("");
+  const dropdownRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  // Get the selected state name
+  const getSelectedStateName = () => {
+    const state = nigerianStates.find((state) => state.id === selectedState);
+    return state ? state.name : "Lagos";
+  };
+
+  // Filter states for display
+  const featuredStates = nigerianStates.filter((state) => state.featured);
+  const otherStates = nigerianStates.filter((state) => !state.featured);
+
+  // Fetch listings for the selected state
+  const { data: listingsData, isLoading } = useQuery({
+    queryKey: ["stateListings", selectedState, selectedCity],
+    queryFn: async () => {
+      const stateName = getSelectedStateName();
+      return await get_listing({
+        state: stateName,
+        ...(selectedCity ? { city: selectedCity } : {}),
+        limit: 10, // Limit to prevent overwhelming the UI
+      });
+    },
+  });
+
+  // Function to handle city selection
+  const handleCitySelect = (cityId, cityName) => {
+    setSelectedCity(cityName);
+  };
+
   return (
-    <div className="mb-8 mt-10 pb-8 border-b border-gray-400">
-      <div className="flex items-center gap-2 mb-4">
-        <h2 className="text-xl font-medium text-gray-800">
-          Explore Properties Across Nigeria
-        </h2>
-        <img
-          src={`https://flagcdn.com/w20/${"ng"}.png`}
-          alt={`NG flag`}
-          className="w-4 h-3"
-        />
-      </div>
-
-      {/* States row - horizontal scrollable */}
-      <HorizontalScrollContainer>
-        {nigerianStates.map((state) => (
-          <button
-            key={state.id}
-            onClick={() =>
-              setSelectedState(state.id === selectedState ? null : state.id)
-            }
-            className={`flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-full transition-colors whitespace-nowrap ${
-              selectedState === state.id
-                ? "border-[2px] border-primaryPurple shadow-inner"
-                : "border-[1px] shadow-inner"
-            }`}
-          >
-            <MapPin className="text-primaryPurple text-sm" />
-            <span>{state.name}</span>
-          </button>
-        ))}
-      </HorizontalScrollContainer>
-
-      {/* Cities - horizontal scrollable */}
-      {selectedState && (
-        <HorizontalScrollContainer>
-          {nigerianStates
-            .find((state) => state.id === selectedState)
-            ?.cities.map((city) => (
-              <div
-                key={city.id}
-                className="min-w-48 flex-shrink-0 bg-white p-3 rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-100 cursor-pointer"
+    <div className="mb-12 mt-10 pb-8 border-b border-gray-400">
+      <HorizontalScrollContainer
+        title="Explore properties across Nigeria"
+        icon={
+          <div>
+            <img
+              src={`https://flagcdn.com/w20/${"ng"}.png`}
+              alt={`NG flag`}
+              className="w-4 h-3"
+            />
+          </div>
+        }
+        childrenTwo={
+          <div className="flex flex-wrap items-center gap-3 mb-6">
+            {/* Featured states as direct buttons */}
+            {featuredStates.map((state) => (
+              <button
+                key={state.id}
+                onClick={() => {
+                  setSelectedState(state.id);
+                  setSelectedCity(""); // Reset city selection when state changes
+                }}
+                className={`flex items-center gap-2 px-4 py-2 rounded-full transition-colors whitespace-nowrap ${
+                  selectedState === state.id
+                    ? "bg-primaryPurple text-white shadow-md"
+                    : "border border-gray-200 bg-white hover:bg-gray-50"
+                }`}
               >
-                <h4 className="font-medium mb-1">{city.name}</h4>
-                <p className="text-sm text-gray-500">
-                  {city.propertyCount} properties
+                <MapPin
+                  size={16}
+                  className={
+                    selectedState === state.id
+                      ? "text-white"
+                      : "text-primaryPurple"
+                  }
+                />
+                <span>{state.name}</span>
+              </button>
+            ))}
+
+            {/* Dropdown for other states */}
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                className="flex items-center gap-2 px-4 py-2 rounded-full border border-gray-200 bg-white hover:bg-gray-50 transition-colors"
+              >
+                More States
+                <ChevronDown size={16} />
+              </button>
+
+              {dropdownOpen && (
+                <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-50 border border-gray-200 max-h-64 overflow-y-auto">
+                  {otherStates.map((state) => (
+                    <button
+                      key={state.id}
+                      onClick={() => {
+                        setSelectedState(state.id);
+                        setSelectedCity("");
+                        setDropdownOpen(false);
+                      }}
+                      className="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center gap-2"
+                    >
+                      <MapPin size={14} className="text-primaryPurple" />
+                      <span>{state.name}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        }
+      >
+        {isLoading && (
+          <div className="w-full flex justify-center items-center py-8">
+            <Loader />
+          </div>
+        )}
+
+        {/* Display property listings for selected state */}
+        {!isLoading && listingsData && (
+          <div className="mt-1">
+            <h3 className="text-lg font-medium mb-2 text-gray-700">
+              Properties in {getSelectedStateName()}
+              {selectedCity && ` - ${selectedCity}`}
+            </h3>
+
+            {/* Display listings */}
+            {listingsData.payload.data.length > 0 ? (
+              <div className="flex flex-nowrap overflow-x-auto gap-6 py-2">
+                {listingsData.payload.data.map((listing) => (
+                  <div className="min-w-[280px] w-[280px] flex-shrink-0">
+                    <EnhancedQueryCard key={listing.id} {...listing} />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-white rounded-lg shadow-sm p-6 text-center">
+                <p className="text-gray-600">
+                  No properties found in {getSelectedStateName()}
+                  {selectedCity && ` - ${selectedCity}`}.
+                </p>
+                <p className="text-gray-500 mt-2">
+                  Try selecting a different state or city.
                 </p>
               </div>
-            ))}
-        </HorizontalScrollContainer>
-      )}
+            )}
+          </div>
+        )}
+      </HorizontalScrollContainer>
     </div>
   );
 };
@@ -906,20 +982,43 @@ function RenterHomePage() {
   const [isLoadingLocation, setIsLoadingLocation] = useState(true);
   const [selectedCity, setSelectedCity] = useState("");
   const [userCoordinates, setUserCoordinates] = useState(null);
+  const [isRefetchingListings, setIsRefetchingListings] = useState(false);
 
-  // Effect to get user's location and determine state
+  // Effect to get user's location and determine state and default city
   useEffect(() => {
     const getUserLocation = async () => {
       try {
         setIsLoadingLocation(true);
-        // console.log(userState);
-        // Check if we already have the state stored in localStorage
+
+        // Check if we already have the state and city stored in localStorage
         const storedState = localStorage.getItem("userState");
+        const storedCity = localStorage.getItem("selectedCity");
         const storedCoords = localStorage.getItem("userCoordinates");
 
-        if (storedState && storedCoords) {
+        if (storedState) {
           setUserState(storedState);
-          setUserCoordinates(JSON.parse(storedCoords));
+
+          // Set default city from storage if available
+          if (storedCity) {
+            setSelectedCity(storedCity);
+          } else {
+            // Set default city based on state - you can customize this mapping
+            const defaultCityMap = {
+              Lagos: "Ikeja",
+              Abuja: "Central",
+              Rivers: "Port Harcourt",
+              // Add more state-to-default-city mappings as needed
+            };
+
+            const defaultCity = defaultCityMap[storedState] || "";
+            setSelectedCity(defaultCity);
+            localStorage.setItem("selectedCity", defaultCity);
+          }
+
+          if (storedCoords) {
+            setUserCoordinates(JSON.parse(storedCoords));
+          }
+
           setIsLoadingLocation(false);
           return;
         }
@@ -947,6 +1046,7 @@ function RenterHomePage() {
             console.log("Geocoding response:", data);
 
             let detectedState = "";
+            let detectedCity = "";
 
             if (data.results && data.results.length > 0) {
               // Try to extract state from components
@@ -959,28 +1059,45 @@ function RenterHomePage() {
                 components.county ||
                 "";
 
+              // Try to extract city
+              detectedCity =
+                components.city ||
+                components.town ||
+                components.village ||
+                components.suburb ||
+                "";
+
               // Clean up state name if it contains "State" suffix
               detectedState = detectedState.replace(" State", "");
 
               // Verify it's in Nigeria
               if (!components.country?.includes("Nigeria")) {
                 detectedState = "Lagos"; // Default for non-Nigerian locations
+                detectedCity = "Ikeja"; // Default city for Lagos
               }
             } else {
               detectedState = "Lagos"; // Default fallback
+              detectedCity = "Ikeja"; // Default city for Lagos
             }
 
             // Store in state and localStorage
             setUserState(detectedState);
-            console.log(userState);
+            setSelectedCity(detectedCity);
+
             localStorage.setItem("userState", detectedState);
+            localStorage.setItem("selectedCity", detectedCity);
+
             setIsLoadingLocation(false);
           },
           (error) => {
             console.error("Geolocation error:", error);
             // Default to Lagos if location access is denied
             setUserState("Lagos");
+            setSelectedCity("Ikeja");
+
             localStorage.setItem("userState", "Lagos");
+            localStorage.setItem("selectedCity", "Ikeja");
+
             setIsLoadingLocation(false);
           },
           {
@@ -992,7 +1109,11 @@ function RenterHomePage() {
       } catch (error) {
         console.error("Error getting location:", error);
         setUserState("Lagos");
+        setSelectedCity("Ikeja");
+
         localStorage.setItem("userState", "Lagos");
+        localStorage.setItem("selectedCity", "Ikeja");
+
         setIsLoadingLocation(false);
       }
     };
@@ -1000,22 +1121,31 @@ function RenterHomePage() {
     getUserLocation();
   }, []);
 
-  // Handle city selection
+  // Handle city selection - only update state and trigger listings refetch
   const handleCitySelect = (cityName) => {
+    setIsRefetchingListings(true);
     setSelectedCity(cityName);
+    localStorage.setItem("selectedCity", cityName);
     console.log("Selected city in RenterHomePage:", cityName);
-    // You could add additional logic here, like filtering listings by city
   };
 
   // Modified query to include state as a parameter and city if selected
   const { data, isFetching, refetch } = useQuery({
     queryKey: ["listings", activeType, userState, selectedCity],
-    queryFn: async () =>
-      await get_listing({
+    queryFn: async () => {
+      // Set refetching flag when query starts
+      setIsRefetchingListings(true);
+
+      const result = await get_listing({
         ...(activeType !== "all" ? { type: activeType } : {}),
         ...(userState ? { state: userState } : {}),
         ...(selectedCity ? { city: selectedCity } : {}),
-      }),
+      });
+
+      // Clear refetching flag when query finishes
+      setIsRefetchingListings(false);
+      return result;
+    },
     // Only run query when we have the user's state
     enabled: !isLoadingLocation,
   });
@@ -1027,6 +1157,10 @@ function RenterHomePage() {
     { icon: <School size={18} />, label: "University Housing" },
     { icon: <Train size={18} />, label: "Transit Friendly" },
   ];
+
+  // Determine if we're loading listings only or everything
+  const isLoadingListingsOnly = isRefetchingListings && !isLoadingLocation;
+  const isInitialLoading = isFetching || isLoadingLocation;
 
   return (
     <div className="min-h-dvh bg-gray-100">
@@ -1043,66 +1177,79 @@ function RenterHomePage() {
         {/* Recently Viewed Listings */}
         <RecentlyViewedListings />
 
-        {/* Nigerian States and Cities */}
-        <NigerianStatesAndCities
-          currentState={userState}
-          onStateChange={(newState) => {
-            setUserState(newState);
-            localStorage.setItem("userState", newState);
-            // Reset selected city when state changes
-            setSelectedCity("");
-          }}
-        />
+        {/* Nigerian States and Cities - only show loading for initial load */}
+        {!isLoadingListingsOnly && (
+          <NigerianStatesAndCities
+            currentState={userState}
+            onStateChange={(newState) => {
+              setUserState(newState);
+              localStorage.setItem("userState", newState);
+
+              // Set default city for selected state
+              const defaultCityMap = {
+                Lagos: "Ikeja",
+                Abuja: "Central",
+                Rivers: "Port Harcourt",
+                // Add more state-to-default-city mappings as needed
+              };
+
+              const defaultCity = defaultCityMap[newState] || "";
+              setSelectedCity(defaultCity);
+              localStorage.setItem("selectedCity", defaultCity);
+            }}
+          />
+        )}
 
         {/* Main Listings */}
         <div className="mt-14 border-b border-gray-400 pb-6">
-          {isFetching || isLoadingLocation ? (
-            <div className="w-full flex items-center justify-center p-12 mt-4">
-              <Loader />
-            </div>
-          ) : (
-            <HorizontalScrollContainer
-              title={`Properties around ${userState || "Your Area"}`}
-              icon={<MapPin size={20} />}
-              description={`Surf accommodations around ${userState || "your current state"}`}
-              childrenTwo={
+          <HorizontalScrollContainer
+            title={`Properties ${selectedCity ? `in ${selectedCity}, ` : "around "} ${userState || "Your Area"}`}
+            icon={<MapPin size={20} />}
+            description={`Surf accommodations ${selectedCity ? `in ${selectedCity}, ` : "around "} ${userState || "your current state"}`}
+            childrenTwo={
+              !isLoadingLocation && (
                 <PopularCities
                   selectedState={userState}
                   onCitySelect={handleCitySelect}
                   selectedCity={selectedCity}
                 />
-              }
-            >
-              {data?.payload.data && data.payload.data.length > 0 ? (
-                data.payload.data.map((listing) => (
-                  <div
-                    className="min-w-64 md:min-w-72 flex-shrink-0"
-                    key={listing.id}
-                  >
-                    <EnhancedQueryCard {...listing} />
-                  </div>
-                ))
-              ) : (
-                <div className="w-full flex flex-col items-center justify-center py-12">
-                  <p className="text-xl font-medium text-gray-700 mb-2">
-                    No properties found in{" "}
-                    {selectedCity ? `${selectedCity}, ` : ""}
-                    {userState || "this area"}
-                  </p>
-                  <p className="text-gray-500">
-                    Try selecting a different {selectedCity ? "city or " : ""}
-                    state
-                  </p>
+              )
+            }
+          >
+            {/* Only this part should show loading when refetching listings */}
+            {isRefetchingListings ? (
+              <div className="w-full flex items-center justify-center py-8">
+                <Loader />
+              </div>
+            ) : data?.payload.data && data.payload.data.length > 0 ? (
+              data.payload.data.map((listing) => (
+                <div
+                  className="min-w-64 md:min-w-72 flex-shrink-0"
+                  key={listing.id}
+                >
+                  <EnhancedQueryCard {...listing} />
                 </div>
-              )}
-            </HorizontalScrollContainer>
-          )}
+              ))
+            ) : (
+              <div className="w-full flex flex-col items-center justify-center py-12">
+                <p className="text-xl font-medium text-gray-700 mb-2">
+                  No properties found in{" "}
+                  {selectedCity ? `${selectedCity}, ` : ""}
+                  {userState || "this area"}
+                </p>
+                <p className="text-gray-500">
+                  Try selecting a different {selectedCity ? "city or " : ""}
+                  state
+                </p>
+              </div>
+            )}
+          </HorizontalScrollContainer>
         </div>
 
         {/* Nearby Listings section */}
         <NearbyListings
           data={data}
-          isFetching={isFetching || isLoadingLocation}
+          isFetching={isRefetchingListings}
           userState={userState}
           selectedCity={selectedCity}
         />

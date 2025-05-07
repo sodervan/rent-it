@@ -37,7 +37,7 @@ function Navbar() {
     <div className="flex h-16 md:h-20 shadow-md px-4 sticky top-0 z-[200] bg-white border-b">
       <div className="container flex items-center mx-auto">
         {/* Logo */}
-        <h1 className="text-lg md:text-xl font-bold text-purple-700">RentIt</h1>
+        <h1 className="text-lg md:text-xl font-bold text-purple-700">RentIT</h1>
 
         {/* Desktop Menu */}
         <div className="ml-auto items-center gap-6 hidden md:flex">

@@ -1,5 +1,4 @@
 import { LISTINGITEM } from "@/lib/api";
-import { IconCurrencyNaira } from "@tabler/icons-react";
 import {
   MapPin,
   Heart,
@@ -8,15 +7,22 @@ import {
   SquareIcon,
   ChevronLeft,
   ChevronRight,
+  Loader2,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
+import { motion } from "framer-motion";
+import { useFavorites } from "@/Pages/renter_dashboard/Contexts/FavContext.tsx";
 
 function QueryCard(props: LISTINGITEM) {
-  const [isFavorite, setIsFavorite] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
+
+  // Use the favorites context
+  const { isFavorite, addFavorite, removeFavorite, isLoading } = useFavorites();
+  const favorite = isFavorite(props.id);
+  const isCurrentLoading = isLoading[props.id] || false;
 
   // Function to save listing to recently viewed in localStorage
   const saveToRecentlyViewed = (e: React.MouseEvent) => {
@@ -24,31 +30,25 @@ function QueryCard(props: LISTINGITEM) {
     if ((e.target as HTMLElement).closest("button")) return;
 
     try {
-      // Get current recently viewed listings from localStorage
       const storedRecent = localStorage.getItem("recentlyViewedListings");
       let recentListings: LISTINGITEM[] = storedRecent
         ? JSON.parse(storedRecent)
         : [];
 
-      // Check if this listing is already in the recently viewed array
       const existingIndex = recentListings.findIndex(
         (item) => item.id === props.id,
       );
 
-      // If it exists, remove it so we can add it to the front (most recent)
       if (existingIndex !== -1) {
         recentListings.splice(existingIndex, 1);
       }
 
-      // Add current listing to the beginning of the array
       recentListings.unshift(props);
 
-      // Limit to 10 recent listings
       if (recentListings.length > 10) {
         recentListings = recentListings.slice(0, 10);
       }
 
-      // Save back to localStorage
       localStorage.setItem(
         "recentlyViewedListings",
         JSON.stringify(recentListings),
@@ -58,43 +58,19 @@ function QueryCard(props: LISTINGITEM) {
     }
   };
 
-  // Check if listing is in favorites when component mounts
-  useEffect(() => {
-    try {
-      const storedFavorites = localStorage.getItem("favoriteListings");
-      if (storedFavorites) {
-        const favorites: LISTINGITEM[] = JSON.parse(storedFavorites);
-        const isFav = favorites.some((item) => item.id === props.id);
-        setIsFavorite(isFav);
-      }
-    } catch (error) {
-      console.error("Failed to retrieve favorites:", error);
-    }
-  }, [props.id]);
-
-  // Toggle favorite status and update localStorage
-  const toggleFavorite = (e: React.MouseEvent) => {
+  // Toggle favorite status using the context
+  const toggleFavorite = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
     try {
-      const storedFavorites = localStorage.getItem("favoriteListings");
-      let favorites: LISTINGITEM[] = storedFavorites
-        ? JSON.parse(storedFavorites)
-        : [];
-
-      if (isFavorite) {
-        // Remove from favorites
-        favorites = favorites.filter((item) => item.id !== props.id);
+      if (favorite) {
+        await removeFavorite(props.id);
       } else {
-        // Add to favorites
-        favorites.push(props);
+        await addFavorite(props);
       }
-
-      localStorage.setItem("favoriteListings", JSON.stringify(favorites));
-      setIsFavorite(!isFavorite);
     } catch (error) {
-      console.error("Failed to update favorites:", error);
+      console.error("Failed to toggle favorite:", error);
     }
   };
 
@@ -186,17 +162,36 @@ function QueryCard(props: LISTINGITEM) {
         )}
 
         {/* Favorite button */}
-        <button
+        <motion.button
           onClick={toggleFavorite}
-          className="absolute top-2 right-2 bg-white p-1 rounded-full shadow-sm z-10"
+          disabled={isCurrentLoading}
+          className="absolute top-2 right-2 bg-white p-1 rounded-full shadow-md z-10 hover:bg-gray-50 transition-colors disabled:opacity-50"
+          whileTap={{ scale: 0.9 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.2 }}
         >
-          <Heart
-            size={18}
-            className={
-              isFavorite ? "text-red-500 fill-red-500" : "text-gray-400"
+          <motion.div
+            initial={false}
+            animate={
+              favorite && !isCurrentLoading ? { scale: [1, 1.2, 1] } : {}
             }
-          />
-        </button>
+            transition={{ duration: 0.3 }}
+          >
+            {isCurrentLoading ? (
+              <Loader2 size={18} className="text-purple-600 animate-spin" />
+            ) : (
+              <Heart
+                size={18}
+                className={
+                  favorite
+                    ? "text-red-500 fill-red-500 transition-colors duration-300"
+                    : "text-gray-400 transition-colors duration-300 hover:text-gray-600"
+                }
+              />
+            )}
+          </motion.div>
+        </motion.button>
 
         {/* Furnished badge */}
         {props.isFurnished && (

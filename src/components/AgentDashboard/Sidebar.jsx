@@ -30,7 +30,7 @@ const Sidebar = ({ firstname, loading }) => {
     {
       icon: ListTodo,
       label: "My Listings",
-      link: "/agent/dashboard/listings",
+      link: "/agent/dashboard/mylistings",
     },
     {
       icon: Calendar,

@@ -73,7 +73,7 @@ const AgentProfile = () => {
         withCredentials: true,
       });
       const data = response.data;
-      localStorage.setItem("agentData", JSON.stringify(data));
+      localStorage.setItem("agentData", JSON.stringify(data.payload));
       setAgentData(data.payload || data);
       console.log(data);
       initializeFormData(data.payload || data);
@@ -307,7 +307,7 @@ const AgentProfile = () => {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className="w-full py-2.5 text-white bg-purple-600 rounded-lg shadow-md hover:bg-purple-700 transition-colors"
-              onClick={() => navigate("/agent/dashboard")}
+              onClick={() => navigate("/agent/dashboard/mylistings")}
             >
               Dashboard
             </motion.button>

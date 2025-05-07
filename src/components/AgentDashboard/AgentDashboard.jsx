@@ -18,7 +18,7 @@ const AgentDashboard = () => {
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [share, setShare] = useState(null);
   const { tokenData } = useTokenData();
-  const [agentData, setAgentData] = useState(null);
+  // const [agentData, setAgentData] = useState(null);
 
   const [publishedListings, setPublishedListings] = useState([]);
   const [publishedLoading, setPublishedLoading] = useState(false);
@@ -36,8 +36,8 @@ const AgentDashboard = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("");
   const [priceRange, setPriceRange] = useState("");
+  const [agentData, setAgentData] = useState(null);
   const apiUrl = import.meta.env.VITE_API_URL;
-
   const encodeId = (id) => btoa(id.toString());
   const updateShareState = () => setShare(true);
   const closeShareModal = () => setShare(false);
@@ -163,25 +163,25 @@ const AgentDashboard = () => {
     }
   };
 
-  const fetchAgentDetails = async (forceRefresh = false) => {
-    if (!forceRefresh) {
-      const cached = getCachedData("agentData");
-      if (cached) {
-        setAgentData(cached);
-        return;
-      }
-    }
-
-    try {
-      const response = await axios.get(`${apiUrl}/api/v1/agents`, {
-        withCredentials: true,
-      });
-      setAgentData(response.data);
-      setCachedData("agentData", response.data);
-    } catch (error) {
-      console.error("Error fetching agent details:", error);
-    }
-  };
+  // const fetchAgentDetails = async (forceRefresh = false) => {
+  //   if (!forceRefresh) {
+  //     const cached = getCachedData("agentData");
+  //     if (cached) {
+  //       setAgentData(cached);
+  //       return;
+  //     }
+  //   }
+  //
+  //   try {
+  //     const response = await axios.get(`${apiUrl}/api/v1/agents`, {
+  //       withCredentials: true,
+  //     });
+  //     setAgentData(response.data);
+  //     setCachedData("agentData", response.data);
+  //   } catch (error) {
+  //     console.error("Error fetching agent details:", error);
+  //   }
+  // };
 
   const handleDelist = async (listingId) => {
     try {
@@ -364,7 +364,8 @@ const AgentDashboard = () => {
   };
 
   useEffect(() => {
-    fetchAgentDetails();
+    // fetchAgentDetails();
+    setAgentData(JSON.parse(localStorage.getItem("agentData")));
     fetchPublishedListings();
     fetchUnpublishedListings();
 
@@ -583,10 +584,7 @@ const AgentDashboard = () => {
 
   return (
     <>
-      <Sidebar
-        firstname={agentData ? agentData.payload.firstname : ""}
-        loading={currentLoading}
-      />
+      <Sidebar firstname={agentData?.firstname} loading={currentLoading} />
       <div className="content lg:ml-64 xl:ml-64 mt-24">
         <div className="px-5">
           <div className="flex flex-col gap-6 mb-8">

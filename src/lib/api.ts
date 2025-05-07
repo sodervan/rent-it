@@ -124,6 +124,25 @@ let get_listing = async () => {
   }
 };
 
+const addToFavourites = async (listingId) => {
+  try {
+    const resp = await axios.post(
+      `https://rent-it-api.onrender.com/api/v1/listings/${listingId}/favourite`,
+      {}, // Empty object or actual request body if needed
+      { withCredentials: true }, // Config options as third parameter
+    );
+
+    console.log("Added to favourites:", resp.data);
+    return resp.data;
+  } catch (err) {
+    console.error(
+      "Error adding to favourites:",
+      err.response?.data || err.message,
+    );
+    throw err; // Re-throw for further handling
+  }
+};
+
 let getWithFilters = ({ filters }: { filters: DEFAULTFILTERPARAM }) => {
   let filterString = Object.keys(filters)
     .map((e) => {
@@ -281,6 +300,7 @@ export {
   getUserData,
   getWithQuery,
   uploadProfilePic,
+  addToFavourites,
 };
 
 export type { LISTINGRESPONSE, LISTINGITEM, USERDETAILSPAYLOAD, PROFILEDATA };

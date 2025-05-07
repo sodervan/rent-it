@@ -25,6 +25,8 @@ import RenterVerificationEmail from "@/components/RenterVerificationEmail";
 import SessionExpiredModal from "../SessionExpiryModal";
 import AgentPasswordReset from "@/components/ForgotPassword/AgentPasswordReset";
 import { FullscreenLoader } from "@/FullScreenLoader";
+import AgentTransactionsPage from "@/components/AgentDashboard/AgentTransactionPage";
+import AgentHomePage from "@/components/AgentDashboard/AgentHomePage";
 
 // Protected Route Components
 const ProtectedRoute = ({ children, allowedRoles, redirectPath }) => {
@@ -147,7 +149,7 @@ function Routing() {
 
             {/* Protected Agent Routes */}
             <Route
-              path="/agent/dashboard"
+              path="/agent/dashboard/mylistings"
               element={
                 <AgentRoute>
                   <AgentDashboard />
@@ -167,6 +169,22 @@ function Routing() {
               element={
                 <AgentRoute>
                   <AgentProfile />
+                </AgentRoute>
+              }
+            />
+            <Route
+              path="agent/dashboard"
+              element={
+                <AgentRoute>
+                  <AgentHomePage />
+                </AgentRoute>
+              }
+            />
+            <Route
+              path="agent/dashboard/transactions"
+              element={
+                <AgentRoute>
+                  <AgentTransactionsPage />
                 </AgentRoute>
               }
             />

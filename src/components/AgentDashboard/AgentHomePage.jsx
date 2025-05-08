@@ -127,37 +127,35 @@ export default function AgentHomePage() {
             />
 
             {/* Overlay Content with responsive positioning */}
-            <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
-              <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex flex-col md:flex-row md:items-center">
-                  <div className="w-full md:w-2/3 lg:w-1/2 p-4 sm:p-6 md:p-8">
-                    <motion.div
-                      initial={{ y: 50, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      transition={{ delay: 0.3, duration: 0.8 }}
-                    >
-                      <motion.h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-semibold text-white mb-2 sm:mb-3 md:mb-4">
-                        SHOWCASE YOUR PROPERTIES
-                        <br className="hidden xs:block" />
-                        <span className="xs:ml-1"> WITH EASE</span>
-                      </motion.h1>
-                      <motion.p className="text-gray-50 text-xs sm:text-sm md:text-base lg:text-lg mb-4 sm:mb-6 md:mb-8 max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
-                        List your apartments, attract the right tenants, and
-                        manage your bookings — all in one place. Join our
-                        network of trusted agents and landlords
-                      </motion.p>
+            <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center">
+              <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="max-w-xl ml-4 sm:ml-8 md:ml-12 lg:ml-16">
+                  <motion.div
+                    initial={{ y: 50, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.3, duration: 0.8 }}
+                  >
+                    <motion.h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-white mb-3">
+                      <span className="block">SHOWCASE YOUR</span>
+                      <span className="block">PROPERTIES</span>
+                      <span className="block">WITH EASE</span>
+                    </motion.h1>
+                    <motion.p className="text-gray-50 text-xs sm:text-sm md:text-base lg:text-lg mb-6 max-w-md">
+                      List your apartments, attract the right tenants, and
+                      manage your bookings — all in one place. Join our network
+                      of trusted agents and landlords
+                    </motion.p>
 
-                      <motion.button
-                        className="bg-purple-500 hover:bg-purple-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-md transition-colors duration-300 text-sm sm:text-base md:text-lg w-full sm:w-auto"
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => {
-                          navigate("/agent/addlisting/1");
-                        }}
-                      >
-                        + Add a Listing
-                      </motion.button>
-                    </motion.div>
-                  </div>
+                    <motion.button
+                      className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded text-sm sm:text-base"
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => {
+                        navigate("/agent/addlisting/1");
+                      }}
+                    >
+                      + Add a Listing
+                    </motion.button>
+                  </motion.div>
                 </div>
               </div>
             </div>

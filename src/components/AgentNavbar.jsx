@@ -45,7 +45,7 @@ const Navbar = () => {
     },
     {
       name: "My Listings",
-      path: "/agent/listings",
+      path: "/agent/dashboard/mylistings",
       icon: <ListTodo size={20} />,
       exact: true,
     },
@@ -81,7 +81,7 @@ const Navbar = () => {
         </NavLink>
 
         {/* Hamburger Button for Small Screens */}
-        <div className="flex items-center space-x-4 md:hidden">
+        <div className="flex items-center space-x-4 lg:hidden">
           <button className="text-gray-700 hover:text-purple-600">
             <IconBell size={20} />
           </button>
@@ -94,7 +94,7 @@ const Navbar = () => {
         </div>
 
         {/* Desktop Navbar Content */}
-        <div className="hidden md:flex items-center space-x-6">
+        <div className="hidden lg:flex items-center space-x-6">
           {/* Search Bar */}
           <div className="flex items-center space-x-2">
             <input

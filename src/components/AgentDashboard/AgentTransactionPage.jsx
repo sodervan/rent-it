@@ -63,6 +63,7 @@ const summaryData = {
 export default function AgentTransactionsPage() {
   const [transactions] = useState(transactionsData);
   const [agentData, setAgentData] = useState(null);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   // Status badge styling
   const getStatusBadgeStyle = (status) => {
@@ -78,13 +79,22 @@ export default function AgentTransactionsPage() {
     }
   };
 
+  const handleSidebarCollapse = (collapsed) => {
+    setSidebarCollapsed(collapsed);
+  };
+
   useEffect(() => {
     setAgentData(JSON.parse(localStorage.getItem("agentData")));
   }, []);
   return (
     <>
-      <Sidebar firstname={agentData?.firstname} />
-      <div className="min-h-screen bg-gray-50 p-2 lg:ml-64">
+      <Sidebar
+        firstname={agentData?.firstname}
+        onCollapse={handleSidebarCollapse}
+      />
+      <div
+        className={`min-h-screen bg-gray-50 p-2 transition-all duration-300 ${sidebarCollapsed ? "lg:ml-20" : "lg:ml-60"}`}
+      >
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

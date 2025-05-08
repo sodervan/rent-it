@@ -32,6 +32,11 @@ const AgentProfile = () => {
   const [fetchingData, setFetchingData] = useState(false);
   const { clearToken } = useTokenData();
   const apiUrl = import.meta.env.VITE_API_URL;
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  const handleSidebarCollapse = (collapsed) => {
+    setSidebarCollapsed(collapsed);
+  };
 
   const toggleTab = (index) => {
     setToggleState(index);
@@ -238,12 +243,16 @@ const AgentProfile = () => {
 
   return (
     <>
-      <Sidebar firstname={formData.firstName} loading={loading} />
+      <Sidebar
+        firstname={formData.firstName}
+        loading={loading}
+        onCollapse={handleSidebarCollapse}
+      />
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="flex flex-col lg:flex-row mt-20 max-w-7xl w-[98%] mx-auto gap-10 min-h-screen px-4 lg:ml-64 lg:w-[80%]"
+        className={`transition-all duration-300 flex flex-col lg:flex-row mt-20 max-w-7xl w-[98%] mx-auto gap-10 min-h-screen px-4 ${sidebarCollapsed ? "lg:ml-20" : "lg:ml-60"} lg:w-[80%]`}
       >
         {/* Profile Sidebar */}
         <motion.div

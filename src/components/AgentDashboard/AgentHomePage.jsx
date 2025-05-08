@@ -10,6 +10,7 @@ export default function AgentHomePage() {
   const [priceRange, setPriceRange] = useState("All Prices");
   const [location, setLocation] = useState("Open Locations");
   const [agentData, setAgentData] = useState(null);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const navigate = useNavigate();
   const apiUrl = import.meta.env.VITE_API_URL;
   const [isLoading, setIsLoading] = useState(false);
@@ -43,7 +44,13 @@ export default function AgentHomePage() {
       fetchAgentDetails();
     }
   }, []);
-  // Featured properties data
+
+  // Handle sidebar collapse state
+  const handleSidebarCollapse = (collapsed) => {
+    setSidebarCollapsed(collapsed);
+  };
+
+  // Featured properties data - expanded to 6 items
   const featuredProperties = [
     {
       id: 1,
@@ -77,72 +84,94 @@ export default function AgentHomePage() {
       price: "$2,320,000",
       featured: "Featured",
     },
+    {
+      id: 5,
+      image: "/api/placeholder/580/320",
+      location: "Waterfront Villa",
+      rooms: "5 Beds • 4 Baths",
+      price: "$4,750,000",
+      featured: "Premium",
+    },
+    {
+      id: 6,
+      image: "/api/placeholder/580/320",
+      location: "Downtown Penthouse",
+      rooms: "3 Beds • 3 Baths",
+      price: "$3,125,000",
+      featured: "Featured",
+    },
   ];
 
   return (
     <>
-      <Sidebar firstname={agentData?.firstname} loading={isLoading} />
-      <div className="lg:ml-64 mt-20 min-h-screen font-sans">
-        {/* Hero Section */}
+      <Sidebar
+        firstname={agentData?.firstname}
+        loading={isLoading}
+        onCollapse={handleSidebarCollapse}
+      />
+      <div
+        className={`transition-all duration-300 ${sidebarCollapsed ? "lg:ml-20" : "lg:ml-60"} mt-20 min-h-screen font-sans`}
+      >
+        {/* Hero Section - Made fully responsive */}
         <motion.div
-          className="relative h-full overflow-hidden rounded-lg mx-4 mt-4"
+          className="relative overflow-hidden rounded-lg mx-4 mt-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
         >
-          <img
-            src="https://res.cloudinary.com/dmlgns85e/image/upload/v1746619048/huy-nguyen-AB-q9lwCVv8-unsplash_aagq8k.jpg"
-            alt="Modern Luxury Home"
-            className="w-full h-full object-cover"
-          />
+          <div className="relative h-[300px] sm:h-[350px] md:h-[400px] lg:h-[500px]">
+            <img
+              src="https://res.cloudinary.com/dmlgns85e/image/upload/v1746619048/huy-nguyen-AB-q9lwCVv8-unsplash_aagq8k.jpg"
+              alt="Modern Luxury Home"
+              className="w-full h-full object-cover"
+            />
 
-          {/* Overlay Content */}
-          <div className="absolute inset-0 bg-black bg-opacity-30">
-            <div className="bg-white p-6 max-w-md">
-              <motion.div
-                initial={{ y: 50, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.3, duration: 0.8 }}
-              >
-                <motion.h1 className="text-3xl md:text-4xl font-semibold text-black mb-2">
-                  SHOWCASE YOUR
-                  <br />
-                  PROPERTIES WITH EASE
-                </motion.h1>
-                <motion.p className="text-gray-600 text-sm md:text-base mb-6 max-w-md">
-                  List your apartments, attract the right tenants, and manage
-                  your bookings — all in one place. Join our network of trusted
-                  agents and landlords
-                </motion.p>
-
-                <motion.button
-                  className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-md transition-colors duration-300 w-full"
-                  // whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => {
-                    navigate("/agent/addlisting/1");
-                    console.log(localStorage.getItem());
-                  }}
+            {/* Overlay Content with responsive positioning */}
+            <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center md:block">
+              <div className="md:bg-white p-4 sm:p-6 md:p-8 max-w-full sm:max-w-md ml-4 sm:ml-8 md:ml-0">
+                <motion.div
+                  initial={{ y: 50, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.3, duration: 0.8 }}
                 >
-                  + Add a Listing
-                </motion.button>
-              </motion.div>
+                  <motion.h1 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-semibold text-white md:text-black mb-1 sm:mb-2">
+                    SHOWCASE YOUR
+                    <br className="hidden xs:block" />
+                    <span className="xs:ml-1"> PROPERTIES WITH EASE</span>
+                  </motion.h1>
+                  <motion.p className="text-gray-50 md:text-gray-600 text-xs sm:text-sm md:text-base mb-3 sm:mb-4 md:mb-6 max-w-xs sm:max-w-sm md:max-w-md">
+                    List your apartments, attract the right tenants, and manage
+                    your bookings — all in one place. Join our network of
+                    trusted agents and landlords
+                  </motion.p>
+
+                  <motion.button
+                    className="bg-purple-500 hover:bg-purple-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-md transition-colors duration-300 text-sm sm:text-base w-full"
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => {
+                      navigate("/agent/addlisting/1");
+                    }}
+                  >
+                    + Add a Listing
+                  </motion.button>
+                </motion.div>
+              </div>
             </div>
           </div>
         </motion.div>
 
-        {/* Filters Section */}
+        {/* Filters Section - Made responsive */}
         <motion.div
-          className="mx-auto -mt-12 relative z-10 bg-white shadow-lg p-4 w-[80%]"
+          className="mx-auto -mt-8 sm:-mt-10 md:-mt-12 relative z-10 bg-white shadow-lg p-3 sm:p-4 w-[90%] sm:w-[85%] md:w-[80%]"
           initial={{ y: 30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.5, duration: 0.6 }}
         >
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
             <div>
               <p className="text-xs text-gray-500 mb-1">Location</p>
               <select
-                className="w-full p-2 border border-gray-200 rounded-md"
+                className="w-full p-2 border border-gray-200 rounded-md text-sm"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
               >
@@ -157,7 +186,7 @@ export default function AgentHomePage() {
             <div>
               <p className="text-xs text-gray-500 mb-1">Property Type</p>
               <select
-                className="w-full p-2 border border-gray-200 rounded-md"
+                className="w-full p-2 border border-gray-200 rounded-md text-sm"
                 value={propertyType}
                 onChange={(e) => setPropertyType(e.target.value)}
               >
@@ -169,10 +198,10 @@ export default function AgentHomePage() {
               </select>
             </div>
 
-            <div>
+            <div className="sm:col-span-2 md:col-span-1">
               <p className="text-xs text-gray-500 mb-1">Price Range</p>
               <select
-                className="w-full p-2 border border-gray-200 rounded-md"
+                className="w-full p-2 border border-gray-200 rounded-md text-sm"
                 value={priceRange}
                 onChange={(e) => setPriceRange(e.target.value)}
               >
@@ -186,18 +215,43 @@ export default function AgentHomePage() {
           </div>
         </motion.div>
 
-        {/* Featured Properties Section */}
-        <div className="px-4 py-12">
-          <motion.h2
-            className="text-2xl font-semibold mb-6"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.7 }}
-          >
-            Featured Properties
-          </motion.h2>
+        {/* Featured Properties Section - Increased to 6 items with responsive grid */}
+        <div className="px-4 py-8 sm:py-10 md:py-12">
+          <div className="flex justify-between items-center mb-4 sm:mb-6">
+            <motion.h2
+              className="text-xl sm:text-2xl font-semibold"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.7 }}
+            >
+              Featured Properties
+            </motion.h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <motion.button
+              className="text-sm text-purple-600 hover:text-purple-800 flex items-center"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.8 }}
+            >
+              View All
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4 ml-1"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </motion.button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
             {featuredProperties.map((property, index) => (
               <motion.div
                 key={property.id}
@@ -211,7 +265,7 @@ export default function AgentHomePage() {
                   <img
                     src={property.image}
                     alt={property.location}
-                    className="w-full h-52 object-cover"
+                    className="w-full h-40 sm:h-44 md:h-48 object-cover"
                   />
                   <div className="absolute top-3 left-3">
                     <span
@@ -222,17 +276,19 @@ export default function AgentHomePage() {
                   </div>
                 </div>
 
-                <div className="p-4">
-                  <h3 className="font-medium text-lg mb-1">
+                <div className="p-3 sm:p-4">
+                  <h3 className="font-medium text-base sm:text-lg mb-1 line-clamp-1">
                     {property.location}
                   </h3>
-                  <p className="text-sm text-gray-500 mb-3">{property.rooms}</p>
+                  <p className="text-xs sm:text-sm text-gray-500 mb-2 sm:mb-3">
+                    {property.rooms}
+                  </p>
 
                   <div className="flex justify-between items-center">
-                    <span className="font-semibold text-lg">
+                    <span className="font-semibold text-sm sm:text-base md:text-lg">
                       {property.price}
                     </span>
-                    <button className="text-purple-600 text-sm">
+                    <button className="text-purple-600 text-xs sm:text-sm hover:text-purple-800 transition-colors">
                       View Details →
                     </button>
                   </div>

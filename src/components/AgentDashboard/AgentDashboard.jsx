@@ -168,25 +168,17 @@ const AgentDashboard = () => {
     }
   };
 
-  // const fetchAgentDetails = async (forceRefresh = false) => {
-  //   if (!forceRefresh) {
-  //     const cached = getCachedData("agentData");
-  //     if (cached) {
-  //       setAgentData(cached);
-  //       return;
-  //     }
-  //   }
-  //
-  //   try {
-  //     const response = await axios.get(`${apiUrl}/api/v1/agents`, {
-  //       withCredentials: true,
-  //     });
-  //     setAgentData(response.data);
-  //     setCachedData("agentData", response.data);
-  //   } catch (error) {
-  //     console.error("Error fetching agent details:", error);
-  //   }
-  // };
+  const fetchAgentDetails = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/api/v1/agents`, {
+        withCredentials: true,
+      });
+      setAgentData(response.data.payload);
+      localStorage.setItem("agentData", JSON.stringify(response.data.payload));
+    } catch (error) {
+      console.error("Error fetching agent details:", error);
+    }
+  };
 
   const handleDelist = async (listingId) => {
     try {
@@ -370,7 +362,12 @@ const AgentDashboard = () => {
 
   useEffect(() => {
     // fetchAgentDetails();
-    setAgentData(JSON.parse(localStorage.getItem("agentData")));
+    if (localStorage.getItem("agentData")) {
+      setAgentData(JSON.parse(localStorage.getItem("agentData")));
+    } else {
+      fetchAgentDetails();
+    }
+
     fetchPublishedListings();
     fetchUnpublishedListings();
 

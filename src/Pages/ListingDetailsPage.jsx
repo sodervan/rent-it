@@ -70,7 +70,7 @@ const ListingDetailsPage = () => {
       }
     };
 
-    // fetchListing();
+    fetchListing();
   }, [apiUrl, listingId]);
 
   if (loading) {

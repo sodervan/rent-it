@@ -17,6 +17,15 @@ import {
   FaRegClock,
 } from "react-icons/fa";
 import { TbPlugConnected } from "react-icons/tb";
+import { DollarSign, Info, ChevronDown, ChevronUp } from "lucide-react";
+import {
+  FaLocationArrow,
+  FaSchool,
+  FaHospital,
+  FaCity,
+  FaBuilding,
+} from "react-icons/fa";
+import { MdExpandMore, MdExpandLess, MdDirectionsBus } from "react-icons/md";
 import { FaWater } from "react-icons/fa";
 import { MdOutlineFoodBank } from "react-icons/md";
 import { IconVideo, IconPhoto } from "@tabler/icons-react";
@@ -38,6 +47,8 @@ const ListingDetailsPage = () => {
   const [showBookingForm, setShowBookingForm] = useState(true);
   const [showVideoModal, setShowVideoModal] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
 
   // For proper API integration
   useEffect(() => {
@@ -50,6 +61,7 @@ const ListingDetailsPage = () => {
         );
         const data = response?.data?.payload;
         setListing(data[0]);
+        console.log(listing);
       } catch (err) {
         console.error("Error fetching listing data:", err);
         setError(err.message || "Failed to load listing details");
@@ -79,7 +91,7 @@ const ListingDetailsPage = () => {
         <h3 className="text-xl font-bold mb-2">Error Loading Listing</h3>
         <p>{error}</p>
         <button
-          className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+          className="mt-4 bg-primaryPurple text-white px-4 py-2 rounded-md"
           onClick={() => window.location.reload()}
         >
           Try Again
@@ -336,8 +348,8 @@ const ListingDetailsPage = () => {
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="grid grid-cols-3 sm:grid-cols-5 gap-4 border shadow-md rounded-lg border-gray-200 py-6 mb-6"
+              transition={{ delay: 0.5 }}
+              className="grid grid-cols-3 sm:grid-cols-5 gap-4 border shadow-md rounded-lg border-gray-200 py-6 mb-10"
             >
               <div className="text-center">
                 <p className="text-gray-500 text-sm mb-1">Bedroom</p>
@@ -383,9 +395,12 @@ const ListingDetailsPage = () => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
-              className="mb-8"
+              className="mb-10"
             >
-              <h2 className="text-xl font-semibold mb-3">Description</h2>
+              <p className="font-medium mb-3 text-lg flex items-center">
+                <span className="inline-block w-1 h-6 bg-primaryPurple rounded mr-2"></span>
+                Description
+              </p>
               <p className="text-gray-600">
                 {showFullDescription ? listing.description : shortDescription}
                 {listing.description?.length > 150 && (
@@ -399,52 +414,134 @@ const ListingDetailsPage = () => {
               </p>
             </motion.div>
 
+            {/*LISTING FEATURES*/}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.3 }}
+              className="mb-10"
+            >
+              <p className="font-medium mb-3 text-lg flex items-center">
+                <span className="inline-block w-1 h-6 bg-primaryPurple rounded mr-2"></span>
+                Property Features
+              </p>
+
+              {listing.featureTags && listing.featureTags.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {listing.featureTags
+                    .filter((item) => item.featureTag && item.featureTag.name)
+                    .map((item, index) => (
+                      <div
+                        key={index}
+                        className="inline-flex items-center px-3 py-1.5 bg-blue-50 text-blue-800 border border-blue-100 rounded-full text-sm font-medium hover:bg-blue-100 transition-colors duration-200 shadow-sm"
+                      >
+                        {item.featureTag.interfaceIconCode ? (
+                          <i
+                            className={`${item.featureTag.interfaceIconCode} mr-1.5 text-blue-600`}
+                            aria-hidden="true"
+                          />
+                        ) : (
+                          <span className="w-2 h-2 rounded-full bg-blue-600 mr-1.5"></span>
+                        )}
+                        <span>{item.featureTag.name}</span>
+                      </div>
+                    ))}
+                </div>
+              ) : (
+                <div className="text-gray-500 italic">
+                  No additional features specified
+                </div>
+              )}
+            </motion.div>
+
+            {/*BILLS*/}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.3 }}
+              className="mb-10"
+            >
+              <p className="font-medium mb-3 text-lg flex items-center">
+                <span className="inline-block w-1 h-6 bg-primaryPurple rounded mr-2"></span>
+                Property Bills
+              </p>
+
+              {listing.billsTags && listing.billsTags.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {listing.billsTags
+                    .filter((item) => item.billTag && item.billTag.name)
+                    .map((item, index) => (
+                      <div
+                        key={index}
+                        className="inline-flex items-center px-3 py-1.5 bg-blue-50 text-blue-800 border border-blue-100 rounded-full text-sm font-medium hover:bg-blue-100 transition-colors duration-200 shadow-sm"
+                      >
+                        {item.billTag.interfaceIconCode ? (
+                          <i
+                            className={`${item.billTag.interfaceIconCode} mr-1.5 text-blue-600`}
+                            aria-hidden="true"
+                          />
+                        ) : (
+                          <span className="w-2 h-2 rounded-full bg-blue-600 mr-1.5"></span>
+                        )}
+                        <span>{item.billTag.name}</span>
+                      </div>
+                    ))}
+                </div>
+              ) : (
+                <div className="text-gray-500 italic">
+                  No additional features specified
+                </div>
+              )}
+            </motion.div>
+
             {/* Property Features */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
-              className="mb-8 bg-gray-50 p-4 rounded-lg"
+              className="mb-8 bg-gray-50 p-5 rounded-lg shadow-sm"
             >
-              <h2 className="text-xl font-semibold mb-3">Features</h2>
+              <h2 className="text-lg font-medium mb-4  border-b pb-2">
+                Features
+              </h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-y-4">
-                <div className="flex items-center">
-                  <TbPlugConnected className="text-primaryPurple mr-2" />
-                  <span>
+                <div className="flex items-center group">
+                  <TbPlugConnected className="text-primaryPurple mr-2 group-hover:scale-110 transition-transform" />
+                  <span className="text-gray-700">
                     {listing.listingFeatures?.electricityPaymentType ===
                     "prepaid"
                       ? "Prepaid Electricity"
                       : "Electricity"}
                   </span>
                 </div>
-                <div className="flex items-center">
-                  <FaBath className="text-primaryPurple mr-2" />
-                  <span>
+                <div className="flex items-center group">
+                  <FaBath className="text-primaryPurple mr-2 group-hover:scale-110 transition-transform" />
+                  <span className="text-gray-700">
                     {listing.bathroomAccessType === "private"
                       ? "Private Bathroom"
                       : "Shared Bathroom"}
                   </span>
                 </div>
-                <div className="flex items-center">
-                  <FaBed className="text-primaryPurple mr-2" />
-                  <span>
+                <div className="flex items-center group">
+                  <FaBed className="text-primaryPurple mr-2 group-hover:scale-110 transition-transform" />
+                  <span className="text-gray-700">
                     {listing.bedroomAccessType === "private"
                       ? "Private Bedroom"
                       : "Shared Bedroom"}
                   </span>
                 </div>
-                <div className="flex items-center">
-                  <MdOutlineFoodBank className="text-primaryPurple mr-2" />
-                  <span>
+                <div className="flex items-center group">
+                  <MdOutlineFoodBank className="text-primaryPurple mr-2 group-hover:scale-110 transition-transform" />
+                  <span className="text-gray-700">
                     {listing.kitchenAccessType === "private"
                       ? "Private Kitchen"
                       : "Shared Kitchen"}
                   </span>
                 </div>
                 {listing.electricityAccessType && (
-                  <div className="flex items-center">
-                    <TbPlugConnected className="text-primaryPurple mr-2" />
-                    <span>
+                  <div className="flex items-center group">
+                    <TbPlugConnected className="text-primaryPurple mr-2 group-hover:scale-110 transition-transform" />
+                    <span className="text-gray-700">
                       {listing.electricityAccessType === "private"
                         ? "Private Electricity"
                         : "Shared Electricity"}
@@ -452,9 +549,11 @@ const ListingDetailsPage = () => {
                   </div>
                 )}
                 {listing.furnishingState && (
-                  <div className="flex items-center">
-                    <span className="mr-2">🪑</span>
-                    <span>
+                  <div className="flex items-center group">
+                    <span className="mr-2 text-xl group-hover:scale-110 transition-transform">
+                      🪑
+                    </span>
+                    <span className="text-gray-700">
                       {listing.furnishingState === "fully-furnished"
                         ? "Fully Furnished"
                         : listing.furnishingState === "semi-furnished"
@@ -464,10 +563,166 @@ const ListingDetailsPage = () => {
                   </div>
                 )}
                 {listing.outdoorWaterTaps && (
-                  <div className="flex items-center">
-                    <FaWater className="text-gray-700 mr-2" />
-                    <span>Outdoor Water Taps</span>
+                  <div className="flex items-center group">
+                    <FaWater className="text-primaryPurple mr-2 group-hover:scale-110 transition-transform" />
+                    <span className="text-gray-700">Outdoor Water Taps</span>
                   </div>
+                )}
+              </div>
+            </motion.div>
+
+            {/*LOCATION AND LANDMARKS*/}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="mb-8 bg-gray-50 p-5 rounded-lg shadow-sm"
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-medium flex items-center">
+                  <FaMapMarkerAlt className="text-primaryPurple mr-2" />
+                  Location Details
+                </h2>
+                <button
+                  onClick={() => setExpanded(!expanded)}
+                  className="text-primaryPurple flex items-center text-sm font-medium"
+                >
+                  {expanded ? (
+                    <>
+                      Less details <MdExpandLess className="ml-1" />
+                    </>
+                  ) : (
+                    <>
+                      More details <MdExpandMore className="ml-1" />
+                    </>
+                  )}
+                </button>
+              </div>
+
+              <div className="space-y-3">
+                {/* Address */}
+                <div className="flex">
+                  <div className="w-6 mr-2 text-primaryPurple flex-shrink-0">
+                    <FaLocationArrow />
+                  </div>
+                  <div>
+                    <div className="text-sm text-gray-500 mb-0.5">Address</div>
+                    <div className="text-gray-700">
+                      {listing.location.streetAddress}
+                    </div>
+                    <div className="text-gray-700">
+                      {listing.location.city?.name},{" "}
+                      {listing.location.state?.name},{" "}
+                      {listing.location.country?.name}{" "}
+                      {listing.location.postalCode}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Transportation */}
+                <div className="flex">
+                  <div className="w-6 mr-2 text-primaryPurple flex-shrink-0">
+                    <MdDirectionsBus />
+                  </div>
+                  <div>
+                    <div className="text-sm text-gray-500 mb-2">
+                      Transportation
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {listing.location.transportation?.map((item, index) => (
+                        <span
+                          key={index}
+                          className="inline-flex items-center px-3.5 py-1.5 bg-purple-50 text-purple-700 rounded-full text-xs font-medium"
+                        >
+                          {item}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Conditional content */}
+                {expanded && (
+                  <>
+                    {/* Local Government */}
+                    <div className="flex">
+                      <div className="w-6 mr-2 text-primaryPurple flex-shrink-0">
+                        <FaBuilding />
+                      </div>
+                      <div>
+                        <div className="text-sm text-gray-500 mb-2">
+                          Local Government
+                        </div>
+                        <div className="text-gray-700">
+                          {listing.location.localGovernmentArea?.name}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Educational Institutions */}
+                    <div className="flex">
+                      <div className="w-6 mr-2 text-primaryPurple flex-shrink-0">
+                        <FaSchool />
+                      </div>
+                      <div>
+                        <div className="text-sm text-gray-500 mb-2">
+                          Nearby Educational Institutions
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {listing.location.educationalInstitutions?.map(
+                            (item, index) => (
+                              <span
+                                key={index}
+                                className="inline-flex items-center px-3.5 py-1.5 bg-blue-50 text-blue-700 rounded-full text-xs font-medium"
+                              >
+                                {item}
+                              </span>
+                            ),
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Health Facilities */}
+                    <div className="flex">
+                      <div className="w-6 mr-2 text-primaryPurple flex-shrink-0">
+                        <FaHospital />
+                      </div>
+                      <div>
+                        <div className="text-sm text-gray-500 mb-2">
+                          Nearby Health Facilities
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {listing.location.healthFacilities?.map(
+                            (item, index) => (
+                              <span
+                                key={index}
+                                className="inline-flex items-center px-3.5 py-1.5 bg-green-50 text-green-700 rounded-full text-xs font-medium"
+                              >
+                                {item}
+                              </span>
+                            ),
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Coordinates */}
+                    <div className="flex">
+                      <div className="w-6 mr-2 text-primaryPurple flex-shrink-0">
+                        <FaMapMarkerAlt />
+                      </div>
+                      <div>
+                        <div className="text-sm text-gray-500 mb-0.5">
+                          Coordinates
+                        </div>
+                        <div className="text-gray-700">
+                          {listing.location.coordinates?.x.toFixed(6)},{" "}
+                          {listing.location.coordinates?.y.toFixed(6)}
+                        </div>
+                      </div>
+                    </div>
+                  </>
                 )}
               </div>
             </motion.div>
@@ -478,32 +733,96 @@ const ListingDetailsPage = () => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.65 }}
-                className="mb-8"
+                className="mb-8 rounded-lg border border-gray-200 shadow-sm overflow-hidden"
               >
-                <h2 className="text-xl font-semibold mb-3">Additional Fees</h2>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b border-gray-200">
-                        <th className="text-left py-2">Fee Type</th>
-                        <th className="text-right py-2">Amount</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {listing.extraFees.map((fee, index) => (
-                        <tr key={index} className="border-b border-gray-100">
-                          <td className="py-2">
-                            {fee.feeType?.name || `Additional Fee ${index + 1}`}
-                          </td>
-                          <td className="text-right py-2">
-                            {currencySymbol}
-                            {formatPrice(fee.amount)}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                <div
+                  className="bg-white px-6 py-4 flex justify-between items-center cursor-pointer"
+                  onClick={() => setIsExpanded(!isExpanded)}
+                >
+                  <div className="flex items-center space-x-2">
+                    <p className="text-primaryPurple text-lg">
+                      {listing?.currency.symbol}
+                    </p>
+                    <h2 className="text-lg font-medium">Additional Fees</h2>
+                    <div className="ml-2 bg-secondaryPurple text-primaryPurple text-xs px-2 py-1 rounded-full font-medium">
+                      {listing.extraFees.length}{" "}
+                      {listing.extraFees.length === 1 ? "fee" : "fees"}
+                    </div>
+                  </div>
+                  <div className="flex items-center">
+                    <span className="mr-3 font-medium text-gray-700">
+                      Total: {currencySymbol}
+                      {formatPrice(
+                        listing.extraFees.reduce(
+                          (sum, fee) => sum + fee.amount,
+                          0,
+                        ),
+                      )}
+                    </span>
+                    {isExpanded ? (
+                      <ChevronUp className="h-5 w-5 text-gray-500" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-gray-500" />
+                    )}
+                  </div>
                 </div>
+
+                {isExpanded && (
+                  <div className="bg-gray-50 px-6 py-4">
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead>
+                          <tr className="border-b border-gray-200">
+                            <th className="text-left py-3 px-2 text-sm font-medium text-gray-600">
+                              Fee Description
+                            </th>
+                            <th className="text-right py-3 px-2 text-sm font-medium text-gray-600">
+                              Amount
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {listing.extraFees.map((fee, index) => (
+                            <tr key={index} className={`border-b bg-white`}>
+                              <td className="py-3 px-2 flex items-center">
+                                {fee.feeType?.description && (
+                                  <div className="relative group mr-2">
+                                    <Info className="h-4 w-4 text-gray-400" />
+                                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block bg-gray-800 text-white text-xs p-2 rounded w-48">
+                                      {fee.feeType.description}
+                                    </div>
+                                  </div>
+                                )}
+                                <span className="font-medium text-gray-700">
+                                  {fee.feeType?.name ||
+                                    `Additional Fee ${index + 1}`}
+                                </span>
+                              </td>
+                              <td className="text-right py-3 px-2 font-medium text-gray-800">
+                                {currencySymbol}
+                                {formatPrice(fee.amount)}
+                              </td>
+                            </tr>
+                          ))}
+                          <tr className="bg-secondaryPurple">
+                            <td className="py-3 px-2 font-semibold text-primaryPurple">
+                              Total Additional Fees
+                            </td>
+                            <td className="text-right py-3 px-2 font-semibold text-primaryPurple">
+                              {currencySymbol}
+                              {formatPrice(
+                                listing.extraFees.reduce(
+                                  (sum, fee) => sum + fee.amount,
+                                  0,
+                                ),
+                              )}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
               </motion.div>
             )}
 
@@ -514,12 +833,12 @@ const ListingDetailsPage = () => {
               transition={{ delay: 0.7 }}
               className="mb-8"
             >
-              <h2 className="text-xl font-semibold mb-3">Location</h2>
+              <h2 className="text-lg font-medium mb-3">Location</h2>
               <div className="h-72 bg-gray-200 rounded-lg overflow-hidden">
                 {/* Replace this with actual map component from your preferred mapping library */}
                 <div className="relative w-full h-full">
                   <img
-                    src="/api/placeholder/800/400"
+                    src="#"
                     alt="Map location"
                     className="w-full h-full object-cover"
                   />
@@ -544,9 +863,7 @@ const ListingDetailsPage = () => {
                 transition={{ delay: 0.75 }}
                 className="mb-8"
               >
-                <h2 className="text-xl font-semibold mb-3">
-                  Tenancy Agreement
-                </h2>
+                <h2 className="text-lg font-medium mb-3">Tenancy Agreement</h2>
                 <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
                   <div className="flex items-center justify-between">
                     <div>
@@ -565,7 +882,7 @@ const ListingDetailsPage = () => {
                       href={listing.tenancyAgreement.fileUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm"
+                      className="bg-primaryPurple text-white px-4 py-2 rounded-md text-sm"
                     >
                       View Document
                     </a>
@@ -580,7 +897,7 @@ const ListingDetailsPage = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8 }}
             >
-              <h2 className="text-xl font-semibold mb-4">
+              <h2 className="text-lg font-semibold mb-4">
                 Properties available in the same area
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

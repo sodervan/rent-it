@@ -1,4 +1,3 @@
-
 import { LISTINGITEM } from "@/lib/api";
 import {
   MapPin,
@@ -15,7 +14,9 @@ import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { useFavorites } from "@/Pages/renter_dashboard/Contexts/FavContext.tsx";
 
-function QueryCard(props: LISTINGITEM) {
+function FavouritesCard(props: LISTINGITEM) {
+  console.log("FavouritesCard props:", props);
+  
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
@@ -116,7 +117,7 @@ function QueryCard(props: LISTINGITEM) {
             <img
               key={`${props.id}-image-${index}`}
               loading="lazy"
-              src={picture?.imageUrl || "/placeholder-property.jpg"}
+              src={picture?.image_url || "/placeholder-property.jpg"}
               className={`w-full h-full object-cover absolute top-0 left-0 transition-all duration-500 
                 ${currentImageIndex === index ? "opacity-100 scale-100" : "opacity-0 scale-95"} 
                 ${isImageLoaded ? "animate-fadeIn" : ""}`}
@@ -243,4 +244,4 @@ function QueryCard(props: LISTINGITEM) {
   );
 }
 
-export default QueryCard;
+export default FavouritesCard;

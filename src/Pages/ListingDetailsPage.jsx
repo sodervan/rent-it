@@ -19,6 +19,16 @@ import {
 import { TbPlugConnected } from "react-icons/tb";
 import { DollarSign, Info, ChevronDown, ChevronUp } from "lucide-react";
 import {
+  Home,
+  Bed,
+  Droplet,
+  Plug,
+  Lock,
+  Sofa,
+  Key,
+  ShowerHead,
+} from "lucide-react";
+import {
   FaLocationArrow,
   FaSchool,
   FaHospital,
@@ -53,6 +63,7 @@ const ListingDetailsPage = () => {
   const [showContactForm, setShowContactForm] = useState(false);
   const [agentLoading, setAgentLoading] = useState(false);
   const [unitCount, setUnitCount] = useState(1);
+  const [isConfirmingBooking, setIsConfirmingBooking] = useState(false);
 
   // For proper API integration
   useEffect(() => {
@@ -65,6 +76,7 @@ const ListingDetailsPage = () => {
         );
         const data = response?.data?.payload;
         setListing(data[0]);
+        console.log(data);
       } catch (err) {
         console.error("Error fetching listing data:", err);
         setError(err.message || "Failed to load listing details");
@@ -169,6 +181,17 @@ const ListingDetailsPage = () => {
     });
   };
 
+  const handleBookButtonClick = () => {
+    if (!isConfirmingBooking) {
+      setIsConfirmingBooking(true);
+    } else {
+      // Actual booking logic would go here
+      alert(`Booking ${unitCount} unit(s) confirmed!`);
+      // Reset or proceed to next step
+      setIsConfirmingBooking(false);
+    }
+  };
+
   // Check if the property has a specific feature
   const hasFeature = (featureName) => {
     return listing.featureTags?.some(
@@ -176,6 +199,16 @@ const ListingDetailsPage = () => {
         tag.featureTag?.name?.toLowerCase() === featureName.toLowerCase(),
     );
   };
+
+  const renderInfoRow = (icon, label, value) => (
+    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+      <div className="flex items-center space-x-3">
+        {icon}
+        <span className="text-gray-700 font-medium">{label}</span>
+      </div>
+      <span className="text-gray-900 font-semibold">{value || "NO"}</span>
+    </div>
+  );
 
   return (
     <motion.div
@@ -191,106 +224,41 @@ const ListingDetailsPage = () => {
             {/* Image Gallery */}
             <div className="relative mb-3">
               <AnimatePresence>
-                {!showAllImages ? (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="w-full grid grid-cols-2 md:grid-cols-3 gap-2 h-auto md:h-96"
+                >
+                  {/* Main image - spans full width on mobile, larger on desktop */}
                   <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="sm:grid sm:grid-cols-3 sm:gap-2 sm:h-96 flex flex-col gap-2"
+                    className="col-span-2 h-64 md:h-auto md:col-span-2 md:row-span-2 relative rounded-xl overflow-hidden"
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ duration: 0.3 }}
                   >
+                    <img
+                      src={displayImages[0]}
+                      alt={listing.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </motion.div>
+
+                  {/* Secondary images - 2x2 grid on mobile, vertical stack on desktop */}
+                  {[1, 2].map((index) => (
                     <motion.div
-                      className="sm:col-span-2 sm:row-span-2 relative rounded-xl overflow-hidden h-64 sm:h-full"
-                      whileHover={{ scale: 1.02 }}
+                      key={index}
+                      className="h-32 md:h-full md:row-span-1 relative rounded-xl overflow-hidden"
+                      whileHover={{ scale: 1.05 }}
                       transition={{ duration: 0.3 }}
                     >
                       <img
-                        src={displayImages[0]}
-                        alt={listing.title}
+                        src={displayImages[index] || displayImages[0]}
+                        alt={`${listing.title} interior ${index}`}
                         className="w-full h-full object-cover"
                       />
                     </motion.div>
-
-                    <div className="flex sm:flex-col gap-2 sm:h-full">
-                      <motion.div
-                        className="relative rounded-xl overflow-hidden flex-1 h-40 sm:h-full"
-                        whileHover={{ scale: 1.05 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <img
-                          src={displayImages[1] || displayImages[0]}
-                          alt={`${listing.title} interior 1`}
-                          className="w-full h-full object-cover"
-                        />
-                      </motion.div>
-                      <motion.div
-                        className="relative rounded-xl overflow-hidden flex-1 h-40 sm:h-full"
-                        whileHover={{ scale: 1.05 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <img
-                          src={displayImages[2] || displayImages[0]}
-                          alt={`${listing.title} interior 2`}
-                          className="w-full h-full object-cover"
-                        />
-                      </motion.div>
-                    </div>
-
-                    {/* View all photos button - positioned absolutely over the first image */}
-                    <div className="absolute bottom-4 right-4 z-10">
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="bg-white px-4 py-2 rounded-lg shadow-md font-medium text-sm flex items-center"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-4 w-4 mr-2"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M4 6h16M4 12h16m-7 6h7"
-                          />
-                        </svg>
-                        View all photos
-                      </motion.button>
-                    </div>
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="bg-white p-4 fixed inset-0 z-50 overflow-y-auto"
-                  >
-                    <div className="flex justify-between items-center mb-4">
-                      <h3 className="text-xl font-bold">
-                        {listing.title} - All Photos
-                      </h3>
-                      <button
-                        onClick={() => setShowAllImages(false)}
-                        className="text-gray-800 hover:text-gray-600"
-                      >
-                        ✕ Close
-                      </button>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {displayImages.map((img, idx) => (
-                        <div key={idx} className="rounded-lg overflow-hidden">
-                          <img
-                            src={img}
-                            alt={`${listing.title} - Photo ${idx + 1}`}
-                            className="w-full h-64 object-cover"
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </motion.div>
-                )}
+                  ))}
+                </motion.div>
               </AnimatePresence>
 
               {/* Action buttons over image */}
@@ -482,15 +450,15 @@ const ListingDetailsPage = () => {
                     .map((item, index) => (
                       <div
                         key={index}
-                        className="inline-flex items-center px-3 py-1.5 bg-blue-50 text-blue-800 border border-blue-100 rounded-full text-sm font-medium hover:bg-blue-100 transition-colors duration-200 shadow-sm"
+                        className="inline-flex items-center px-3 py-1.5 bg-purple-50 text-purple-800 border border-purple-100 rounded-full text-sm font-medium hover:bg-purple-100 transition-colors duration-200 shadow-sm"
                       >
                         {item.featureTag.interfaceIconCode ? (
                           <i
-                            className={`${item.featureTag.interfaceIconCode} mr-1.5 text-blue-600`}
+                            className={`${item.featureTag.interfaceIconCode} mr-1.5 text-purple-600`}
                             aria-hidden="true"
                           />
                         ) : (
-                          <span className="w-2 h-2 rounded-full bg-blue-600 mr-1.5"></span>
+                          <span className="w-2 h-2 rounded-full bg-purple-600 mr-1.5"></span>
                         )}
                         <span>{item.featureTag.name}</span>
                       </div>
@@ -522,15 +490,15 @@ const ListingDetailsPage = () => {
                     .map((item, index) => (
                       <div
                         key={index}
-                        className="inline-flex items-center px-3 py-1.5 bg-blue-50 text-blue-800 border border-blue-100 rounded-full text-sm font-medium hover:bg-blue-100 transition-colors duration-200 shadow-sm"
+                        className="inline-flex items-center px-3 py-1.5 bg-purple-50 text-purple-800 border border-purple-100 rounded-full text-sm font-medium hover:bg-purple-100 transition-colors duration-200 shadow-sm"
                       >
                         {item.billTag.interfaceIconCode ? (
                           <i
-                            className={`${item.billTag.interfaceIconCode} mr-1.5 text-blue-600`}
+                            className={`${item.billTag.interfaceIconCode} mr-1.5 text-purple-600`}
                             aria-hidden="true"
                           />
                         ) : (
-                          <span className="w-2 h-2 rounded-full bg-blue-600 mr-1.5"></span>
+                          <span className="w-2 h-2 rounded-full bg-purple-600 mr-1.5"></span>
                         )}
                         <span>{item.billTag.name}</span>
                       </div>
@@ -544,79 +512,148 @@ const ListingDetailsPage = () => {
             </motion.div>
 
             {/* Property Features */}
+            {/*<motion.div*/}
+            {/*  initial={{ opacity: 0, y: 10 }}*/}
+            {/*  animate={{ opacity: 1, y: 0 }}*/}
+            {/*  transition={{ delay: 0.6 }}*/}
+            {/*  className="mb-8 bg-gray-50 p-5 rounded-lg shadow-sm"*/}
+            {/*>*/}
+            {/*  <h2 className="text-lg font-medium mb-4  border-b pb-2">*/}
+            {/*    Features*/}
+            {/*  </h2>*/}
+            {/*  <div className="grid grid-cols-2 sm:grid-cols-3 gap-y-4">*/}
+            {/*    <div className="flex items-center group">*/}
+            {/*      <TbPlugConnected className="text-primaryPurple mr-2 group-hover:scale-110 transition-transform" />*/}
+            {/*      <span className="text-gray-700">*/}
+            {/*        {listing.listingFeatures?.electricityPaymentType ===*/}
+            {/*        "prepaid"*/}
+            {/*          ? "Prepaid Electricity"*/}
+            {/*          : "Electricity"}*/}
+            {/*      </span>*/}
+            {/*    </div>*/}
+            {/*    <div className="flex items-center group">*/}
+            {/*      <FaBath className="text-primaryPurple mr-2 group-hover:scale-110 transition-transform" />*/}
+            {/*      <span className="text-gray-700">*/}
+            {/*        {listing.bathroomAccessType === "private"*/}
+            {/*          ? "Private Bathroom"*/}
+            {/*          : "Shared Bathroom"}*/}
+            {/*      </span>*/}
+            {/*    </div>*/}
+            {/*    <div className="flex items-center group">*/}
+            {/*      <FaBed className="text-primaryPurple mr-2 group-hover:scale-110 transition-transform" />*/}
+            {/*      <span className="text-gray-700">*/}
+            {/*        {listing.bedroomAccessType === "private"*/}
+            {/*          ? "Private Bedroom"*/}
+            {/*          : "Shared Bedroom"}*/}
+            {/*      </span>*/}
+            {/*    </div>*/}
+            {/*    <div className="flex items-center group">*/}
+            {/*      <MdOutlineFoodBank className="text-primaryPurple mr-2 group-hover:scale-110 transition-transform" />*/}
+            {/*      <span className="text-gray-700">*/}
+            {/*        {listing.kitchenAccessType === "private"*/}
+            {/*          ? "Private Kitchen"*/}
+            {/*          : "Shared Kitchen"}*/}
+            {/*      </span>*/}
+            {/*    </div>*/}
+            {/*    {listing.electricityAccessType && (*/}
+            {/*      <div className="flex items-center group">*/}
+            {/*        <TbPlugConnected className="text-primaryPurple mr-2 group-hover:scale-110 transition-transform" />*/}
+            {/*        <span className="text-gray-700">*/}
+            {/*          {listing.electricityAccessType === "private"*/}
+            {/*            ? "Private Electricity"*/}
+            {/*            : "Shared Electricity"}*/}
+            {/*        </span>*/}
+            {/*      </div>*/}
+            {/*    )}*/}
+            {/*    {listing.furnishingState && (*/}
+            {/*      <div className="flex items-center group">*/}
+            {/*        <span className="mr-2 text-xl group-hover:scale-110 transition-transform">*/}
+            {/*          🪑*/}
+            {/*        </span>*/}
+            {/*        <span className="text-gray-700">*/}
+            {/*          {listing.furnishingState === "fully-furnished"*/}
+            {/*            ? "Fully Furnished"*/}
+            {/*            : listing.furnishingState === "semi-furnished"*/}
+            {/*              ? "Semi-Furnished"*/}
+            {/*              : "Not Furnished"}*/}
+            {/*        </span>*/}
+            {/*      </div>*/}
+            {/*    )}*/}
+            {/*    {listing.outdoorWaterTaps && (*/}
+            {/*      <div className="flex items-center group">*/}
+            {/*        <FaWater className="text-primaryPurple mr-2 group-hover:scale-110 transition-transform" />*/}
+            {/*        <span className="text-gray-700">Outdoor Water Taps</span>*/}
+            {/*      </div>*/}
+            {/*    )}*/}
+            {/*  </div>*/}
+            {/*</motion.div>*/}
+
+            {/*LISTING PROPERTIES*/}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
-              className="mb-8 bg-gray-50 p-5 rounded-lg shadow-sm"
+              className="w-full max-w-6xl mx-auto bg-white border border-gray-50 rounded-xl overflow-hidden
+                  transform transition-all duration-300
+                  sm:max-w-4xl md:max-w-5xl lg:max-w-6xl mb-8"
             >
-              <h2 className="text-lg font-medium mb-4  border-b pb-2">
-                Features
-              </h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-y-4">
-                <div className="flex items-center group">
-                  <TbPlugConnected className="text-primaryPurple mr-2 group-hover:scale-110 transition-transform" />
-                  <span className="text-gray-700">
-                    {listing.listingFeatures?.electricityPaymentType ===
-                    "prepaid"
-                      ? "Prepaid Electricity"
-                      : "Electricity"}
-                  </span>
+              {/* Header Section */}
+              <div className="flex items-center p-5 bg-secondaryPurple border-b border-purple-100">
+                <Home className="w-6 h-6 mr-4 text-primaryPurple" />
+                <h2 className="text-xl font-bold text-gray-800 tracking-tight">
+                  Property Details
+                </h2>
+              </div>
+
+              {/* Details Grid */}
+              <div className="p-5 space-y-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {renderInfoRow(
+                    <Bed className="w-6 h-6 text-primaryPurple" />,
+                    "Bedrooms",
+                    listing?.listingFeatures.beds,
+                  )}
+                  {renderInfoRow(
+                    <ShowerHead className="w-6 h-6 text-primaryPurple" />,
+                    "Bathrooms",
+                    listing?.listingFeatures.bathrooms,
+                  )}
+                  {renderInfoRow(
+                    <Plug className="w-6 h-6 text-primaryPurple" />,
+                    "Electricity Payment",
+                    listing?.listingFeatures.electricityPaymentType,
+                  )}
+                  {renderInfoRow(
+                    <Lock className="w-6 h-6 text-primaryPurple" />,
+                    "Bathroom Access",
+                    listing?.listingFeatures.bathroomAccessType,
+                  )}
+                  {renderInfoRow(
+                    <Sofa className="w-6 h-6 text-primaryPurple" />,
+                    "Furnishing State",
+                    listing?.listingFeatures.furnishingState,
+                  )}
+                  {renderInfoRow(
+                    <Droplet className="w-6 h-6 text-primaryPurple" />,
+                    "In-House Running Water",
+                    listing?.listingFeatures.inHouseRunningWater,
+                  )}
+                  {renderInfoRow(
+                    <Key className="w-6 h-6 text-primaryPurple" />,
+                    "Kitchen Access",
+                    listing?.listingFeatures.kitchenAccessType,
+                  )}
+                  {renderInfoRow(
+                    <Droplet className="w-6 h-6 text-primaryPurple" />,
+                    "Outdoor Water Taps",
+                    listing?.listingFeatures.outDoorWaterTaps,
+                  )}
+                  {renderInfoRow(
+                    <Droplet className="w-6 h-6 text-primaryPurple" />,
+                    "Water from External Source",
+                    listing?.listingFeatures.waterFromExternalSource,
+                  )}
                 </div>
-                <div className="flex items-center group">
-                  <FaBath className="text-primaryPurple mr-2 group-hover:scale-110 transition-transform" />
-                  <span className="text-gray-700">
-                    {listing.bathroomAccessType === "private"
-                      ? "Private Bathroom"
-                      : "Shared Bathroom"}
-                  </span>
-                </div>
-                <div className="flex items-center group">
-                  <FaBed className="text-primaryPurple mr-2 group-hover:scale-110 transition-transform" />
-                  <span className="text-gray-700">
-                    {listing.bedroomAccessType === "private"
-                      ? "Private Bedroom"
-                      : "Shared Bedroom"}
-                  </span>
-                </div>
-                <div className="flex items-center group">
-                  <MdOutlineFoodBank className="text-primaryPurple mr-2 group-hover:scale-110 transition-transform" />
-                  <span className="text-gray-700">
-                    {listing.kitchenAccessType === "private"
-                      ? "Private Kitchen"
-                      : "Shared Kitchen"}
-                  </span>
-                </div>
-                {listing.electricityAccessType && (
-                  <div className="flex items-center group">
-                    <TbPlugConnected className="text-primaryPurple mr-2 group-hover:scale-110 transition-transform" />
-                    <span className="text-gray-700">
-                      {listing.electricityAccessType === "private"
-                        ? "Private Electricity"
-                        : "Shared Electricity"}
-                    </span>
-                  </div>
-                )}
-                {listing.furnishingState && (
-                  <div className="flex items-center group">
-                    <span className="mr-2 text-xl group-hover:scale-110 transition-transform">
-                      🪑
-                    </span>
-                    <span className="text-gray-700">
-                      {listing.furnishingState === "fully-furnished"
-                        ? "Fully Furnished"
-                        : listing.furnishingState === "semi-furnished"
-                          ? "Semi-Furnished"
-                          : "Not Furnished"}
-                    </span>
-                  </div>
-                )}
-                {listing.outdoorWaterTaps && (
-                  <div className="flex items-center group">
-                    <FaWater className="text-primaryPurple mr-2 group-hover:scale-110 transition-transform" />
-                    <span className="text-gray-700">Outdoor Water Taps</span>
-                  </div>
-                )}
               </div>
             </motion.div>
 
@@ -782,31 +819,30 @@ const ListingDetailsPage = () => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.65 }}
-                className="mb-8 rounded-lg border border-gray-200 shadow-sm overflow-hidden"
+                className="w-full bg-white rounded-xl mb-10 border border-gray-50 overflow-hidden"
               >
+                {/* Header Section */}
                 <div
-                  className="bg-white px-6 py-4 flex justify-between items-center cursor-pointer"
+                  className="px-4 sm:px-6 py-4 flex flex-col sm:flex-row justify-between items-center
+                    hover:bg-gray-50 transition-colors duration-200 cursor-pointer"
                   onClick={() => setIsExpanded(!isExpanded)}
                 >
-                  <div className="flex items-center space-x-2">
-                    <p className="text-primaryPurple text-lg">
+                  <div className="flex items-center space-x-3 mb-2 sm:mb-0">
+                    <p className="text-primaryPurple text-lg font-semibold">
                       {listing?.currency.symbol}
                     </p>
-                    <h2 className="text-lg font-medium">Additional Fees</h2>
-                    <div className="ml-2 bg-secondaryPurple text-primaryPurple text-xs px-2 py-1 rounded-full font-medium">
+                    <h2 className="text-lg font-medium text-gray-800">
+                      Additional Fees
+                    </h2>
+                    <div className="ml-2 bg-secondaryPurple text-primaryPurple text-xs px-2 py-1 rounded-full">
                       {listing.extraFees.length}{" "}
                       {listing.extraFees.length === 1 ? "fee" : "fees"}
                     </div>
                   </div>
                   <div className="flex items-center">
-                    <span className="mr-3 font-medium text-gray-700">
+                    <span className="mr-3 font-medium text-gray-700 text-sm sm:text-base">
                       Total: {currencySymbol}
-                      {formatPrice(
-                        listing.extraFees.reduce(
-                          (sum, fee) => sum + fee.amount,
-                          0,
-                        ),
-                      )}
+                      {formatPrice(listing.baseCost)}
                     </span>
                     {isExpanded ? (
                       <ChevronUp className="h-5 w-5 text-gray-500" />
@@ -816,55 +852,70 @@ const ListingDetailsPage = () => {
                   </div>
                 </div>
 
+                {/* Expanded Details */}
                 {isExpanded && (
-                  <div className="bg-gray-50 px-6 py-4">
+                  <div className="bg-gray-50 px-4 sm:px-6 py-4">
                     <div className="overflow-x-auto">
-                      <table className="w-full">
+                      <table className="w-full border-collapse">
                         <thead>
-                          <tr className="border-b border-gray-200">
-                            <th className="text-left py-3 px-2 text-sm font-medium text-gray-600">
+                          <tr className="bg-gray-100">
+                            <th
+                              className="text-left py-3 px-2 text-xs sm:text-sm font-medium text-gray-600
+                                 rounded-tl-lg"
+                            >
                               Fee Description
                             </th>
-                            <th className="text-right py-3 px-2 text-sm font-medium text-gray-600">
+                            <th
+                              className="text-right py-3 px-2 text-xs sm:text-sm font-medium text-gray-600
+                                 rounded-tr-lg"
+                            >
                               Amount
                             </th>
                           </tr>
                         </thead>
                         <tbody>
                           {listing.extraFees.map((fee, index) => (
-                            <tr key={index} className={`border-b bg-white`}>
+                            <tr
+                              key={index}
+                              className="bg-white hover:bg-gray-100 transition-colors duration-150"
+                            >
                               <td className="py-3 px-2 flex items-center">
                                 {fee.feeType?.description && (
                                   <div className="relative group mr-2">
-                                    <Info className="h-4 w-4 text-gray-400" />
-                                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block bg-gray-800 text-white text-xs p-2 rounded w-48">
+                                    <Info className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                                    <div
+                                      className="absolute z-10 bottom-full left-1/2 transform -translate-x-1/2
+                                          mb-2 hidden group-hover:block bg-gray-800 text-white
+                                          text-xs p-2 rounded w-48 shadow-lg"
+                                    >
                                       {fee.feeType.description}
                                     </div>
                                   </div>
                                 )}
-                                <span className="font-medium text-gray-700">
+                                <span className="font-medium text-gray-700 text-sm sm:text-base">
                                   {fee.feeType?.name ||
                                     `Additional Fee ${index + 1}`}
                                 </span>
                               </td>
-                              <td className="text-right py-3 px-2 font-medium text-gray-800">
+                              <td className="text-right py-3 px-2 font-medium text-gray-800 text-sm sm:text-base">
                                 {currencySymbol}
                                 {formatPrice(fee.amount)}
                               </td>
                             </tr>
                           ))}
                           <tr className="bg-secondaryPurple">
-                            <td className="py-3 px-2 font-semibold text-primaryPurple">
+                            <td
+                              className="py-3 px-2 font-semibold text-primaryPurple text-sm sm:text-base
+                                 rounded-bl-lg"
+                            >
                               Total Additional Fees
                             </td>
-                            <td className="text-right py-3 px-2 font-semibold text-primaryPurple">
+                            <td
+                              className="text-right py-3 px-2 font-semibold text-primaryPurple text-sm sm:text-base
+                                 rounded-br-lg"
+                            >
                               {currencySymbol}
-                              {formatPrice(
-                                listing.extraFees.reduce(
-                                  (sum, fee) => sum + fee.amount,
-                                  0,
-                                ),
-                              )}
+                              {formatPrice(listing.baseCost)}
                             </td>
                           </tr>
                         </tbody>
@@ -1166,7 +1217,7 @@ const ListingDetailsPage = () => {
                   className="sticky top-6"
                 >
                   <div className="bg-gray-100 shadow-sm rounded-xl p-6 border border-gray-100 mb-5">
-                    <h2 className="text-xl font-bold mb-4">
+                    <h2 className="text-lg font-medium mb-4">
                       Contact Listing Agent
                     </h2>
 
@@ -1358,7 +1409,7 @@ const ListingDetailsPage = () => {
                   className="sticky top-6"
                 >
                   <div className="bg-gray-100 shadow-sm rounded-xl p-6 border border-gray-100 mb-5">
-                    <h2 className="text-xl font-bold mb-4">
+                    <h2 className="text-lg font-medium mb-4">
                       Complete Your Booking
                     </h2>
 
@@ -1458,7 +1509,7 @@ const ListingDetailsPage = () => {
                       </ol>
                     </div>
 
-                    <div className="mt-4 flex items-center text-sm text-blue-600 bg-blue-50 p-3 rounded-lg">
+                    <div className="mt-4 mb-3 flex items-center text-sm text-blue-600 bg-blue-50 p-3 rounded-lg">
                       <div className="mr-2">💰</div>
                       <p>
                         <strong>Secure Payment:</strong> All payments made are
@@ -1516,6 +1567,19 @@ const ListingDetailsPage = () => {
                       </label>
                     </div>
                   </div>
+
+                  {isConfirmingBooking && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="mb-4 bg-amber-50 border border-amber-200 rounded-lg p-3 text-center"
+                    >
+                      <p className="text-amber-700 text-sm font-medium">
+                        You can always cancel a booking from the bookings page
+                      </p>
+                    </motion.div>
+                  )}
+
                   <div className="flex space-x-4">
                     <motion.button
                       whileHover={{ scale: 1.02 }}
@@ -1529,9 +1593,16 @@ const ListingDetailsPage = () => {
                     <motion.button
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      className="w-full bg-black text-white font-medium py-3 rounded-md"
+                      className={`w-full font-medium py-3 rounded-md transition-colors duration-300 ${
+                        !isConfirmingBooking
+                          ? "bg-black text-white"
+                          : "bg-amber-500 text-white animate-pulse"
+                      }`}
+                      onClick={handleBookButtonClick}
                     >
-                      Book {unitCount} Unit{unitCount !== 1 ? "s" : ""}
+                      {!isConfirmingBooking
+                        ? `Book ${unitCount} Unit${unitCount !== 1 ? "s" : ""}`
+                        : "Go Ahead?"}
                     </motion.button>
                   </div>
 

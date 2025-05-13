@@ -392,7 +392,7 @@ const ListingDetailsPage = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="max-w-7xl mx-auto bg-white rounded-xl shadow-sm overflow-hidden my-8"
+      className="max-w-7xl mx-auto bg-white rounded-xl shadow-sm overflow-hidden mb-8 mt-20"
     >
       <div className="p-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

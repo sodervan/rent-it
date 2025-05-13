@@ -1,6 +1,7 @@
 import { useLocation } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import AgentNavbar from "@/components/AgentNavbar";
+import ListingDetailsNavbar from "@/components/ListingDetailsNavbar";
 import { Outlet } from "react-router-dom";
 import AgentRegistrationNavBar from "@/components/AgentRegistrationNavBar.jsx";
 import useTokenData from "../../TokenHook.js";
@@ -17,6 +18,7 @@ const MainLayout = () => {
     "/agent/agentregistration",
   );
   const isInRenterDash = location.pathname.includes("/renter/dashboard");
+  const isInListingsDetailsPage = location.pathname.includes("/listing/");
   const isForgotPassword =
     location.pathname.includes("/renter/forgotpassword") ||
     location.pathname.includes("/renter/resetpassword") ||
@@ -38,6 +40,9 @@ const MainLayout = () => {
   if (!isVerificationPage && !isForgotPassword && !isInRenterDash) {
     if (isAgentRegistration) {
       navbar = <AgentRegistrationNavBar />;
+    } else if (isInListingsDetailsPage) {
+      // Use the specialized ListingDetailsNavbar for listing detail pages
+      navbar = <ListingDetailsNavbar />;
     } else if (tokenData?.role === "agent") {
       navbar = <AgentNavbar />;
     } else {

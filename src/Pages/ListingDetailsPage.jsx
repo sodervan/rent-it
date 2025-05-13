@@ -6,8 +6,6 @@ import {
   FaBed,
   FaBath,
   FaRulerCombined,
-  FaCar,
-  FaShieldAlt,
   FaRegStar,
   FaStar,
   FaEllipsisH,
@@ -16,8 +14,8 @@ import {
   FaMoneyBillWave,
   FaRegClock,
 } from "react-icons/fa";
-import { TbPlugConnected } from "react-icons/tb";
-import { DollarSign, Info, ChevronDown, ChevronUp } from "lucide-react";
+import { User } from "lucide-react";
+import { Info, ChevronDown, ChevronUp } from "lucide-react";
 import {
   Home,
   Bed,
@@ -64,6 +62,160 @@ const ListingDetailsPage = () => {
   const [agentLoading, setAgentLoading] = useState(false);
   const [unitCount, setUnitCount] = useState(1);
   const [isConfirmingBooking, setIsConfirmingBooking] = useState(false);
+  const [openItem, setOpenItem] = useState(null);
+  const [isBookLoading, setBookLoading] = useState(false);
+  const [bookingError, setBookingError] = useState(null);
+  const [bookingStatus, setBookingStatus] = useState("loading"); // 'loading', 'success', 'error'
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isVisible, setIsVisible] = useState(true);
+  const [agentData, setAgentData] = useState(null);
+  const [isHovered, setIsHovered] = useState(false);
+  // const [durationUnit, setDurationUnit] = useState(
+  //   listing?.paymentDuration === "annum" ? "year" : "month",
+  // );
+  const [duration, setDuration] = useState(1);
+
+  const getDurationOptions = () => {
+    if (listing.paymentDuration === "annum") {
+      return [
+        { value: 1, label: "1 Year" },
+        { value: 2, label: "2 Years" },
+        { value: 3, label: "3 Years" },
+        { value: 4, label: "4 Years" },
+        { value: 5, label: "5 Years" },
+      ];
+    } else {
+      return [
+        { value: 1, label: "1 Month" },
+        { value: 3, label: "3 Months" },
+        { value: 6, label: "6 Months" },
+        { value: 9, label: "9 Months" },
+        { value: 12, label: "12 Months" },
+      ];
+    }
+  };
+
+  const toggleItem = (id) => {
+    setOpenItem(openItem === id ? null : id);
+  };
+
+  const handleClose = () => {
+    setIsVisible(false);
+    setTimeout(() => {
+      setBookLoading(false);
+      document.body.style.overflow = "";
+    }, 300); // Matches exit animation duration
+  };
+
+  // Automatically book when modal opens
+  useEffect(() => {
+    if (isBookLoading) {
+      bookApartment();
+    }
+  }, [isBookLoading]);
+
+  const backdropVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1 },
+  };
+
+  const modalVariants = {
+    hidden: { scale: 0.9, opacity: 0, y: 20 },
+    visible: {
+      scale: 1,
+      opacity: 1,
+      y: 0,
+      transition: { type: "spring", damping: 15 },
+    },
+    exit: { scale: 0.9, opacity: 0, y: 20, transition: { duration: 0.3 } },
+  };
+
+  // Loading spinner animation
+  const spinnerVariants = {
+    animate: {
+      rotate: 360,
+      transition: {
+        duration: 1.5,
+        repeat: Infinity,
+        ease: "linear",
+      },
+    },
+  };
+
+  // Success checkmark animation
+  const checkmarkPathVariants = {
+    hidden: { pathLength: 0 },
+    visible: {
+      pathLength: 1,
+      transition: {
+        duration: 0.6,
+        ease: "easeInOut",
+      },
+    },
+  };
+
+  // Error X animation
+  const errorPathVariants = {
+    hidden: { pathLength: 0 },
+    visible: {
+      pathLength: 1,
+      transition: {
+        duration: 0.6,
+        ease: "easeInOut",
+      },
+    },
+  };
+
+  const faqData = [
+    {
+      id: 1,
+      question: "How do I schedule a viewing of an apartment?",
+      answer:
+        "You can schedule a viewing directly through our platform by selecting your preferred property and clicking the 'Schedule Viewing' button. You'll be able to choose from available time slots and receive instant confirmation. For premium listings, we also offer virtual tours that you can access immediately.",
+    },
+    {
+      id: 2,
+      question: "What documents do I need to apply for an apartment?",
+      answer:
+        "To apply for an apartment, you'll typically need: proof of identity (passport or ID), proof of income (last 3 months' pay stubs or employment letter), credit history, references from previous landlords, and a security deposit. Some properties may have additional requirements which will be clearly listed on the property details page.",
+    },
+    {
+      id: 3,
+      question: "How is the security deposit handled?",
+      answer:
+        "Security deposits are held in a secure escrow account throughout your tenancy. The deposit amount is typically equivalent to one month's rent. Upon move-out, the deposit will be returned within 21 days, minus any deductions for damages beyond normal wear and tear, which will be fully documented with photographic evidence.",
+    },
+    {
+      id: 4,
+      question: "Can I have pets in my rental apartment?",
+      answer:
+        "Pet policies vary by property. Many of our listings are pet-friendly, which is indicated by a pet-friendly badge on the property listing. Some properties may charge an additional pet deposit or monthly pet rent. You can use our search filters to find pet-friendly properties that match your needs.",
+    },
+    {
+      id: 5,
+      question: "What is included in the monthly rent?",
+      answer:
+        "What's included in your rent varies by property. The property listing will clearly specify which utilities (water, electricity, gas, internet) are included. Most properties include water and waste management, while electricity and internet may be separate. Maintenance of common areas and building facilities is typically included in all rentals.",
+    },
+    {
+      id: 6,
+      question: "How do I report maintenance issues?",
+      answer:
+        "You can report maintenance issues directly through your tenant dashboard. Our platform offers 24/7 maintenance reporting with priority levels. Emergency issues receive immediate attention, while standard maintenance requests are addressed within 48 hours. You'll receive real-time updates as your request progresses.",
+    },
+    {
+      id: 7,
+      question: "What is the typical lease duration?",
+      answer:
+        "Our standard lease duration is 12 months, though some properties offer flexible terms ranging from 3 to 24 months. Extended leases often come with rental discounts, while shorter terms might have a slightly higher monthly rate. Lease renewal options are presented 60 days before your current lease expires.",
+    },
+    {
+      id: 8,
+      question: "How can I pay my rent each month?",
+      answer:
+        "We offer multiple secure payment options including credit/debit card, bank transfer, and automatic payments. You can set up recurring payments through your tenant dashboard. All transactions are encrypted and processed through our secure payment gateway, and you'll receive instant payment confirmations.",
+    },
+  ];
 
   // For proper API integration
   useEffect(() => {
@@ -82,17 +234,23 @@ const ListingDetailsPage = () => {
         setError(err.message || "Failed to load listing details");
       } finally {
         setLoading(false);
+        setTimeout(() => {
+          fetchAgentDetails();
+        }, 200);
       }
     };
 
     const fetchAgentDetails = async () => {
       setAgentLoading(true);
       try {
-        const response = await axios.get(`${apiUrl}/api/v1/agents`, {
-          withCredentials: true,
-        });
+        const response = await axios.get(
+          `${apiUrl}/api/v1/listings/${listingId}/agent`,
+          {
+            withCredentials: true,
+          },
+        );
         const data = response?.data;
-        console.log(data.payload);
+        setAgentData(data.payload[0]);
         console.log(response);
       } catch (err) {
         console.error("Error fetching agent data:", err);
@@ -103,9 +261,37 @@ const ListingDetailsPage = () => {
     };
 
     fetchListing();
-    // fetchAgentDetails();
   }, [apiUrl, listingId]);
 
+  const bookApartment = async () => {
+    setBookingStatus("loading");
+    setBookLoading(true);
+
+    try {
+      const response = await axios.post(
+        `${apiUrl}/api/v1/listings/${listingId}/bookings`,
+        { duration: duration, units: unitCount }, // Send units in the request body
+        { withCredentials: true },
+      );
+
+      const data = response?.data;
+      console.log(data.payload);
+      console.log(response);
+
+      // Wait a short time before showing success to make loading feel meaningful
+      setTimeout(() => {
+        setBookingStatus("success");
+      }, 1200);
+    } catch (err) {
+      console.error("Error booking apartment:", err);
+      setErrorMessage(
+        err.response?.data?.message ||
+          err.message ||
+          "Failed to book apartment",
+      );
+      setBookingStatus("error");
+    }
+  };
   if (loading) {
     return (
       <div className="flex justify-center items-center h-96">
@@ -185,19 +371,10 @@ const ListingDetailsPage = () => {
     if (!isConfirmingBooking) {
       setIsConfirmingBooking(true);
     } else {
-      // Actual booking logic would go here
-      alert(`Booking ${unitCount} unit(s) confirmed!`);
-      // Reset or proceed to next step
+      setBookLoading(true);
+      setIsVisible(true);
       setIsConfirmingBooking(false);
     }
-  };
-
-  // Check if the property has a specific feature
-  const hasFeature = (featureName) => {
-    return listing.featureTags?.some(
-      (tag) =>
-        tag.featureTag?.name?.toLowerCase() === featureName.toLowerCase(),
-    );
   };
 
   const renderInfoRow = (icon, label, value) => (
@@ -991,6 +1168,84 @@ const ListingDetailsPage = () => {
               </motion.div>
             )}
 
+            {/*FAQS SECTION*/}
+            <div className="w-full max-w-4xl mx-auto px-4 py-12">
+              <div className="text-center mb-6">
+                <h2 className="text-2xl font-semibold text-gray-800 mb-2">
+                  Frequently Asked Questions
+                </h2>
+              </div>
+
+              <div className="grid gap-3 md:gap-4">
+                {faqData.map((item) => (
+                  <motion.div
+                    whileTap={{ scale: 0.98 }}
+                    key={item.id}
+                    className="border border-gray-200 rounded-lg shadow-sm bg-white overflow-hidden"
+                  >
+                    <motion.button
+                      onClick={() => toggleItem(item.id)}
+                      className="w-full flex justify-between items-center p-5 text-left focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50"
+                      aria-expanded={openItem === item.id}
+                      aria-controls={`faq-answer-${item.id}`}
+                    >
+                      <h3 className="text-lg font-medium text-gray-900">
+                        {item.question}
+                      </h3>
+                      <span className="ml-6 flex-shrink-0">
+                        <motion.svg
+                          animate={{ rotate: openItem === item.id ? 180 : 0 }}
+                          transition={{ duration: 0.3 }}
+                          className="h-5 w-5 text-gray-500"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                            clipRule="evenodd"
+                          />
+                        </motion.svg>
+                      </span>
+                    </motion.button>
+
+                    <AnimatePresence>
+                      {openItem === item.id && (
+                        <motion.div
+                          id={`faq-answer-${item.id}`}
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.3 }}
+                          className="overflow-hidden"
+                        >
+                          <div className="p-5 pt-0 border-t border-gray-200">
+                            <p className="text-gray-700 text-base leading-relaxed">
+                              {item.answer}
+                            </p>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+                ))}
+              </div>
+
+              <div className="mt-12 bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  Still have questions?
+                </h3>
+                <p className="text-gray-600 mb-4">
+                  Our support team is here to help you with any other questions
+                  you might have.
+                </p>
+                <button className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors duration-200">
+                  Contact Support
+                </button>
+              </div>
+            </div>
+
             {/* Available Properties Section */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
@@ -1043,169 +1298,246 @@ const ListingDetailsPage = () => {
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ duration: 0.5 }}
                 >
-                  <div className="sticky top-6 bg-gray-100 shadow-sm rounded-xl p-6 border border-gray-100 mb-5">
-                    <h2 className="text-2xl font-semibold mb-2">
-                      {currencySymbol}
-                      {formatPrice(listing.baseCost)}
-                      <span className="text-gray-500 text-lg font-normal">
-                        /{listing.paymentDuration}
-                      </span>
-                    </h2>
+                  {agentLoading ? (
+                    // Skeleton Loader
+                    <div className="sticky top-6 bg-gray-100 shadow-sm rounded-xl p-6 border border-gray-100 mb-5">
+                      {/* Skeleton for Price */}
+                      <div className="h-8 bg-gray-200 rounded-md w-40 mb-2 animate-pulse"></div>
 
-                    <div className="flex gap-2 mb-6 flex-wrap">
-                      <div className="text-gray-600 bg-gray-200 px-2 py-1 rounded text-sm">
-                        Self check-in
+                      {/* Skeleton for Tags */}
+                      <div className="flex gap-2 mb-6 flex-wrap">
+                        <div className="h-7 bg-gray-200 rounded w-24 animate-pulse"></div>
+                        <div className="h-7 bg-gray-200 rounded w-28 animate-pulse"></div>
+                        <div className="h-7 bg-gray-200 rounded w-32 animate-pulse"></div>
                       </div>
-                      <div className="text-gray-600 bg-gray-200 px-2 py-1 rounded text-sm">
-                        Great location
-                      </div>
-                      {listing.isStudent && (
-                        <div className="text-gray-600 bg-gray-200 px-2 py-1 rounded text-sm">
-                          Student friendly
+
+                      {/* Skeleton for Check In/Out */}
+                      <div className="grid grid-cols-2 gap-4 mb-6">
+                        <div className="border border-gray-200 rounded-md p-3">
+                          <div className="h-4 bg-gray-200 rounded w-16 mb-2 animate-pulse"></div>
+                          <div className="h-5 bg-gray-200 rounded w-24 animate-pulse"></div>
                         </div>
-                      )}
-                    </div>
-
-                    {/* Check In/Out */}
-                    <div className="grid grid-cols-2 gap-4 mb-6">
-                      <div className="border border-gray-300 rounded-md p-3">
-                        <p className="text-gray-500 text-sm mb-1">Check In</p>
-                        <p className="font-medium">Select Date</p>
-                      </div>
-                      <div className="border border-gray-300 rounded-md p-3">
-                        <p className="text-gray-500 text-sm mb-1">Check Out</p>
-                        <p className="font-medium">Select Date</p>
-                      </div>
-                    </div>
-
-                    {/* Guests */}
-                    <div className="border border-gray-300 rounded-md p-3 mb-6">
-                      <p className="text-gray-500 text-sm mb-1">Guests</p>
-                      <div className="flex justify-between items-center">
-                        <p className="font-medium">
-                          {guestCount} Guest{guestCount !== 1 ? "s" : ""}
-                        </p>
-                        <div className="flex items-center">
-                          <motion.button
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
-                            onClick={() =>
-                              setGuestCount(Math.max(1, guestCount - 1))
-                            }
-                            className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-600"
-                            disabled={guestCount <= 1}
-                          >
-                            -
-                          </motion.button>
-                          <span className="mx-3">{guestCount}</span>
-                          <motion.button
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
-                            onClick={() =>
-                              setGuestCount(Math.min(10, guestCount + 1))
-                            }
-                            className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-600"
-                            disabled={guestCount >= 10}
-                          >
-                            +
-                          </motion.button>
+                        <div className="border border-gray-200 rounded-md p-3">
+                          <div className="h-4 bg-gray-200 rounded w-16 mb-2 animate-pulse"></div>
+                          <div className="h-5 bg-gray-200 rounded w-24 animate-pulse"></div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* Deposit Information */}
-                    <div className="mb-6 bg-blue-50 p-3 rounded-md">
-                      <h3 className="font-semibold text-blue-800 mb-2">
-                        Required Deposit
-                      </h3>
-                      <p className="font-medium">
-                        {currencySymbol}
-                        {formatPrice(listing.minBaseCostDeposit)}
-                      </p>
-                      <p className="text-sm text-gray-600 mt-1">
-                        This amount is required to secure the apartment
-                      </p>
-                    </div>
+                      {/* Skeleton for Guests */}
+                      <div className="border border-gray-200 rounded-md p-3 mb-6">
+                        <div className="h-4 bg-gray-200 rounded w-12 mb-2 animate-pulse"></div>
+                        <div className="flex justify-between items-center">
+                          <div className="h-5 bg-gray-200 rounded w-20 animate-pulse"></div>
+                          <div className="flex items-center space-x-3">
+                            <div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse"></div>
+                            <div className="w-4 h-5 bg-gray-200 rounded animate-pulse"></div>
+                            <div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse"></div>
+                          </div>
+                        </div>
+                      </div>
 
-                    {/* Cancellation Policy */}
-                    <div className="mb-6">
-                      <h3 className="font-semibold mb-3">
-                        Cancellation Policy
-                      </h3>
-                      <div className="space-y-3">
-                        <div className="flex justify-between">
-                          <p>Non-Refundable</p>
-                          <p>
+                      {/* Skeleton for Deposit Information */}
+                      <div className="mb-6 bg-blue-50 p-3 rounded-md">
+                        <div className="h-5 bg-blue-100 rounded w-36 mb-2 animate-pulse"></div>
+                        <div className="h-6 bg-blue-100 rounded w-24 mb-1 animate-pulse"></div>
+                        <div className="h-4 bg-blue-100 rounded w-64 mt-1 animate-pulse"></div>
+                      </div>
+
+                      {/* Skeleton for Cancellation Policy */}
+                      <div className="mb-6">
+                        <div className="h-5 bg-gray-200 rounded w-36 mb-3 animate-pulse"></div>
+                        <div className="space-y-3">
+                          <div className="flex justify-between">
+                            <div className="h-5 bg-gray-200 rounded w-28 animate-pulse"></div>
+                            <div className="h-5 bg-gray-200 rounded w-20 animate-pulse"></div>
+                          </div>
+                          <div className="flex justify-between">
+                            <div className="h-5 bg-gray-200 rounded w-20 animate-pulse"></div>
+                            <div className="h-5 bg-gray-200 rounded w-20 animate-pulse"></div>
+                          </div>
+                          <div className="h-4 bg-gray-200 rounded w-full animate-pulse"></div>
+                        </div>
+                      </div>
+
+                      {/* Skeleton for Total */}
+                      <div className="flex justify-between pt-4 border-t border-gray-200">
+                        <div className="h-5 bg-gray-200 rounded w-36 animate-pulse"></div>
+                        <div className="h-5 bg-gray-200 rounded w-20 animate-pulse"></div>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="sticky top-6 bg-gray-100 shadow-sm rounded-xl p-6 border border-gray-100 mb-5">
+                        <h2 className="text-2xl font-semibold mb-2">
+                          {currencySymbol}
+                          {formatPrice(listing.baseCost)}
+                          <span className="text-gray-500 text-lg font-normal">
+                            /{listing.paymentDuration}
+                          </span>
+                        </h2>
+
+                        <div className="flex gap-2 mb-6 flex-wrap">
+                          <div className="text-gray-600 bg-gray-200 px-2 py-1 rounded text-sm">
+                            Self check-in
+                          </div>
+                          <div className="text-gray-600 bg-gray-200 px-2 py-1 rounded text-sm">
+                            Great location
+                          </div>
+                          {listing.isStudent && (
+                            <div className="text-gray-600 bg-gray-200 px-2 py-1 rounded text-sm">
+                              Student friendly
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Check In/Out */}
+                        <div className="grid grid-cols-2 gap-4 mb-6">
+                          <div className="border border-gray-300 rounded-md p-3">
+                            <p className="text-gray-500 text-sm mb-1">
+                              Check In
+                            </p>
+                            <p className="font-medium">Select Date</p>
+                          </div>
+                          <div className="border border-gray-300 rounded-md p-3">
+                            <p className="text-gray-500 text-sm mb-1">
+                              Check Out
+                            </p>
+                            <p className="font-medium">Select Date</p>
+                          </div>
+                        </div>
+
+                        {/* Guests */}
+                        <div className="border border-gray-300 rounded-md p-3 mb-6">
+                          <p className="text-gray-500 text-sm mb-1">Guests</p>
+                          <div className="flex justify-between items-center">
+                            <p className="font-medium">
+                              {guestCount} Guest{guestCount !== 1 ? "s" : ""}
+                            </p>
+                            <div className="flex items-center">
+                              <motion.button
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                                onClick={() =>
+                                  setGuestCount(Math.max(1, guestCount - 1))
+                                }
+                                className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-600"
+                                disabled={guestCount <= 1}
+                              >
+                                -
+                              </motion.button>
+                              <span className="mx-3">{guestCount}</span>
+                              <motion.button
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                                onClick={() =>
+                                  setGuestCount(Math.min(10, guestCount + 1))
+                                }
+                                className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-600"
+                                disabled={guestCount >= 10}
+                              >
+                                +
+                              </motion.button>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Deposit Information */}
+                        <div className="mb-6 bg-blue-50 p-3 rounded-md">
+                          <h3 className="font-semibold text-blue-800 mb-2">
+                            Required Deposit
+                          </h3>
+                          <p className="font-medium">
+                            {currencySymbol}
+                            {formatPrice(listing.minBaseCostDeposit)}
+                          </p>
+                          <p className="text-sm text-gray-600 mt-1">
+                            This amount is required to secure the apartment
+                          </p>
+                        </div>
+
+                        {/* Cancellation Policy */}
+                        <div className="mb-6">
+                          <h3 className="font-semibold mb-3">
+                            Cancellation Policy
+                          </h3>
+                          <div className="space-y-3">
+                            <div className="flex justify-between">
+                              <p>Non-Refundable</p>
+                              <p>
+                                {currencySymbol}
+                                {formatPrice(listing.baseCost)}
+                              </p>
+                            </div>
+                            <div className="flex justify-between">
+                              <p>Refundable</p>
+                              <p>
+                                {currencySymbol}
+                                {formatPrice(
+                                  parseFloat(listing.baseCost) * 1.05,
+                                )}
+                              </p>
+                            </div>
+                            <p className="text-sm text-gray-600">
+                              Free cancellation before booking confirmation,
+                              after that, the reservation is non-refundable.
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Total */}
+                        <div className="flex justify-between pt-4 border-t border-gray-200">
+                          <p className="font-semibold">Total Before Taxes:</p>
+                          <p className="font-semibold">
                             {currencySymbol}
                             {formatPrice(listing.baseCost)}
                           </p>
                         </div>
-                        <div className="flex justify-between">
-                          <p>Refundable</p>
-                          <p>
-                            {currencySymbol}
-                            {formatPrice(parseFloat(listing.baseCost) * 1.05)}
-                          </p>
-                        </div>
-                        <p className="text-sm text-gray-600">
-                          Free cancellation before booking confirmation, after
-                          that, the reservation is non-refundable.
+                      </div>
+                      {/* Buttons - Modified to have 2 buttons */}
+                      <div className="flex space-x-4 mb-4 mt-4">
+                        <motion.button
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          className="w-1/2 bg-black text-white font-medium py-3 rounded-md"
+                          onClick={() => {
+                            setShowBookingForm(false);
+                            setShowContactForm(false);
+                          }}
+                        >
+                          Book Apartment
+                        </motion.button>
+
+                        <motion.button
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          className="w-1/2 bg-white text-black font-medium py-3 rounded-md border border-black"
+                          onClick={() => {
+                            setShowBookingForm(false);
+                            setShowContactForm(true);
+                          }}
+                        >
+                          Contact Agent
+                        </motion.button>
+                      </div>
+
+                      {/* Urgent booking notification */}
+                      <div className="mt-4 flex items-center text-sm text-orange-600 bg-orange-50 p-3 rounded-lg">
+                        <div className="mr-2">⏱️</div>
+                        <p>
+                          <strong>Limited availability!</strong> Only{" "}
+                          {listing.unitsLeft} unit(s) left out of{" "}
+                          {listing.units}
                         </p>
                       </div>
-                    </div>
 
-                    {/* Total */}
-                    <div className="flex justify-between pt-4 border-t border-gray-200">
-                      <p className="font-semibold">Total Before Taxes:</p>
-                      <p className="font-semibold">
-                        {currencySymbol}
-                        {formatPrice(listing.baseCost)}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Buttons - Modified to have 2 buttons */}
-                  <div className="flex space-x-4 mb-4 mt-4">
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="w-1/2 bg-black text-white font-medium py-3 rounded-md"
-                      onClick={() => {
-                        setShowBookingForm(false);
-                        setShowContactForm(false);
-                      }}
-                    >
-                      Book Apartment
-                    </motion.button>
-
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="w-1/2 bg-white text-black font-medium py-3 rounded-md border border-black"
-                      onClick={() => {
-                        setShowBookingForm(false);
-                        setShowContactForm(true);
-                      }}
-                    >
-                      Contact Agent
-                    </motion.button>
-                  </div>
-
-                  {/* Urgent booking notification */}
-                  <div className="mt-4 flex items-center text-sm text-orange-600 bg-orange-50 p-3 rounded-lg">
-                    <div className="mr-2">⏱️</div>
-                    <p>
-                      <strong>Limited availability!</strong> Only{" "}
-                      {listing.unitsLeft} unit(s) left out of {listing.units}
-                    </p>
-                  </div>
-
-                  {/* Report listing */}
-                  <div className="mt-6 text-center">
-                    <button className="text-red-500 underline text-sm hover:underline">
-                      Report this listing
-                    </button>
-                  </div>
+                      {/* Report listing */}
+                      <div className="mt-6 text-center">
+                        <button className="text-red-500 underline text-sm hover:underline">
+                          Report this listing
+                        </button>
+                      </div>
+                    </>
+                  )}
                 </motion.div>
               ) : showContactForm ? (
                 <motion.div
@@ -1216,27 +1548,63 @@ const ListingDetailsPage = () => {
                   transition={{ duration: 0.5 }}
                   className="sticky top-6"
                 >
-                  <div className="bg-gray-100 shadow-sm rounded-xl p-6 border border-gray-100 mb-5">
+                  <div className="bg-gray-100 shadow-sm rounded-xl p-6 border border-gray-400 mb-5">
                     <h2 className="text-lg font-medium mb-4">
                       Contact Listing Agent
                     </h2>
 
-                    <div className="flex items-center mb-6 pb-4 border-b border-gray-200">
-                      <div className="w-12 h-12 bg-gray-300 rounded-full mr-4"></div>
-                      <div>
-                        <p className="font-medium">Sarah Johnson</p>
-                        <p className="text-sm text-gray-600">Leasing Agent</p>
-                        <div className="flex items-center mt-1">
-                          <span className="text-yellow-500 mr-1">★</span>
-                          <span className="text-sm">4.9 (128 reviews)</span>
+                    <div className="mb-6 pb-4 border-b border-gray-300">
+                      <div className="flex items-center">
+                        <div className="w-12 h-12 bg-gray-300 rounded-full mr-4 overflow-hidden flex items-center justify-center">
+                          <img
+                            src={agentData?.profileImage}
+                            alt="N/A"
+                            className="object-cover"
+                          />
+                        </div>
+                        <div>
+                          <p className="font-medium">{agentData?.agentName}</p>
+                          <div className="flex items-center gap-3">
+                            <p className="text-sm text-gray-600">
+                              Leasing Agent
+                            </p>
+                            <div className="flex items-center">
+                              <span className="text-yellow-500 mr-1">★</span>
+                              <span className="text-sm">4.9</span>
+                            </div>
+                          </div>
                         </div>
                       </div>
+                      <motion.button
+                        className="relative mt-2 bg-purple-100 text-purple-800 font-medium px-4 py-2 rounded-lg shadow-sm overflow-hidden"
+                        // whileHover={{ scale: 1.03 }}
+                        whileTap={{ scale: 0.97 }}
+                        transition={{ duration: 0.2 }}
+                        onMouseEnter={() => setIsHovered(true)}
+                        onMouseLeave={() => setIsHovered(false)}
+                      >
+                        <motion.div
+                          className="absolute inset-0 bg-purple-200 origin-left"
+                          initial={{ scaleX: 0 }}
+                          animate={{ scaleX: isHovered ? 1 : 0 }}
+                          transition={{ duration: 0.3 }}
+                        />
+
+                        <motion.div
+                          className="relative flex items-center justify-center gap-2"
+                          animate={{ x: isHovered ? 5 : 0 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <User size={18} />
+                          <span>View agent page</span>
+                        </motion.div>
+                      </motion.button>
                     </div>
 
                     {/* Contact Buttons */}
                     <div className="space-y-3 mb-6">
                       <a
-                        href="https://wa.me/1234567890"
+                        href={`https://wa.me/${"+234" + agentData?.phoneNumber.replace(/^0/, "")}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center justify-center w-full bg-green-500 hover:bg-green-600 text-white font-medium py-3 px-4 rounded-lg transition duration-200"
@@ -1253,7 +1621,7 @@ const ListingDetailsPage = () => {
                       </a>
 
                       <a
-                        href="tel:+1234567890"
+                        href={`tel:${"+234" + agentData.phoneNumber.replace(/^0/, "")}`}
                         className="flex items-center justify-center w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-4 rounded-lg transition duration-200"
                       >
                         <svg
@@ -1274,7 +1642,7 @@ const ListingDetailsPage = () => {
                       </a>
 
                       <a
-                        href="mailto:sarah.johnson@realestate.com?subject=Property Inquiry"
+                        href={`mailto:${agentData.email}?subject=Property Inquiry`}
                         className="flex items-center justify-center w-full bg-purple-500 hover:bg-purple-600 text-white font-medium py-3 px-4 rounded-lg transition duration-200"
                       >
                         <svg
@@ -1296,7 +1664,7 @@ const ListingDetailsPage = () => {
                     </div>
 
                     {/* Example Message Box */}
-                    <div className="mb-6 bg-white p-4 rounded-lg border border-gray-200">
+                    <div className="mb-2 bg-white p-4 rounded-lg border border-gray-200">
                       <div className="flex justify-between items-center mb-2">
                         <h3 className="font-medium text-gray-800">
                           Example Message
@@ -1340,10 +1708,10 @@ const ListingDetailsPage = () => {
                         </button>
                       </div>
                       <p id="example-message" className="text-sm text-gray-600">
-                        Hi Sarah, I'm interested in this property and would like
-                        to schedule a viewing. I'm available on weekdays after
-                        5pm and anytime on weekends. Looking forward to hearing
-                        from you.
+                        Hi {agentData.agentName}, I'm interested in the property
+                        - {listing.title} and would like to schedule a viewing.
+                        I'm available on weekdays after 5pm and anytime on
+                        weekends. Looking forward to hearing from you.
                       </p>
 
                       {/* Toast notification for copy action */}
@@ -1353,24 +1721,6 @@ const ListingDetailsPage = () => {
                       >
                         Message copied to clipboard!
                       </div>
-                    </div>
-
-                    <div className="mb-4 bg-blue-50 p-4 rounded-md">
-                      <h3 className="font-medium text-blue-800 mb-2">
-                        About this listing
-                      </h3>
-                      <p className="text-sm text-gray-600 mb-2">
-                        {listing.title}
-                      </p>
-                      <p className="text-sm">
-                        <span className="font-medium">
-                          {currencySymbol}
-                          {formatPrice(listing.baseCost)}
-                        </span>
-                        <span className="text-gray-500">
-                          /{listing.paymentDuration}
-                        </span>
-                      </p>
                     </div>
                   </div>
 
@@ -1457,6 +1807,61 @@ const ListingDetailsPage = () => {
                           {listing.unitsLeft} unit(s) left out of{" "}
                           {listing.units}
                         </p>
+                      </div>
+                    </div>
+                    {/*DURATION*/}
+                    <div className="mb-6 border border-gray-300 rounded-md p-4">
+                      <label className="block text-gray-700 mb-2 font-medium">
+                        Rental Duration
+                      </label>
+                      <div className="flex flex-col space-y-4">
+                        <div className="flex justify-between items-center">
+                          <p className="font-medium">
+                            {duration}{" "}
+                            {listing.paymentDuration === "annum"
+                              ? `Year${duration !== 1 ? "s" : ""}`
+                              : `Month${duration !== 1 ? "s" : ""}`}
+                          </p>
+                          <div className="flex items-center">
+                            <select
+                              value={duration}
+                              onChange={(e) =>
+                                setDuration(parseInt(e.target.value))
+                              }
+                              className="bg-white border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                              {getDurationOptions().map((option) => (
+                                <option key={option.value} value={option.value}>
+                                  {option.label}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+
+                        {listing.paymentDuration === "monthly" &&
+                          duration >= 12 && (
+                            <div className="flex items-center text-sm text-blue-600 bg-blue-50 p-3 rounded-lg">
+                              <div className="mr-2">💡</div>
+                              <p>
+                                <strong>Pro tip:</strong> Annual contracts may
+                                qualify for discounted rates. Contact the agent
+                                for details.
+                              </p>
+                            </div>
+                          )}
+
+                        {listing.paymentDuration === "annum" &&
+                          duration >= 2 && (
+                            <div className="flex items-center text-sm text-blue-600 bg-blue-50 p-3 rounded-lg">
+                              <div className="mr-2">💰</div>
+                              <p>
+                                <strong>Multi-year discount:</strong> You may
+                                qualify for reduced rates on {duration}-year
+                                contracts.
+                              </p>
+                            </div>
+                          )}
                       </div>
                     </div>
 
@@ -1596,14 +2001,217 @@ const ListingDetailsPage = () => {
                       className={`w-full font-medium py-3 rounded-md transition-colors duration-300 ${
                         !isConfirmingBooking
                           ? "bg-black text-white"
-                          : "bg-amber-500 text-white animate-pulse"
+                          : "bg-green-500 text-white"
                       }`}
                       onClick={handleBookButtonClick}
                     >
                       {!isConfirmingBooking
                         ? `Book ${unitCount} Unit${unitCount !== 1 ? "s" : ""}`
-                        : "Go Ahead?"}
+                        : "Confirm Booking"}
                     </motion.button>
+                  </div>
+                  {/*BOOKING MODAL ANIMATION*/}
+                  <div>
+                    <AnimatePresence>
+                      {isBookLoading && isVisible && (
+                        <motion.div
+                          initial="hidden"
+                          animate="visible"
+                          exit="hidden"
+                          variants={backdropVariants}
+                          className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 backdrop-blur-sm"
+                        >
+                          <motion.div
+                            variants={modalVariants}
+                            className="bg-white rounded-xl p-8 max-w-md w-full shadow-2xl text-center relative mx-4"
+                          >
+                            {bookingStatus === "loading" && (
+                              <div className="py-6">
+                                <motion.div
+                                  variants={spinnerVariants}
+                                  animate="animate"
+                                  className="w-20 h-20 border-4 border-gray-200 border-t-blue-600 rounded-full mx-auto mb-6"
+                                />
+                                <h3 className="text-xl font-semibold text-gray-800 mt-4">
+                                  Processing your booking...
+                                </h3>
+                                <p className="text-gray-500 mt-3 max-w-xs mx-auto">
+                                  Please wait while we confirm your reservation.
+                                  This usually takes a few seconds.
+                                </p>
+                              </div>
+                            )}
+
+                            {bookingStatus === "success" && (
+                              <div className="py-6">
+                                <motion.div
+                                  initial={{ scale: 0 }}
+                                  animate={{ scale: 1 }}
+                                  transition={{
+                                    type: "spring",
+                                    damping: 10,
+                                    stiffness: 100,
+                                  }}
+                                  className="w-20 h-20 bg-green-100 rounded-full mx-auto mb-6 flex items-center justify-center"
+                                >
+                                  <motion.svg
+                                    width="32"
+                                    height="32"
+                                    viewBox="0 0 32 32"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="text-green-600"
+                                  >
+                                    <motion.path
+                                      d="M6 16L13 23L26 10"
+                                      stroke="currentColor"
+                                      strokeWidth="3"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      variants={checkmarkPathVariants}
+                                      initial="hidden"
+                                      animate="visible"
+                                    />
+                                  </motion.svg>
+                                </motion.div>
+
+                                <h3 className="text-2xl font-semibold text-gray-800 mt-4">
+                                  Booking Successful!
+                                </h3>
+
+                                <p className="text-gray-600 mt-3">
+                                  You've successfully booked{" "}
+                                  <span className="font-semibold text-gray-800">
+                                    {unitCount} unit{unitCount !== 1 ? "s" : ""}
+                                  </span>
+                                </p>
+
+                                <p className="text-gray-500 text-sm mt-4">
+                                  A confirmation email has been sent to your
+                                  inbox with all the details.
+                                </p>
+
+                                <motion.button
+                                  whileHover={{ scale: 1.03 }}
+                                  whileTap={{ scale: 0.97 }}
+                                  className="mt-6 bg-blue-600 text-white px-8 py-3 rounded-lg font-medium shadow-md hover:bg-blue-700 transition-colors duration-200"
+                                  onClick={handleClose}
+                                >
+                                  Close
+                                </motion.button>
+                              </div>
+                            )}
+
+                            {bookingStatus === "error" && (
+                              <div className="py-6">
+                                <motion.div
+                                  initial={{ scale: 0 }}
+                                  animate={{ scale: 1 }}
+                                  transition={{
+                                    type: "spring",
+                                    damping: 10,
+                                    stiffness: 100,
+                                  }}
+                                  className="w-20 h-20 bg-red-100 rounded-full mx-auto mb-6 flex items-center justify-center"
+                                >
+                                  <motion.svg
+                                    width="32"
+                                    height="32"
+                                    viewBox="0 0 32 32"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="text-red-600"
+                                  >
+                                    <motion.path
+                                      d="M24 8L8 24"
+                                      stroke="currentColor"
+                                      strokeWidth="3"
+                                      strokeLinecap="round"
+                                      variants={errorPathVariants}
+                                      initial="hidden"
+                                      animate="visible"
+                                    />
+                                    <motion.path
+                                      d="M8 8L24 24"
+                                      stroke="currentColor"
+                                      strokeWidth="3"
+                                      strokeLinecap="round"
+                                      variants={errorPathVariants}
+                                      initial="hidden"
+                                      animate="visible"
+                                      transition={{ delay: 0.2 }}
+                                    />
+                                  </motion.svg>
+                                </motion.div>
+
+                                <h3 className="text-2xl font-semibold text-gray-800 mt-4">
+                                  Booking Failed
+                                </h3>
+
+                                <p className="text-red-600 mt-3 max-w-xs mx-auto">
+                                  {errorMessage}
+                                </p>
+
+                                <div className="mt-6 flex flex-col sm:flex-row justify-center gap-3">
+                                  <motion.button
+                                    whileHover={{ scale: 1.03 }}
+                                    whileTap={{ scale: 0.97 }}
+                                    className="bg-white border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors duration-200"
+                                    onClick={handleClose}
+                                  >
+                                    Cancel
+                                  </motion.button>
+
+                                  <motion.button
+                                    whileHover={{ scale: 1.03 }}
+                                    whileTap={{ scale: 0.97 }}
+                                    className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium shadow-md hover:bg-blue-700 transition-colors duration-200"
+                                    onClick={() => {
+                                      setBookingStatus("loading");
+                                      bookApartment();
+                                    }}
+                                  >
+                                    Try Again
+                                  </motion.button>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Close button in the corner */}
+                            <motion.button
+                              whileHover={{ scale: 1.1, rotate: 90 }}
+                              whileTap={{ scale: 0.9 }}
+                              className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+                              onClick={handleClose}
+                              aria-label="Close modal"
+                            >
+                              <svg
+                                width="16"
+                                height="16"
+                                viewBox="0 0 16 16"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M12 4L4 12"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                                <path
+                                  d="M4 4L12 12"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                              </svg>
+                            </motion.button>
+                          </motion.div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
 
                   <div className="mt-4 text-center flex items-center justify-center">

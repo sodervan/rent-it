@@ -37,10 +37,15 @@ const AgentDashboard = () => {
   const [filterType, setFilterType] = useState("");
   const [priceRange, setPriceRange] = useState("");
   const [agentData, setAgentData] = useState(null);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const apiUrl = import.meta.env.VITE_API_URL;
   const encodeId = (id) => btoa(id.toString());
   const updateShareState = () => setShare(true);
   const closeShareModal = () => setShare(false);
+
+  const handleSidebarCollapse = (collapsed) => {
+    setSidebarCollapsed(collapsed);
+  };
 
   const getCachedData = (key) => {
     const cached = localStorage.getItem(key);
@@ -163,25 +168,17 @@ const AgentDashboard = () => {
     }
   };
 
-  // const fetchAgentDetails = async (forceRefresh = false) => {
-  //   if (!forceRefresh) {
-  //     const cached = getCachedData("agentData");
-  //     if (cached) {
-  //       setAgentData(cached);
-  //       return;
-  //     }
-  //   }
-  //
-  //   try {
-  //     const response = await axios.get(`${apiUrl}/api/v1/agents`, {
-  //       withCredentials: true,
-  //     });
-  //     setAgentData(response.data);
-  //     setCachedData("agentData", response.data);
-  //   } catch (error) {
-  //     console.error("Error fetching agent details:", error);
-  //   }
-  // };
+  const fetchAgentDetails = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/api/v1/agents`, {
+        withCredentials: true,
+      });
+      setAgentData(response.data.payload);
+      localStorage.setItem("agentData", JSON.stringify(response.data.payload));
+    } catch (error) {
+      console.error("Error fetching agent details:", error);
+    }
+  };
 
   const handleDelist = async (listingId) => {
     try {
@@ -365,7 +362,12 @@ const AgentDashboard = () => {
 
   useEffect(() => {
     // fetchAgentDetails();
-    setAgentData(JSON.parse(localStorage.getItem("agentData")));
+    if (localStorage.getItem("agentData")) {
+      setAgentData(JSON.parse(localStorage.getItem("agentData")));
+    } else {
+      fetchAgentDetails();
+    }
+
     fetchPublishedListings();
     fetchUnpublishedListings();
 
@@ -584,8 +586,14 @@ const AgentDashboard = () => {
 
   return (
     <>
-      <Sidebar firstname={agentData?.firstname} loading={currentLoading} />
-      <div className="content lg:ml-64 xl:ml-64 mt-24">
+      <Sidebar
+        firstname={agentData?.firstname}
+        loading={currentLoading}
+        onCollapse={handleSidebarCollapse}
+      />
+      <div
+        className={`content transition-all duration-300 ${sidebarCollapsed ? "lg:ml-20" : "lg:ml-60"} mt-24`}
+      >
         <div className="px-5">
           <div className="flex flex-col gap-6 mb-8">
             <div className="flex flex-col md:flex-row items-center justify-between gap-4">

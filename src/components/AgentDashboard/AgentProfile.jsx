@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import ConfirmationModal from "@/components/AgentDashboard/ConfirmationModal.tsx";
 import { useNavigate } from "react-router-dom";
-import { IconEdit } from "@tabler/icons-react";
+import { IconEdit, IconWallet, IconPlus, IconTrash } from "@tabler/icons-react";
 import { toast } from "react-toastify";
 import { Spinner } from "@material-tailwind/react";
 import { motion } from "framer-motion";
@@ -28,10 +28,69 @@ const AgentProfile = () => {
   });
   const [originalFormData, setOriginalFormData] = useState({});
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] =
+    useState(false);
   const [loading, setIsLoading] = useState(false);
   const [fetchingData, setFetchingData] = useState(false);
   const { clearToken } = useTokenData();
   const apiUrl = import.meta.env.VITE_API_URL;
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  //STATED FOR CHANGING PASSWORD
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [repeatPassword, setRepeatPassword] = useState("");
+  // New states for withdrawal methods
+  const [withdrawalMethods, setWithdrawalMethods] = useState([]);
+  const [withdrawalHistory, setWithdrawalHistory] = useState([]);
+  const [isAddAccountModalOpen, setIsAddAccountModalOpen] = useState(false);
+  const [newAccount, setNewAccount] = useState({
+    accountType: "bank", // bank, crypto, or paypal
+    bankName: "",
+    accountNumber: "",
+    accountName: "",
+    cryptoAddress: "",
+    cryptoType: "",
+    paypalEmail: "",
+    isDefault: false,
+  });
+  const [showConfirmDelete, setShowConfirmDelete] = useState(null);
+  const [balance, setBalance] = useState(0);
+  const [isPasswordChanging, setsIsPasswordChanging] = useState(false);
+
+  const changePasswordHandler = async () => {
+    setsIsPasswordChanging(true); // you should also start loading at the beginning
+
+    try {
+      const response = await axios.post(
+        `${apiUrl}/api/v1/agents/change-password`,
+        {
+          oldPassword: oldPassword,
+          newPassword: newPassword,
+          confirmPassword: repeatPassword,
+        },
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      const result = response.data;
+      // Do something with result if needed
+    } catch (error) {
+      console.error("Password change Error:", error);
+      const errorMessage =
+        error.response?.data?.message || "Failed to Change Password";
+      toast.error(errorMessage);
+    } finally {
+      setsIsPasswordChanging(false);
+    }
+  };
+
+  const handleSidebarCollapse = (collapsed) => {
+    setSidebarCollapsed(collapsed);
+  };
 
   const toggleTab = (index) => {
     setToggleState(index);
@@ -86,6 +145,30 @@ const AgentProfile = () => {
     } finally {
       setFetchingData(false);
     }
+  };
+
+  const fetchWithdrawalMethods = async () => {
+    // In production, this would be an API call
+    // Mock data for now
+    setWithdrawalMethods([
+      {
+        id: "1",
+        accountType: "bank",
+        bankName: "First Bank",
+        accountNumber: "1234567890",
+        accountName: "John Smith",
+        isDefault: true,
+        dateAdded: "2024-11-15",
+      },
+      {
+        id: "2",
+        accountType: "crypto",
+        cryptoType: "Bitcoin",
+        cryptoAddress: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+        isDefault: false,
+        dateAdded: "2025-01-20",
+      },
+    ]);
   };
 
   const initializeFormData = (data) => {
@@ -195,6 +278,125 @@ const AgentProfile = () => {
     }
   };
 
+  // New handlers for withdrawal functionality
+  const handleNewAccountChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setNewAccount((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const saveNewAccount = async () => {
+    // Validate form based on account type
+    let isValid = false;
+    let errorMessage = "";
+
+    if (newAccount.accountType === "bank") {
+      if (
+        !newAccount.bankName ||
+        !newAccount.accountNumber ||
+        !newAccount.accountName
+      ) {
+        errorMessage = "Please fill all bank account fields";
+      } else {
+        isValid = true;
+      }
+    } else if (newAccount.accountType === "crypto") {
+      if (!newAccount.cryptoType || !newAccount.cryptoAddress) {
+        errorMessage = "Please fill all cryptocurrency fields";
+      } else {
+        isValid = true;
+      }
+    } else if (newAccount.accountType === "paypal") {
+      if (!newAccount.paypalEmail) {
+        errorMessage = "Please enter your PayPal email";
+      } else {
+        isValid = true;
+      }
+    }
+
+    if (!isValid) {
+      toast.error(errorMessage);
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      // Mock API response - In production, make a POST request to save account
+      const newId = Math.random().toString(36).substring(2, 9);
+
+      const newMethodData = {
+        ...newAccount,
+        id: newId,
+        dateAdded: new Date().toISOString().split("T")[0],
+      };
+
+      // If this is set as default, update other methods to not be default
+      if (newAccount.isDefault) {
+        setWithdrawalMethods((prev) =>
+          prev.map((method) => ({ ...method, isDefault: false })),
+        );
+      }
+
+      setWithdrawalMethods((prev) => [...prev, newMethodData]);
+
+      // Reset form
+      setNewAccount({
+        accountType: "bank",
+        bankName: "",
+        accountNumber: "",
+        accountName: "",
+        cryptoAddress: "",
+        cryptoType: "",
+        paypalEmail: "",
+        isDefault: false,
+      });
+
+      setIsAddAccountModalOpen(false);
+      toast.success("Withdrawal method added successfully!");
+    } catch (error) {
+      console.error("Error adding withdrawal method:", error);
+      toast.error("Failed to add withdrawal method");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const deleteWithdrawalMethod = async (id) => {
+    setIsLoading(true);
+    try {
+      // In production, make a DELETE request
+      setWithdrawalMethods((prev) => prev.filter((method) => method.id !== id));
+      setShowConfirmDelete(null);
+      toast.success("Withdrawal method deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting withdrawal method:", error);
+      toast.error("Failed to delete withdrawal method");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const setAsDefaultMethod = async (id) => {
+    setIsLoading(true);
+    try {
+      // In production, make a PATCH request
+      setWithdrawalMethods((prev) =>
+        prev.map((method) => ({
+          ...method,
+          isDefault: method.id === id,
+        })),
+      );
+      toast.success("Default withdrawal method updated!");
+    } catch (error) {
+      console.error("Error updating default method:", error);
+      toast.error("Failed to update default method");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
 
@@ -207,12 +409,17 @@ const AgentProfile = () => {
         console.log("Parsed Data:", parsed); // Debugging
 
         // Handle both possible data structures
-        const agentPayload = parsed?.data.payload || parsed;
+        const agentPayload = parsed?.data?.payload || parsed?.payload || parsed;
         console.log("Agent Payload:", agentPayload); // Debugging
 
         if (agentPayload) {
-          setAgentData(parsed?.data.payload);
+          setAgentData(agentPayload);
           initializeFormData(agentPayload);
+
+          // Mock data setup
+          setBalance(agentPayload.balance || 15000);
+          fetchWithdrawalMethods();
+          fetchWithdrawalHistory();
         } else {
           fetchAgentData();
         }
@@ -238,12 +445,16 @@ const AgentProfile = () => {
 
   return (
     <>
-      <Sidebar firstname={formData.firstName} loading={loading} />
+      <Sidebar
+        firstname={formData.firstName}
+        loading={loading}
+        onCollapse={handleSidebarCollapse}
+      />
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="flex flex-col lg:flex-row mt-20 max-w-7xl w-[98%] mx-auto gap-10 min-h-screen px-4 lg:ml-64 lg:w-[80%]"
+        className={`flex flex-col lg:flex-row mt-20 max-w-7xl w-[98%] mx-auto gap-10 min-h-screen px-4 ${sidebarCollapsed ? "lg:ml-20" : "lg:ml-60"} lg:w-[80%]`}
       >
         {/* Profile Sidebar */}
         <motion.div
@@ -337,15 +548,17 @@ const AgentProfile = () => {
 
           {/* Tabs */}
           <div className="border-b border-gray-200 mb-6">
-            <div className="flex space-x-8">
+            <div className="flex space-x-8 overflow-x-auto pb-1">
               {[
                 { id: 1, label: "Profile", icon: "profile" },
                 { id: 2, label: "Password", icon: "password" },
+                // { id: 3, label: "Withdrawal", icon: "withdrawal" },
+                { id: 4, label: "Payment Methods", icon: "payment" },
               ].map((tab) => (
                 <motion.button
                   key={tab.id}
                   onClick={() => toggleTab(tab.id)}
-                  className={`pb-4 relative ${
+                  className={`pb-4 relative whitespace-nowrap ${
                     toggle === tab.id
                       ? "text-purple-600"
                       : "text-gray-500 hover:text-gray-700"
@@ -368,7 +581,8 @@ const AgentProfile = () => {
           {/* Profile Form */}
           <motion.div
             initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            animate={{ opacity: toggle === 1 ? 1 : 0 }}
+            exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
             className={toggle === 1 ? "block" : "hidden"}
           >
@@ -509,10 +723,17 @@ const AgentProfile = () => {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: toggle === 2 ? 1 : 0 }}
+            exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
             className={toggle === 2 ? "block" : "hidden"}
           >
-            <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+            <form
+              className="space-y-6"
+              onSubmit={(e) => {
+                e.preventDefault();
+                changePasswordHandler();
+              }}
+            >
               <div className="space-y-6">
                 <h2 className="text-lg font-semibold text-gray-700">
                   Change Password
@@ -524,6 +745,8 @@ const AgentProfile = () => {
                     </label>
                     <input
                       type="password"
+                      value={oldPassword}
+                      onChange={(e) => setOldPassword(e.target.value)}
                       className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
                       placeholder="Enter current password"
                     />
@@ -534,6 +757,8 @@ const AgentProfile = () => {
                     </label>
                     <input
                       type="password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
                       className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
                       placeholder="Enter new password"
                     />
@@ -544,8 +769,10 @@ const AgentProfile = () => {
                     </label>
                     <input
                       type="password"
+                      value={repeatPassword}
+                      onChange={(e) => setRepeatPassword(e.target.value)}
                       className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-                      placeholder="Confirm new password"
+                      placeholder="Repeat new password"
                     />
                   </div>
                 </div>
@@ -554,23 +781,172 @@ const AgentProfile = () => {
               <div className="space-y-4">
                 <motion.button
                   type="submit"
-                  whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="w-full py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-300"
+                  className={`w-full py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-300
+        ${isPasswordChanging ? "opacity-50 cursor-not-allowed" : ""}
+    `}
                 >
-                  Reset Password
-                </motion.button>
-
-                <motion.button
-                  type="button"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-300"
-                >
-                  Forgot Password?
+                  {isPasswordChanging ? "Changing..." : "Change Password"}
                 </motion.button>
               </div>
             </form>
+          </motion.div>
+
+          {/* Payment Methods Tab */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: toggle === 4 ? 1 : 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className={toggle === 4 ? "block" : "hidden"}
+          >
+            <div className="space-y-6">
+              <div className="flex justify-between items-center">
+                <h2 className="text-lg font-semibold text-gray-700">
+                  Payment Methods
+                </h2>
+                <motion.button
+                  onClick={() => setIsAddAccountModalOpen(true)}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="flex items-center text-sm px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                >
+                  <IconPlus size={16} className="mr-1" />
+                  Add New
+                </motion.button>
+              </div>
+
+              {withdrawalMethods.length === 0 ? (
+                <div className="text-center py-12 border-2 border-dashed border-gray-300 rounded-lg">
+                  <IconWallet
+                    size={40}
+                    className="mx-auto text-gray-400 mb-3"
+                  />
+                  <h3 className="text-lg font-medium text-gray-600 mb-1">
+                    No payment methods
+                  </h3>
+                  <p className="text-gray-500 mb-4">
+                    Add a payment method to receive your earnings
+                  </p>
+                  <button
+                    onClick={() => setIsAddAccountModalOpen(true)}
+                    className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                  >
+                    Add Payment Method
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {withdrawalMethods.map((method) => (
+                    <motion.div
+                      key={method.id}
+                      className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                      whileHover={{ y: -2 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <div className="flex justify-between">
+                        <div>
+                          {method.accountType === "bank" && (
+                            <>
+                              <div className="flex items-center space-x-2">
+                                <span className="text-lg font-medium text-gray-800">
+                                  {method.bankName}
+                                </span>
+                                {method.isDefault && (
+                                  <span className="px-2 py-0.5 bg-green-100 text-green-800 text-xs rounded-full">
+                                    Default
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-gray-600">
+                                {method.accountNumber} ({method.accountName})
+                              </p>
+                            </>
+                          )}
+
+                          {method.accountType === "crypto" && (
+                            <>
+                              <div className="flex items-center space-x-2">
+                                <span className="text-lg font-medium text-gray-800">
+                                  {method.cryptoType}
+                                </span>
+                                {method.isDefault && (
+                                  <span className="px-2 py-0.5 bg-green-100 text-green-800 text-xs rounded-full">
+                                    Default
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-gray-600 text-sm truncate max-w-md">
+                                {method.cryptoAddress}
+                              </p>
+                            </>
+                          )}
+
+                          {method.accountType === "paypal" && (
+                            <>
+                              <div className="flex items-center space-x-2">
+                                <span className="text-lg font-medium text-gray-800">
+                                  PayPal
+                                </span>
+                                {method.isDefault && (
+                                  <span className="px-2 py-0.5 bg-green-100 text-green-800 text-xs rounded-full">
+                                    Default
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-gray-600">
+                                {method.paypalEmail}
+                              </p>
+                            </>
+                          )}
+
+                          <p className="text-gray-400 text-xs mt-2">
+                            Added: {method.dateAdded}
+                          </p>
+                        </div>
+
+                        <div className="flex items-start space-x-2">
+                          {!method.isDefault && (
+                            <button
+                              onClick={() => setAsDefaultMethod(method.id)}
+                              className="text-sm px-3 py-1.5 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
+                            >
+                              Set as Default
+                            </button>
+                          )}
+
+                          {showConfirmDelete === method.id ? (
+                            <div className="flex items-center space-x-2">
+                              <button
+                                onClick={() =>
+                                  deleteWithdrawalMethod(method.id)
+                                }
+                                className="text-sm px-3 py-1.5 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+                              >
+                                Confirm
+                              </button>
+                              <button
+                                onClick={() => setShowConfirmDelete(null)}
+                                className="text-sm px-3 py-1.5 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          ) : (
+                            <button
+                              onClick={() => setShowConfirmDelete(method.id)}
+                              className="text-sm p-1.5 text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                            >
+                              <IconTrash size={18} />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </div>
           </motion.div>
         </motion.div>
 
@@ -582,6 +958,196 @@ const AgentProfile = () => {
             onConfirm={handleLogout}
             message="Are you sure you want to log out? This action cannot be undone."
           />
+        )}
+
+        {/* Delete Account Confirmation Modal */}
+        {isDeleteAccountModalOpen && (
+          <ConfirmationModal
+            isOpen={isDeleteAccountModalOpen}
+            onClose={() => setIsDeleteAccountModalOpen(false)}
+            onConfirm={() => {
+              toast.success(
+                "Account deletion requested. Our team will contact you shortly.",
+              );
+              setIsDeleteAccountModalOpen(false);
+            }}
+            message="Are you sure you want to delete your account? This will remove all your data and listings from our platform. This action cannot be undone."
+          />
+        )}
+
+        {/* Add Account Modal */}
+        {isAddAccountModalOpen && (
+          <div className="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="bg-white rounded-lg shadow-xl max-w-md w-full p-6"
+            >
+              <h3 className="text-lg font-medium text-gray-900 mb-4">
+                Add Payment Method
+              </h3>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Account Type
+                  </label>
+                  <select
+                    name="accountType"
+                    value={newAccount.accountType}
+                    onChange={handleNewAccountChange}
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  >
+                    <option value="bank">Bank Account</option>
+                    <option value="crypto">Cryptocurrency</option>
+                    <option value="paypal">PayPal</option>
+                  </select>
+                </div>
+
+                {newAccount.accountType === "bank" && (
+                  <>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Bank Name
+                      </label>
+                      <input
+                        type="text"
+                        name="bankName"
+                        value={newAccount.bankName}
+                        onChange={handleNewAccountChange}
+                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        placeholder="Enter bank name"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Account Number
+                      </label>
+                      <input
+                        type="text"
+                        name="accountNumber"
+                        value={newAccount.accountNumber}
+                        onChange={handleNewAccountChange}
+                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        placeholder="Enter account number"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Account Name
+                      </label>
+                      <input
+                        type="text"
+                        name="accountName"
+                        value={newAccount.accountName}
+                        onChange={handleNewAccountChange}
+                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        placeholder="Enter account name"
+                      />
+                    </div>
+                  </>
+                )}
+
+                {newAccount.accountType === "crypto" && (
+                  <>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Cryptocurrency Type
+                      </label>
+                      <select
+                        name="cryptoType"
+                        value={newAccount.cryptoType}
+                        onChange={handleNewAccountChange}
+                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      >
+                        <option value="">Select cryptocurrency</option>
+                        <option value="Bitcoin">Bitcoin (BTC)</option>
+                        <option value="Ethereum">Ethereum (ETH)</option>
+                        <option value="USDT">USDT (Tether)</option>
+                        <option value="USDC">USDC</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Wallet Address
+                      </label>
+                      <input
+                        type="text"
+                        name="cryptoAddress"
+                        value={newAccount.cryptoAddress}
+                        onChange={handleNewAccountChange}
+                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        placeholder="Enter wallet address"
+                      />
+                    </div>
+                  </>
+                )}
+
+                {newAccount.accountType === "paypal" && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      PayPal Email
+                    </label>
+                    <input
+                      type="email"
+                      name="paypalEmail"
+                      value={newAccount.paypalEmail}
+                      onChange={handleNewAccountChange}
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      placeholder="Enter PayPal email"
+                    />
+                  </div>
+                )}
+
+                <div className="flex items-center mt-2">
+                  <input
+                    type="checkbox"
+                    id="isDefault"
+                    name="isDefault"
+                    checked={newAccount.isDefault}
+                    onChange={handleNewAccountChange}
+                    className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
+                  />
+                  <label
+                    htmlFor="isDefault"
+                    className="ml-2 block text-sm text-gray-700"
+                  >
+                    Set as default withdrawal method
+                  </label>
+                </div>
+              </div>
+
+              <div className="mt-6 flex justify-end space-x-3">
+                <button
+                  onClick={() => setIsAddAccountModalOpen(false)}
+                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <motion.button
+                  onClick={saveNewAccount}
+                  disabled={loading}
+                  whileHover={{ scale: !loading ? 1.02 : 1 }}
+                  whileTap={{ scale: !loading ? 0.98 : 1 }}
+                  className={`px-4 py-2 rounded-md transition-colors ${
+                    loading
+                      ? "bg-purple-400 cursor-not-allowed"
+                      : "bg-purple-600 hover:bg-purple-700"
+                  } text-white`}
+                >
+                  {loading ? (
+                    <div className="flex items-center space-x-2">
+                      <Spinner className="w-4 h-4" />
+                      <span>Saving...</span>
+                    </div>
+                  ) : (
+                    "Save Payment Method"
+                  )}
+                </motion.button>
+              </div>
+            </motion.div>
+          </div>
         )}
       </motion.div>
     </>

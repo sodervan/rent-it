@@ -127,7 +127,7 @@ function Routing() {
             <Route path="/aboutus" element={<AboutUs />} />
             <Route path="/blog" element={<Blog />} />
             <Route
-              path="/listing-details-page/:id/:index"
+              path="/listing/:listingId"
               element={<ListingDetailsPage />}
             />
             <Route path="/agent/login" element={<AgentsLogin />} />
@@ -214,14 +214,14 @@ function Routing() {
                 </RenterRoute>
               }
             />
-            <Route
-              path="/listing/:listingId"
-              element={
-                <RenterRoute>
-                  <ListingDetailsPage />
-                </RenterRoute>
-              }
-            />
+            {/*<Route*/}
+            {/*  path="/listing/:listingId"*/}
+            {/*  element={*/}
+            {/*    <RenterRoute>*/}
+            {/*      <ListingDetailsPage />*/}
+            {/*    </RenterRoute>*/}
+            {/*  }*/}
+            {/*/>*/}
           </Route>
         </Routes>
       </BrowserRouter>

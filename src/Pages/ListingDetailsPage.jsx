@@ -30,18 +30,18 @@ import {
   FaLocationArrow,
   FaSchool,
   FaHospital,
-  FaCity,
   FaBuilding,
 } from "react-icons/fa";
 import { MdExpandMore, MdExpandLess, MdDirectionsBus } from "react-icons/md";
-import { FaWater } from "react-icons/fa";
-import { MdOutlineFoodBank } from "react-icons/md";
 import { IconVideo, IconPhoto } from "@tabler/icons-react";
 import axios from "axios";
 import VideoModal from "@/components/AddListings/VideoModal.jsx";
 import ImageModal from "@/components/AddListings/ImagesModal.jsx";
+import useTokenData from "../../TokenHook.js";
+import BlockedBookingModal from "@/components/BlockedBookingModal.jsx";
 
 const ListingDetailsPage = () => {
+  const { tokenData } = useTokenData();
   const [listing, setListing] = useState(null);
   const apiUrl = import.meta.env.VITE_API_URL;
   const { listingId } = useParams();
@@ -70,10 +70,8 @@ const ListingDetailsPage = () => {
   const [isVisible, setIsVisible] = useState(true);
   const [agentData, setAgentData] = useState(null);
   const [isHovered, setIsHovered] = useState(false);
-  // const [durationUnit, setDurationUnit] = useState(
-  //   listing?.paymentDuration === "annum" ? "year" : "month",
-  // );
   const [duration, setDuration] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const getDurationOptions = () => {
     if (listing.paymentDuration === "annum") {
@@ -292,6 +290,7 @@ const ListingDetailsPage = () => {
       setBookingStatus("error");
     }
   };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-96">
@@ -371,9 +370,19 @@ const ListingDetailsPage = () => {
     if (!isConfirmingBooking) {
       setIsConfirmingBooking(true);
     } else {
-      setBookLoading(true);
-      setIsVisible(true);
-      setIsConfirmingBooking(false);
+      if (!tokenData) {
+        console.log("There is no token data");
+        setIsModalOpen(true);
+        return;
+      } else {
+        if (tokenData?.role === "user") {
+          setBookLoading(true);
+          setIsVisible(true);
+          setIsConfirmingBooking(false);
+        } else {
+          console.log("This is an agent account");
+        }
+      }
     }
   };
 
@@ -515,6 +524,13 @@ const ListingDetailsPage = () => {
               open={showImageModal}
               onClose={() => setShowImageModal(false)}
             />
+
+            {isModalOpen && (
+              <BlockedBookingModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+              />
+            )}
             {/* Property Title & Location */}
             <div className="mb-6">
               <motion.h1
@@ -687,83 +703,6 @@ const ListingDetailsPage = () => {
                 </div>
               )}
             </motion.div>
-
-            {/* Property Features */}
-            {/*<motion.div*/}
-            {/*  initial={{ opacity: 0, y: 10 }}*/}
-            {/*  animate={{ opacity: 1, y: 0 }}*/}
-            {/*  transition={{ delay: 0.6 }}*/}
-            {/*  className="mb-8 bg-gray-50 p-5 rounded-lg shadow-sm"*/}
-            {/*>*/}
-            {/*  <h2 className="text-lg font-medium mb-4  border-b pb-2">*/}
-            {/*    Features*/}
-            {/*  </h2>*/}
-            {/*  <div className="grid grid-cols-2 sm:grid-cols-3 gap-y-4">*/}
-            {/*    <div className="flex items-center group">*/}
-            {/*      <TbPlugConnected className="text-primaryPurple mr-2 group-hover:scale-110 transition-transform" />*/}
-            {/*      <span className="text-gray-700">*/}
-            {/*        {listing.listingFeatures?.electricityPaymentType ===*/}
-            {/*        "prepaid"*/}
-            {/*          ? "Prepaid Electricity"*/}
-            {/*          : "Electricity"}*/}
-            {/*      </span>*/}
-            {/*    </div>*/}
-            {/*    <div className="flex items-center group">*/}
-            {/*      <FaBath className="text-primaryPurple mr-2 group-hover:scale-110 transition-transform" />*/}
-            {/*      <span className="text-gray-700">*/}
-            {/*        {listing.bathroomAccessType === "private"*/}
-            {/*          ? "Private Bathroom"*/}
-            {/*          : "Shared Bathroom"}*/}
-            {/*      </span>*/}
-            {/*    </div>*/}
-            {/*    <div className="flex items-center group">*/}
-            {/*      <FaBed className="text-primaryPurple mr-2 group-hover:scale-110 transition-transform" />*/}
-            {/*      <span className="text-gray-700">*/}
-            {/*        {listing.bedroomAccessType === "private"*/}
-            {/*          ? "Private Bedroom"*/}
-            {/*          : "Shared Bedroom"}*/}
-            {/*      </span>*/}
-            {/*    </div>*/}
-            {/*    <div className="flex items-center group">*/}
-            {/*      <MdOutlineFoodBank className="text-primaryPurple mr-2 group-hover:scale-110 transition-transform" />*/}
-            {/*      <span className="text-gray-700">*/}
-            {/*        {listing.kitchenAccessType === "private"*/}
-            {/*          ? "Private Kitchen"*/}
-            {/*          : "Shared Kitchen"}*/}
-            {/*      </span>*/}
-            {/*    </div>*/}
-            {/*    {listing.electricityAccessType && (*/}
-            {/*      <div className="flex items-center group">*/}
-            {/*        <TbPlugConnected className="text-primaryPurple mr-2 group-hover:scale-110 transition-transform" />*/}
-            {/*        <span className="text-gray-700">*/}
-            {/*          {listing.electricityAccessType === "private"*/}
-            {/*            ? "Private Electricity"*/}
-            {/*            : "Shared Electricity"}*/}
-            {/*        </span>*/}
-            {/*      </div>*/}
-            {/*    )}*/}
-            {/*    {listing.furnishingState && (*/}
-            {/*      <div className="flex items-center group">*/}
-            {/*        <span className="mr-2 text-xl group-hover:scale-110 transition-transform">*/}
-            {/*          🪑*/}
-            {/*        </span>*/}
-            {/*        <span className="text-gray-700">*/}
-            {/*          {listing.furnishingState === "fully-furnished"*/}
-            {/*            ? "Fully Furnished"*/}
-            {/*            : listing.furnishingState === "semi-furnished"*/}
-            {/*              ? "Semi-Furnished"*/}
-            {/*              : "Not Furnished"}*/}
-            {/*        </span>*/}
-            {/*      </div>*/}
-            {/*    )}*/}
-            {/*    {listing.outdoorWaterTaps && (*/}
-            {/*      <div className="flex items-center group">*/}
-            {/*        <FaWater className="text-primaryPurple mr-2 group-hover:scale-110 transition-transform" />*/}
-            {/*        <span className="text-gray-700">Outdoor Water Taps</span>*/}
-            {/*      </div>*/}
-            {/*    )}*/}
-            {/*  </div>*/}
-            {/*</motion.div>*/}
 
             {/*LISTING PROPERTIES*/}
             <motion.div
@@ -2030,7 +1969,7 @@ const ListingDetailsPage = () => {
                                 <motion.div
                                   variants={spinnerVariants}
                                   animate="animate"
-                                  className="w-20 h-20 border-4 border-gray-200 border-t-blue-600 rounded-full mx-auto mb-6"
+                                  className="w-20 h-20 border-4 border-gray-200 border-t-purple-600 rounded-full mx-auto mb-6"
                                 />
                                 <h3 className="text-xl font-semibold text-gray-800 mt-4">
                                   Processing your booking...
@@ -2094,7 +2033,7 @@ const ListingDetailsPage = () => {
                                 <motion.button
                                   whileHover={{ scale: 1.03 }}
                                   whileTap={{ scale: 0.97 }}
-                                  className="mt-6 bg-blue-600 text-white px-8 py-3 rounded-lg font-medium shadow-md hover:bg-blue-700 transition-colors duration-200"
+                                  className="mt-6 bg-purple-600 text-white px-8 py-3 rounded-lg font-medium shadow-md hover:bg-purple-700 transition-colors duration-200"
                                   onClick={handleClose}
                                 >
                                   Close
@@ -2165,7 +2104,7 @@ const ListingDetailsPage = () => {
                                   <motion.button
                                     whileHover={{ scale: 1.03 }}
                                     whileTap={{ scale: 0.97 }}
-                                    className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium shadow-md hover:bg-blue-700 transition-colors duration-200"
+                                    className="bg-purple-600 text-white px-6 py-3 rounded-lg font-medium shadow-md hover:bg-purple-700 transition-colors duration-200"
                                     onClick={() => {
                                       setBookingStatus("loading");
                                       bookApartment();

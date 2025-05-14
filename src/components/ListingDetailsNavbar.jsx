@@ -9,6 +9,7 @@ const ListingDetailsNavbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const menuRef = useRef(null);
+  const { clearToken } = useTokenData();
 
   // Handle scroll effect for navbar with throttling
   useEffect(() => {
@@ -85,7 +86,8 @@ const ListingDetailsNavbar = () => {
   const handleSignOut = () => {
     // Add a subtle animation before signout
     const signoutAnimation = () => {
-      localStorage.removeItem("token");
+      clearToken();
+      localStorage.clear();
       window.location.href = "/";
     };
 
@@ -110,8 +112,6 @@ const ListingDetailsNavbar = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             <NavLink to="/renter/dashboard/home">Home</NavLink>
-            {/*<NavLink to="/about">About Us</NavLink>*/}
-            {/*<NavLink to="/contact">Contact</NavLink>*/}
 
             {/* Conditional rendering based on token */}
             {tokenData ? (
@@ -119,7 +119,7 @@ const ListingDetailsNavbar = () => {
                 {/* User dropdown menu */}
                 <div className="relative group" ref={dropdownRef}>
                   <button
-                    className={`flex items-center space-x-2 text-gray-700 hover:text-indigo-600 focus:outline-none transition-all duration-300 ${isDropdownOpen ? "text-indigo-600" : ""}`}
+                    className={`flex items-center space-x-2 text-gray-700 hover:text-purple-700 focus:outline-none transition-all duration-300 ${isDropdownOpen ? "text-purple-700" : ""}`}
                     onClick={toggleDropdown}
                     aria-expanded={isDropdownOpen}
                     aria-haspopup="true"
@@ -127,7 +127,7 @@ const ListingDetailsNavbar = () => {
                     <span>{tokenData.name || "My Account"}</span>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className={`h-5 w-5 transition-transform duration-300 ${isDropdownOpen ? "rotate-180 text-indigo-600" : ""}`}
+                      className={`h-5 w-5 transition-transform duration-300 ${isDropdownOpen ? "rotate-180 text-purple-700" : ""}`}
                       viewBox="0 0 20 20"
                       fill="currentColor"
                     >
@@ -150,18 +150,30 @@ const ListingDetailsNavbar = () => {
                         Agent Dashboard
                       </DropdownLink>
                     ) : (
-                      <DropdownLink to="/renter/dashboard">
+                      <DropdownLink to="/renter/dashboard/home">
                         My Dashboard
                       </DropdownLink>
                     )}
-                    <DropdownLink to="/profile">Profile</DropdownLink>
-                    <DropdownLink to="/favorites">
-                      Favorite Listings
-                    </DropdownLink>
+                    {tokenData.role === "agent" ? (
+                      <DropdownLink to="/agent/dashboard/profile">
+                        Profile
+                      </DropdownLink>
+                    ) : (
+                      <DropdownLink to="/renter/dashboard/settings">
+                        Profile
+                      </DropdownLink>
+                    )}
+                    {tokenData.role === "agent" ? (
+                      <DropdownLink to="/agent/bookings">Bookings</DropdownLink>
+                    ) : (
+                      <DropdownLink to="/renter/dashboard/favourites">
+                        Favorite Listings
+                      </DropdownLink>
+                    )}
                     <hr className="my-1 border-gray-200" />
                     <button
                       onClick={handleSignOut}
-                      className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors duration-200"
+                      className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors duration-200"
                     >
                       Sign Out
                     </button>
@@ -173,7 +185,7 @@ const ListingDetailsNavbar = () => {
                       ? "/agent/new-listing"
                       : "/contact-agent"
                   }
-                  className="bg-indigo-600 text-white px-6 py-2 rounded-full hover:bg-indigo-700 transition-all duration-300 ease-in-out hover:shadow-lg transform hover:-translate-y-0.5 active:translate-y-0"
+                  className="bg-purple-700 text-white px-6 py-2 rounded-full hover:bg-purple-800 transition-all duration-300 ease-in-out hover:shadow-lg transform hover:-translate-y-0.5 active:translate-y-0"
                 >
                   {tokenData.role === "agent" ? "Add Listing" : "Contact Agent"}
                 </Link>
@@ -182,14 +194,14 @@ const ListingDetailsNavbar = () => {
               <div className="flex items-center space-x-4">
                 {/* User is not logged in */}
                 <Link
-                  to="/login"
-                  className="text-gray-700 hover:text-indigo-600 transition-colors duration-300"
+                  to="/renter/login"
+                  className="text-gray-700 hover:text-purple-700 transition-colors duration-300"
                 >
                   Login
                 </Link>
                 <Link
-                  to="/signup"
-                  className="bg-indigo-600 text-white px-6 py-2 rounded-full hover:bg-indigo-700 transition-all duration-300 ease-in-out hover:shadow-lg transform hover:-translate-y-0.5 active:translate-y-0"
+                  to="/renter/signup"
+                  className="bg-purple-700 text-white px-6 py-2 rounded-full hover:bg-purple-800 transition-all duration-300 ease-in-out hover:shadow-lg transform hover:-translate-y-0.5 active:translate-y-0"
                 >
                   Sign Up
                 </Link>
@@ -201,7 +213,7 @@ const ListingDetailsNavbar = () => {
           <div className="md:hidden" ref={menuRef}>
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-700 hover:text-indigo-600 focus:outline-none transition-all duration-300"
+              className="text-gray-700 hover:text-purple-700 focus:outline-none transition-all duration-300"
               aria-expanded={isMenuOpen}
               aria-label="Toggle menu"
             >
@@ -236,14 +248,11 @@ const ListingDetailsNavbar = () => {
           style={{ height: "calc(100vh - var(--navbar-height, 56px))" }}
         >
           <div className="container mx-auto px-4 py-6 flex flex-col space-y-4 overflow-y-auto h-full">
-            <MobileNavLink to="/listings" onClick={() => setIsMenuOpen(false)}>
-              All Listings
-            </MobileNavLink>
-            <MobileNavLink to="/about" onClick={() => setIsMenuOpen(false)}>
-              About Us
-            </MobileNavLink>
-            <MobileNavLink to="/contact" onClick={() => setIsMenuOpen(false)}>
-              Contact
+            <MobileNavLink
+              to="/renter/dashboard/home"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Home
             </MobileNavLink>
 
             {tokenData ? (
@@ -258,31 +267,43 @@ const ListingDetailsNavbar = () => {
                   </MobileNavLink>
                 ) : (
                   <MobileNavLink
-                    to="/renter/dashboard"
+                    to="/renter/dashboard/home"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     My Dashboard
                   </MobileNavLink>
                 )}
-                <MobileNavLink
-                  to="/profile"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Profile Settings
-                </MobileNavLink>
-                <MobileNavLink
-                  to="/favorites"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Saved Listings
-                </MobileNavLink>
+                {tokenData.role === "agent" ? (
+                  <MobileNavLink
+                    to="/agent/dashboard/profile"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Profile
+                  </MobileNavLink>
+                ) : (
+                  <MobileNavLink to="/renter/dashboard/settings">
+                    Profile
+                  </MobileNavLink>
+                )}
+                {tokenData.role === "agent" ? (
+                  <MobileNavLink
+                    to="/agent/bookings"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Bookings
+                  </MobileNavLink>
+                ) : (
+                  <MobileNavLink to="/renter/dashboard/favourites">
+                    Favorite Listings
+                  </MobileNavLink>
+                )}
                 <hr className="my-4 border-gray-200" />
                 <button
                   onClick={() => {
                     handleSignOut();
                     setIsMenuOpen(false);
                   }}
-                  className="text-left text-gray-700 hover:text-indigo-600 transition-colors duration-300 py-3 font-medium"
+                  className="text-left text-gray-700 hover:text-purple-700 transition-colors duration-300 py-3 font-medium"
                 >
                   Sign Out
                 </button>
@@ -292,7 +313,7 @@ const ListingDetailsNavbar = () => {
                       ? "/agent/new-listing"
                       : "/contact-agent"
                   }
-                  className="bg-indigo-600 text-white px-6 py-3 rounded-full hover:bg-indigo-700 transition-all duration-300 ease-in-out hover:shadow-lg text-center mt-4"
+                  className="bg-purple-700 text-white px-6 py-3 rounded-full hover:bg-purple-800 transition-all duration-300 ease-in-out hover:shadow-lg text-center mt-4"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {tokenData.role === "agent" ? "Add Listing" : "Contact Agent"}
@@ -301,12 +322,15 @@ const ListingDetailsNavbar = () => {
             ) : (
               <>
                 {/* User is not logged in (mobile) */}
-                <MobileNavLink to="/login" onClick={() => setIsMenuOpen(false)}>
+                <MobileNavLink
+                  to="/renter/login"
+                  onClick={() => setIsMenuOpen(false)}
+                >
                   Login
                 </MobileNavLink>
                 <Link
-                  to="/signup"
-                  className="bg-indigo-600 text-white px-6 py-3 rounded-full hover:bg-indigo-700 transition-all duration-300 ease-in-out hover:shadow-lg text-center mt-4"
+                  to="/renter/signup"
+                  className="bg-purple-700 text-white px-6 py-3 rounded-full hover:bg-purple-800 transition-all duration-300 ease-in-out hover:shadow-lg text-center mt-4"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Sign Up
@@ -324,10 +348,10 @@ const ListingDetailsNavbar = () => {
 const NavLink = ({ to, children }) => (
   <Link
     to={to}
-    className="text-gray-700 hover:text-indigo-600 relative group transition-colors duration-300"
+    className="text-gray-700 hover:text-purple-700 relative group transition-colors duration-300"
   >
     {children}
-    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-indigo-600 transition-all duration-300 origin-left group-hover:w-full"></span>
+    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-purple-700 transition-all duration-300 origin-left group-hover:w-full"></span>
   </Link>
 );
 
@@ -335,7 +359,7 @@ const NavLink = ({ to, children }) => (
 const DropdownLink = ({ to, children }) => (
   <Link
     to={to}
-    className="block px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors duration-200"
+    className="block px-4 py-2 text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors duration-200"
   >
     {children}
   </Link>
@@ -345,7 +369,7 @@ const DropdownLink = ({ to, children }) => (
 const MobileNavLink = ({ to, children, onClick }) => (
   <Link
     to={to}
-    className="text-gray-700 hover:text-indigo-600 transition-colors duration-300 py-3 font-medium flex items-center"
+    className="text-gray-700 hover:text-purple-700 transition-colors duration-300 py-3 font-medium flex items-center"
     onClick={onClick}
   >
     {children}

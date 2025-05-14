@@ -15,7 +15,7 @@ import { motion } from "framer-motion";
 import { useFavorites } from "@/Pages/renter_dashboard/Contexts/FavContext.tsx";
 
 function FavouritesCard(props: LISTINGITEM) {
-  console.log("FavouritesCard props:", props);
+  // console.log("FavouritesCard props:", props);
   
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
@@ -23,7 +23,9 @@ function FavouritesCard(props: LISTINGITEM) {
 
   // Use the favorites context
   const { isFavorite, addFavorite, removeFavorite, isLoading } = useFavorites();
-  const favorite = isFavorite(props.id);
+  const favorite = true;
+
+  // console.log(favorite)
   const isCurrentLoading = isLoading[props.id] || false;
 
   // Function to save listing to recently viewed in localStorage

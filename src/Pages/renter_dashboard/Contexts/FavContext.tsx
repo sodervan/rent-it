@@ -117,47 +117,50 @@ export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const removeFavorite = async (listingId: string) => {
-    // Prevent multiple simultaneous requests for the same listing
-    if (isLoading[listingId]) return;
+const removeFavorite = async (listingId: string) => {
+  if (isLoading[listingId]) return;
 
-    setIsLoading((prev) => ({ ...prev, [listingId]: true }));
-    try {
-      await axios.delete(`${apiUrl}/api/v1/listings/${listingId}/favourite`, {
-        withCredentials: true,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+  setIsLoading((prev) => ({ ...prev, [listingId]: true }));
+  try {
+    await axios.delete(`${apiUrl}/api/v1/listings/${listingId}/favourite`, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
-      const newFavorites = favorites.filter((item) => item.id !== listingId);
-      setFavorites(newFavorites);
-      localStorage.setItem("favoriteListings", JSON.stringify(newFavorites));
+    console.log("Current favorites:", favorites); // Debugging log
 
-      toast.success("Removed from favorites");
-    } catch (error: any) {
-      console.error("Error removing from favorites:", error);
+    // Ensure favorites is an array before filtering
+    const newFavorites = Array.isArray(favorites)
+      ? favorites.filter((item) => item.id !== listingId)
+      : [];
+    setFavorites(newFavorites);
+    localStorage.setItem("favoriteListings", JSON.stringify(newFavorites));
 
-      // More detailed error handling
-      if (error.response) {
-        console.error("Error response:", error.response.data);
-        console.error("Status code:", error.response.status);
-        toast.error(
-          error.response.data.message || "Failed to remove from favorites",
-        );
-      } else if (error.request) {
-        console.error("No response received:", error.request);
-        toast.error("No response from server");
-      } else {
-        console.error("Error setting up request:", error.message);
-        toast.error("Failed to remove from favorites");
-      }
+    toast.success("Removed from favorites");
+  } catch (error: any) {
+    console.error("Error removing from favorites:", error);
 
-      throw error;
-    } finally {
-      setIsLoading((prev) => ({ ...prev, [listingId]: false }));
+    if (error.response) {
+      console.error("Error response:", error.response.data);
+      console.error("Status code:", error.response.status);
+      toast.error(
+        error.response.data.message || "Failed to remove from favorites"
+      );
+    } else if (error.request) {
+      console.error("No response received:", error.request);
+      toast.error("No response from server");
+    } else {
+      console.error("Error setting up request:", error.message);
+      toast.error("Failed to remove from favorites");
     }
-  };
+
+    throw error;
+  } finally {
+    setIsLoading((prev) => ({ ...prev, [listingId]: false }));
+  }
+};
 
   const refetchFavorites = async () => {
     return fetchFavorites();

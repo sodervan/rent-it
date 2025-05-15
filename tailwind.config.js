@@ -26,6 +26,10 @@ export default withMT({
           "50%": { opacity: "1" },
           "100%": { transform: "translateY(-100%)", opacity: "0" },
         },
+        shimmer: {
+          "0%": { backgroundPosition: "-1000px 0" },
+          "100%": { backgroundPosition: "1000px 0" },
+        },
         // fadeIn: {
         //   "0%": { opacity: "0", transform: "scale(0.95)" },
         //   "100%": { opacity: "1", transform: "scale(1)" },
@@ -34,6 +38,7 @@ export default withMT({
       animation: {
         slideUp: "slideUp 1s ease-out",
         slideDown: "slideDown 1s ease-in",
+        shimmer: "shimmer 2s infinite linear",
         // fadeIn: "fadeIn 0.5s ease-out forwards",
       },
     },

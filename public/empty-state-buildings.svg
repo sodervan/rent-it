@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+  <style>
+    .st0{fill:#E5E7EB;}
+    .st1{fill:#9CA3AF;}
+    .st2{fill:#D1D5DB;}
+  </style>
+  <g transform="translate(0 0)">
+    <!-- Background -->
+    <circle cx="100" cy="100" r="80" fill="#F3F4F6" />
+    
+    <!-- Buildings -->
+    <rect x="40" y="60" width="30" height="90" rx="2" class="st0" />
+    <rect x="45" y="70" width="8" height="8" rx="1" class="st1" />
+    <rect x="57" y="70" width="8" height="8" rx="1" class="st1" />
+    <rect x="45" y="85" width="8" height="8" rx="1" class="st1" />
+    <rect x="57" y="85" width="8" height="8" rx="1" class="st1" />
+    <rect x="45" y="100" width="8" height="8" rx="1" class="st1" />
+    <rect x="57" y="100" width="8" height="8" rx="1" class="st1" />
+    <rect x="45" y="115" width="8" height="8" rx="1" class="st1" />
+    <rect x="57" y="115" width="8" height="8" rx="1" class="st1" />
+    <rect x="45" y="130" width="20" height="10" rx="1" class="st1" />
+    
+    <rect x="80" y="40" width="40" height="110" rx="2" class="st2" />
+    <rect x="87" y="50" width="10" height="10" rx="1" class="st1" />
+    <rect x="103" y="50" width="10" height="10" rx="1" class="st1" />
+    <rect x="87" y="70" width="10" height="10" rx="1" class="st1" />
+    <rect x="103" y="70" width="10" height="10" rx="1" class="st1" />
+    <rect x="87" y="90" width="10" height="10" rx="1" class="st1" />
+    <rect x="103" y="90" width="10" height="10" rx="1" class="st1" />
+    <rect x="87" y="110" width="10" height="10" rx="1" class="st1" />
+    <rect x="103" y="110" width="10" height="10" rx="1" class="st1" />
+    <rect x="87" y="130" width="26" height="12" rx="1" class="st1" />
+    
+    <rect x="130" y="70" width="30" height="80" rx="2" class="st0" />
+    <rect x="135" y="80" width="8" height="8" rx="1" class="st1" />
+    <rect x="147" y="80" width="8" height="8" rx="1" class="st1" />
+    <rect x="135" y="95" width="8" height="8" rx="1" class="st1" />
+    <rect x="147" y="95" width="8" height="8" rx="1" class="st1" />
+    <rect x="135" y="110" width="8" height="8" rx="1" class="st1" />
+    <rect x="147" y="110" width="8" height="8" rx="1" class="st1" />
+    <rect x="135" y="125" width="20" height="10" rx="1" class="st1" />
+    
+    <!-- Ground -->
+    <rect x="30" y="150" width="140" height="4" rx="2" class="st1" />
+  </g>
+</svg>

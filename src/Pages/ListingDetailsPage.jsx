@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useParams } from "react-router-dom";
 // Font Awesome icons using React components
@@ -15,7 +15,13 @@ import {
   FaRegClock,
 } from "react-icons/fa";
 import { User } from "lucide-react";
-import { Info, ChevronDown, ChevronUp } from "lucide-react";
+import {
+  Info,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronUp,
+} from "lucide-react";
 import {
   Home,
   Bed,
@@ -33,12 +39,16 @@ import {
   FaBuilding,
 } from "react-icons/fa";
 import { MdExpandMore, MdExpandLess, MdDirectionsBus } from "react-icons/md";
+import { IoBookmarksOutline } from "react-icons/io5";
 import { IconVideo, IconPhoto } from "@tabler/icons-react";
 import axios from "axios";
 import VideoModal from "@/components/AddListings/VideoModal.jsx";
 import ImageModal from "@/components/AddListings/ImagesModal.jsx";
 import useTokenData from "../../TokenHook.js";
 import BlockedBookingModal from "@/components/BlockedBookingModal.jsx";
+import QueryCard from "@/Pages/renter_dashboard/renter_dash_comps/QueryCard";
+import PropertyMap from "@/components/Maps/PropertyMap.jsx";
+import Footer from "@/components/Footer.tsx";
 
 const ListingDetailsPage = () => {
   const { tokenData } = useTokenData();
@@ -48,6 +58,48 @@ const ListingDetailsPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [agentError, setAgentError] = useState(null);
+  const [nearbyListings, setNearbyListings] = useState([]);
+  const [nearbyListingsLoading, setNearbyListingsLoading] = useState(false);
+
+  // Fetch nearby listings based on current listing's location
+  const fetchNearbyListings = async (latitude, longitude) => {
+    try {
+      setNearbyListingsLoading(true);
+      const response = await axios.get(`${apiUrl}/api/v1/listings`, {
+        params: {
+          latitude,
+          longitude,
+          radius: 10, // 10km radius - increased to find more properties
+          limit: 6, // Get up to 6 nearby listings to filter best matches
+        },
+      });
+
+      // Handle different response formats
+      let listingsData = [];
+      if (response.data.payload && response.data.payload.data) {
+        listingsData = response.data.payload.data;
+      } else if (response.data.data) {
+        listingsData = response.data.data;
+      } else if (Array.isArray(response.data)) {
+        listingsData = response.data;
+      }
+
+      // Filter out the current listing and ensure we have valid data
+      const filteredListings = listingsData
+        .filter((item) => item.id !== listingId) // Remove current listing
+        .filter((item) => item.pictures && item.pictures.length > 0) // Ensure listings have pictures
+        .filter(
+          (item) => item.listingFeatures || (item.beds && item.bathrooms),
+        ); // Ensure they have features
+
+      setNearbyListings(filteredListings);
+    } catch (error) {
+      console.error("Error fetching nearby listings:", error);
+      setNearbyListings([]); // Set empty array in case of error
+    } finally {
+      setNearbyListingsLoading(false);
+    }
+  };
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isSaved, setIsSaved] = useState(false);
   const [guestCount, setGuestCount] = useState(3);
@@ -72,6 +124,103 @@ const ListingDetailsPage = () => {
   const [isHovered, setIsHovered] = useState(false);
   const [duration, setDuration] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  // State and ref for horizontal scrolling
+  const [showLeftScroll, setShowLeftScroll] = useState(false);
+  const [showRightScroll, setShowRightScroll] = useState(true);
+  const nearbyListingsRef = useRef(null);
+  const bookingSectionRef = useRef(null);
+  const [showScrollToBooking, setShowScrollToBooking] = useState(false);
+
+  // Add scrollbar hiding CSS and handle scroll for floating button
+  useEffect(() => {
+    const styleTag = document.createElement("style");
+    styleTag.textContent = `
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      .floating-btn {
+        transform: translateY(0);
+        opacity: 1;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+      }
+      .floating-btn.hidden {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+      .tooltip {
+        visibility: hidden;
+        position: absolute;
+        bottom: 125%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        white-space: nowrap;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+      .tooltip::after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: rgba(0, 0, 0, 0.8) transparent transparent transparent;
+      }
+      .btn-wrapper:hover .tooltip {
+        visibility: visible;
+        opacity: 1;
+      }
+    `;
+    document.head.appendChild(styleTag);
+
+    // Handle scroll to show/hide floating button
+    const handleScroll = () => {
+      if (!bookingSectionRef.current) return;
+
+      const scrollPosition = window.scrollY;
+      const bookingSectionPosition =
+        bookingSectionRef.current.getBoundingClientRect().top + window.scrollY;
+
+      // Show button if user scrolled past 30% of the page and hasn't reached booking section yet
+      setShowScrollToBooking(
+        scrollPosition > window.innerHeight * 0.3 &&
+          scrollPosition < bookingSectionPosition - window.innerHeight * 0.5,
+      );
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    handleScroll(); // Initial check
+
+    return () => {
+      document.head.removeChild(styleTag);
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  const scrollToBooking = () => {
+    if (bookingSectionRef.current) {
+      bookingSectionRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  // Handle scroll position for nearby listings
+  const handleNearbyListingsScroll = () => {
+    if (!nearbyListingsRef.current) return;
+
+    const { scrollLeft, scrollWidth, clientWidth } = nearbyListingsRef.current;
+    setShowLeftScroll(scrollLeft > 0);
+    setShowRightScroll(scrollLeft < scrollWidth - clientWidth - 10);
+  };
 
   const getDurationOptions = () => {
     if (listing.paymentDuration === "annum") {
@@ -227,6 +376,33 @@ const ListingDetailsPage = () => {
         const data = response?.data?.payload;
         setListing(data[0]);
         console.log(data);
+
+        // Fetch nearby listings once we have the current listing data
+        const listingData = data[0];
+        if (listingData?.location) {
+          let lat, lng;
+
+          if (
+            listingData.location.coordinates?.x &&
+            listingData.location.coordinates?.y
+          ) {
+            lat = listingData.location.coordinates.y;
+            lng = listingData.location.coordinates.x;
+          } else if (
+            listingData.location.latitude &&
+            listingData.location.longitude
+          ) {
+            lat = listingData.location.latitude;
+            lng = listingData.location.longitude;
+          }
+
+          if (lat && lng) {
+            // Small delay to ensure map renders first
+            setTimeout(() => {
+              fetchNearbyListings(lat, lng);
+            }, 500);
+          }
+        }
       } catch (err) {
         console.error("Error fetching listing data:", err);
         setError(err.message || "Failed to load listing details");
@@ -292,16 +468,220 @@ const ListingDetailsPage = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-96">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          className="w-12 h-12 border-4 border-gray-300 border-t-purple-500 rounded-full"
-        />
-      </div>
-    );
-  }
+      return (
+        <div className="container mx-auto px-4 py-8 max-w-7xl">
+          {/* Skeleton Header */}
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="mb-8"
+          >
+            <div className="h-8 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md w-3/4 max-w-xl mb-4 animate-shimmer"></div>
+            <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md w-1/2 max-w-md animate-shimmer"></div>
+          </motion.div>
+
+          {/* Skeleton Grid Layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Left column - Main content */}
+            <div className="lg:col-span-2">
+              {/* Image Gallery Skeleton */}
+              <div className="rounded-xl overflow-hidden bg-gray-200 h-80 mb-6 relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-shimmer"></div>
+              
+                {/* Image Indicator Dots */}
+                <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
+                  {[1, 2, 3, 4, 5].map((_, i) => (
+                    <motion.div 
+                      key={i} 
+                      className="w-2 h-2 rounded-full bg-white bg-opacity-60"
+                      animate={{ opacity: [0.4, 1, 0.4] }}
+                      transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.3 }}
+                    ></motion.div>
+                  ))}
+                </div>
+              </div>
+            
+              {/* Info Bar Skeleton */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="flex flex-wrap justify-between items-center mb-6"
+              >
+                <div className="w-1/2 h-6 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md animate-shimmer"></div>
+                <div className="flex space-x-2">
+                  <div className="w-24 h-8 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md animate-shimmer"></div>
+                  <div className="w-24 h-8 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md animate-shimmer"></div>
+                </div>
+              </motion.div>
+            
+              {/* Property Features Skeleton */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="grid grid-cols-3 gap-4 mb-8"
+              >
+                <div className="h-20 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-lg flex items-center justify-center animate-shimmer">
+                  <div className="w-16 h-6 bg-gray-300 rounded"></div>
+                </div>
+                <div className="h-20 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-lg flex items-center justify-center animate-shimmer">
+                  <div className="w-16 h-6 bg-gray-300 rounded"></div>
+                </div>
+                <div className="h-20 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-lg flex items-center justify-center animate-shimmer">
+                  <div className="w-16 h-6 bg-gray-300 rounded"></div>
+                </div>
+              </motion.div>
+            
+              {/* Description Skeleton */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                className="mb-8"
+              >
+                <div className="h-6 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md w-48 mb-4 animate-shimmer"></div>
+                <div className="space-y-3">
+                  <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md w-full animate-shimmer"></div>
+                  <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md w-full animate-shimmer"></div>
+                  <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md w-3/4 animate-shimmer"></div>
+                  <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md w-full animate-shimmer"></div>
+                  <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md w-5/6 animate-shimmer"></div>
+                </div>
+              </motion.div>
+            
+              {/* Amenities Skeleton */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                className="mb-8"
+              >
+                <div className="h-6 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md w-40 mb-4 animate-shimmer"></div>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {[1, 2, 3, 4, 5, 6].map((_, i) => (
+                    <motion.div 
+                      key={i} 
+                      className="flex items-center"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.3, delay: 0.4 + (i * 0.1) }}
+                    >
+                      <div className="w-6 h-6 bg-gray-300 rounded-full mr-2"></div>
+                      <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md w-24 animate-shimmer"></div>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+            
+              {/* Map Skeleton */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+                className="mb-8"
+              >
+                <div className="h-6 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md w-48 mb-4 animate-shimmer"></div>
+                <div className="h-64 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-xl animate-shimmer">
+                  <div className="h-full w-full flex items-center justify-center">
+                    <svg className="w-16 h-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          
+            {/* Right column - Booking Form */}
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="lg:col-span-1"
+            >
+              <div className="sticky top-6 bg-gray-100 shadow-sm rounded-xl p-6 border border-gray-100">
+                {/* Price Skeleton */}
+                <div className="h-8 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md w-40 mb-4 animate-shimmer"></div>
+              
+                {/* Tags Skeleton */}
+                <div className="flex gap-2 mb-6 flex-wrap">
+                  <div className="h-7 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-24 animate-shimmer"></div>
+                  <div className="h-7 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-28 animate-shimmer"></div>
+                  <div className="h-7 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-32 animate-shimmer"></div>
+                </div>
+              
+                {/* Calendar Skeleton */}
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <div className="border border-gray-200 rounded-md p-3">
+                    <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-16 mb-2 animate-shimmer"></div>
+                    <div className="h-5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-24 animate-shimmer"></div>
+                  </div>
+                  <div className="border border-gray-200 rounded-md p-3">
+                    <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-16 mb-2 animate-shimmer"></div>
+                    <div className="h-5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-24 animate-shimmer"></div>
+                  </div>
+                </div>
+              
+                {/* Guests Skeleton */}
+                <div className="border border-gray-200 rounded-md p-3 mb-6">
+                  <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-12 mb-2 animate-shimmer"></div>
+                  <div className="flex justify-between items-center">
+                    <div className="h-5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-20 animate-shimmer"></div>
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-full animate-shimmer"></div>
+                      <div className="w-4 h-5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded animate-shimmer"></div>
+                      <div className="w-8 h-8 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-full animate-shimmer"></div>
+                    </div>
+                  </div>
+                </div>
+              
+                {/* Price Details Skeleton */}
+                <div className="mb-6">
+                  <div className="flex justify-between mb-2">
+                    <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-24 animate-shimmer"></div>
+                    <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-16 animate-shimmer"></div>
+                  </div>
+                  <div className="flex justify-between mb-2">
+                    <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-20 animate-shimmer"></div>
+                    <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-16 animate-shimmer"></div>
+                  </div>
+                  <div className="flex justify-between pt-4 border-t border-gray-200">
+                    <div className="h-5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-28 animate-shimmer"></div>
+                    <div className="h-5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-20 animate-shimmer"></div>
+                  </div>
+                </div>
+              
+                {/* Button Skeleton */}
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 0.4 }}
+                  className="h-12 bg-gradient-to-r from-purple-500 via-purple-600 to-purple-500 rounded-lg w-full mb-4 animate-shimmer"
+                ></motion.div>
+              
+                {/* Agent Info Skeleton */}
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.5 }}
+                  className="flex items-center mt-6 pt-4 border-t border-gray-200"
+                >
+                  <div className="w-10 h-10 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-full mr-3 animate-pulse"></div>
+                  <div>
+                    <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-32 mb-1 animate-shimmer"></div>
+                    <div className="h-3 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-24 animate-shimmer"></div>
+                  </div>
+                </motion.div>
+              </div>
+            </motion.div>
+          </div>
+          
+
+        </div>
+      );
+    }
 
   if (error) {
     return (
@@ -401,7 +781,7 @@ const ListingDetailsPage = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="max-w-7xl mx-auto bg-white rounded-xl shadow-sm overflow-hidden mb-8 mt-20"
+      className="max-w-7xl mx-auto bg-white rounded-xl shadow-sm overflow-hidden mt-20"
     >
       <div className="p-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -1042,35 +1422,6 @@ const ListingDetailsPage = () => {
               </motion.div>
             )}
 
-            {/* Map Section */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7 }}
-              className="mb-8"
-            >
-              <h2 className="text-lg font-medium mb-3">Location</h2>
-              <div className="h-72 bg-gray-200 rounded-lg overflow-hidden">
-                {/* Replace this with actual map component from your preferred mapping library */}
-                <div className="relative w-full h-full">
-                  <img
-                    src="#"
-                    alt="Map location"
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="bg-white p-4 rounded-lg shadow text-center">
-                      <FaMapMarkerAlt className="text-red-500 text-2xl mx-auto mb-2" />
-                      <p>Exact location provided after booking</p>
-                      <p className="text-gray-500 text-sm">
-                        {listing.location?.streetAddress}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
             {/* Tenancy Agreement */}
             {listing.tenancyAgreement && (
               <motion.div
@@ -1185,49 +1536,250 @@ const ListingDetailsPage = () => {
               </div>
             </div>
 
-            {/* Available Properties Section */}
+            {/* Location and Map Section */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+              className="mb-10"
+            >
+              <h2 className="text-lg font-medium mb-4">
+                Location and Nearby Places
+              </h2>
+
+              {loading ? (
+                // Map skeleton while loading
+                <div className="h-[350px] bg-gray-100 rounded-lg animate-pulse"></div>
+              ) : (
+                <PropertyMap
+                  latitude={
+                    listing?.location?.coordinates?.y ||
+                    listing?.location?.latitude
+                  }
+                  longitude={
+                    listing?.location?.coordinates?.x ||
+                    listing?.location?.longitude
+                  }
+                  address={listing?.location?.streetAddress}
+                  landmarks={[
+                    ...(listing?.location?.healthFacilities?.map((place) => ({
+                      name: place,
+                      type: "hospital",
+                    })) || []),
+                    ...(listing?.location?.educationalInstitutions?.map(
+                      (place) => ({
+                        name: place,
+                        type: "school",
+                      }),
+                    ) || []),
+                    ...(listing?.location?.transportation?.map((place) => ({
+                      name: place,
+                      type: "transportation",
+                    })) || []),
+                  ]}
+                />
+              )}
+
+              <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div className="flex items-start gap-2 p-3 bg-purple-50 rounded-lg">
+                  <FaSchool className="text-green-600 text-lg mt-1 flex-shrink-0" />
+                  <div>
+                    <h3 className="font-medium text-sm">
+                      Educational Institutions
+                    </h3>
+                    {listing?.location?.educationalInstitutions?.length > 0 ? (
+                      <ul className="text-sm text-gray-600 mt-1">
+                        {listing.location.educationalInstitutions
+                          .slice(0, 2)
+                          .map((item, idx) => (
+                            <li key={`edu-${idx}`}>{item}</li>
+                          ))}
+                        {listing.location.educationalInstitutions.length >
+                          2 && (
+                          <li className="text-purple-600 text-xs mt-1">
+                            +
+                            {listing.location.educationalInstitutions.length -
+                              2}{" "}
+                            more
+                          </li>
+                        )}
+                      </ul>
+                    ) : (
+                      <p className="text-sm text-gray-500">
+                        No educational institutions listed
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-2 p-3 bg-red-50 rounded-lg">
+                  <FaHospital className="text-red-600 text-lg mt-1 flex-shrink-0" />
+                  <div>
+                    <h3 className="font-medium text-sm">Health Facilities</h3>
+                    {listing?.location?.healthFacilities?.length > 0 ? (
+                      <ul className="text-sm text-gray-600 mt-1">
+                        {listing.location.healthFacilities
+                          .slice(0, 2)
+                          .map((item, idx) => (
+                            <li key={`health-${idx}`}>{item}</li>
+                          ))}
+                        {listing.location.healthFacilities.length > 2 && (
+                          <li className="text-purple-600 text-xs mt-1">
+                            +{listing.location.healthFacilities.length - 2} more
+                          </li>
+                        )}
+                      </ul>
+                    ) : (
+                      <p className="text-sm text-gray-500">
+                        No health facilities listed
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-2 p-3 bg-blue-50 rounded-lg">
+                  <MdDirectionsBus className="text-blue-600 text-lg mt-1 flex-shrink-0" />
+                  <div>
+                    <h3 className="font-medium text-sm">Transportation</h3>
+                    {listing?.location?.transportation?.length > 0 ? (
+                      <ul className="text-sm text-gray-600 mt-1">
+                        {listing.location.transportation
+                          .slice(0, 2)
+                          .map((item, idx) => (
+                            <li key={`transport-${idx}`}>{item}</li>
+                          ))}
+                        {listing.location.transportation.length > 2 && (
+                          <li className="text-purple-600 text-xs mt-1">
+                            +{listing.location.transportation.length - 2} more
+                          </li>
+                        )}
+                      </ul>
+                    ) : (
+                      <p className="text-sm text-gray-500">
+                        No transportation options listed
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Properties in Same Area Section */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8 }}
+              className="mb-10"
             >
-              <h2 className="text-lg font-semibold mb-4">
-                Properties available in the same area
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {[1, 2].map((item) => (
-                  <motion.div
-                    key={item}
-                    whileHover={{ y: -5 }}
-                    className="rounded-lg overflow-hidden shadow-sm border border-gray-200"
-                  >
-                    <img
-                      src={`/api/placeholder/500/300`}
-                      alt={`Similar property ${item}`}
-                      className="w-full h-36 object-cover"
-                    />
-                    <div className="p-3">
-                      <h3 className="font-medium">Similar Property {item}</h3>
-                      <p className="text-gray-600 text-sm">
-                        {listing.location?.streetAddress}
-                      </p>
-                      <p className="font-semibold mt-1">
-                        {currencySymbol}
-                        {(
-                          parseInt(listing.baseCost) +
-                          item * 25000
-                        ).toLocaleString()}
-                        /{listing.paymentDuration}
-                      </p>
-                    </div>
-                  </motion.div>
-                ))}
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-medium">
+                  Properties available in the same area
+                </h2>
+                {nearbyListings.length > 2 && (
+                  <div className="flex gap-2">
+                    <button
+                      className={`p-1 rounded-full ${showLeftScroll ? "bg-gray-200 text-gray-700" : "bg-gray-100 text-gray-400 cursor-default"}`}
+                      onClick={() => {
+                        if (nearbyListingsRef.current) {
+                          nearbyListingsRef.current.scrollBy({
+                            left: -320,
+                            behavior: "smooth",
+                          });
+                        }
+                      }}
+                      disabled={!showLeftScroll}
+                    >
+                      <ChevronLeft size={16} />
+                    </button>
+                    <button
+                      className={`p-1 rounded-full ${showRightScroll ? "bg-gray-200 text-gray-700" : "bg-gray-100 text-gray-400 cursor-default"}`}
+                      onClick={() => {
+                        if (nearbyListingsRef.current) {
+                          nearbyListingsRef.current.scrollBy({
+                            left: 320,
+                            behavior: "smooth",
+                          });
+                        }
+                      }}
+                      disabled={!showRightScroll}
+                    >
+                      <ChevronRight size={16} />
+                    </button>
+                  </div>
+                )}
               </div>
+
+              {nearbyListingsLoading ? (
+                // Loading skeleton - horizontal layout
+                <div className="flex overflow-x-auto pb-4 gap-4 no-scrollbar">
+                  {Array(3)
+                    .fill(0)
+                    .map((_, index) => (
+                      <div
+                        key={`skeleton-${index}`}
+                        className="bg-gray-100 rounded-lg h-[250px] w-[280px] min-w-[280px] flex-shrink-0 animate-pulse"
+                      />
+                    ))}
+                </div>
+              ) : nearbyListings.length > 0 ? (
+                // Render nearby listings horizontally with QueryCard
+                <div className="relative">
+                  {/* Scrollable container */}
+                  <div
+                    ref={nearbyListingsRef}
+                    className="flex overflow-x-auto pb-4 gap-4 -mx-4 px-4 no-scrollbar scroll-smooth"
+                    style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+                    onScroll={handleNearbyListingsScroll}
+                  >
+                    {nearbyListings.map((item) => (
+                      <motion.div
+                        key={item.id}
+                        whileHover={{ y: -5 }}
+                        className="flex-shrink-0"
+                      >
+                        <QueryCard
+                          {...item}
+                          listingFeatures={
+                            item.listingFeatures || {
+                              beds: item.beds || 1,
+                              bathrooms: item.bathrooms || 1,
+                            }
+                          }
+                          size={item.size || "N/A"}
+                          isFurnished={
+                            item.listingFeatures?.furnishingState ===
+                              "FULLY_FURNISHED" || false
+                          }
+                        />
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                // No nearby listings found
+                <div className="bg-gray-50 rounded-lg border border-gray-200 p-6 text-center">
+                  <img
+                    src="/empty-state-buildings.svg"
+                    alt="No properties found"
+                    className="w-24 h-24 mx-auto mb-4 opacity-60"
+                    onError={(e) => {
+                      e.target.style.display = "none";
+                    }}
+                  />
+                  <h3 className="text-gray-500 font-medium mb-1">
+                    No other properties found
+                  </h3>
+                  <p className="text-gray-400 text-sm">
+                    There are no other properties available in this area at the
+                    moment.
+                  </p>
+                </div>
+              )}
             </motion.div>
           </div>
 
           {/* Right Section - Booking */}
-          <div className="lg:col-span-1">
+          <div ref={bookingSectionRef} className="lg:col-span-1">
             <AnimatePresence mode="wait">
               {showBookingForm ? (
                 <motion.div
@@ -1949,6 +2501,7 @@ const ListingDetailsPage = () => {
                         : "Confirm Booking"}
                     </motion.button>
                   </div>
+
                   {/*BOOKING MODAL ANIMATION*/}
                   <div>
                     <AnimatePresence>
@@ -2174,8 +2727,32 @@ const ListingDetailsPage = () => {
               )}
             </AnimatePresence>
           </div>
+
+          {/* Floating Book Button for Mobile */}
+          <AnimatePresence>
+            {showScrollToBooking && (
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: 20, opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="fixed bottom-6 right-6 z-50 lg:hidden"
+              >
+                <div className="btn-wrapper">
+                  <button
+                    onClick={scrollToBooking}
+                    className="w-14 h-14 bg-purple-600 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-purple-700 transition-colors"
+                  >
+                    <IoBookmarksOutline size={20} />
+                  </button>
+                  <span className="tooltip">Book this property</span>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
+      <Footer />
     </motion.div>
   );
 };

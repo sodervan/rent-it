@@ -57,7 +57,7 @@ interface LISTINGITEM {
         id: number;
         name: string;
       };
-    },
+    }
   ];
   location: {
     streetAddress: string;
@@ -88,12 +88,12 @@ interface LISTINGITEM {
       videoUrl: string;
       mimeType: MIMEType;
       createdAt: string;
-    },
+    }
   ];
   pictures: [
     {
       id: string;
-      imageUrl: string;
+      image_url: string;
       mimeType: MIMEType;
 
       createdAt: string;
@@ -101,7 +101,7 @@ interface LISTINGITEM {
         id: number;
         name: string;
       };
-    },
+    }
   ];
 }
 
@@ -115,7 +115,7 @@ interface LISTINGRESPONSE extends APIRESPONSE {
 let get_listing = async () => {
   try {
     let resp = await axios.get(
-      "https://rent-it-api.onrender.com/api/v1/listings",
+      "https://rent-it-api.onrender.com/api/v1/listings"
     );
     console.log(resp.data);
     return resp.data;
@@ -129,7 +129,7 @@ const addToFavourites = async (listingId) => {
     const resp = await axios.post(
       `https://rent-it-api.onrender.com/api/v1/listings/${listingId}/favourite`,
       {}, // Empty object or actual request body if needed
-      { withCredentials: true }, // Config options as third parameter
+      { withCredentials: true } // Config options as third parameter
     );
 
     console.log("Added to favourites:", resp.data);
@@ -137,7 +137,7 @@ const addToFavourites = async (listingId) => {
   } catch (err) {
     console.error(
       "Error adding to favourites:",
-      err.response?.data || err.message,
+      err.response?.data || err.message
     );
     throw err; // Re-throw for further handling
   }
@@ -161,7 +161,7 @@ let getWithFilters = ({ filters }: { filters: DEFAULTFILTERPARAM }) => {
 let getWithQuery = async () => {
   try {
     let resp = await axios.get(
-      "https://rent-it-api.onrender.com/api/v1/listings",
+      "https://rent-it-api.onrender.com/api/v1/listings"
     );
     return resp.data;
   } catch (error) {
@@ -220,7 +220,7 @@ let getUserData = async () => {
     fetch("", { credentials: "include" });
     let resp = await axios.get(
       "https://rent-it-api.onrender.com/api/v1/users",
-      { withCredentials: true },
+      { withCredentials: true }
     );
 
     return resp.data;
@@ -242,7 +242,7 @@ let uploadProfilePic = async (img: any) => {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-      },
+      }
     );
 
     return resp;
@@ -257,7 +257,7 @@ let get_favorites = async () => {
       "https://rent-it-api.onrender.com/api/v1/listings/favourites",
       {
         withCredentials: true,
-      },
+      }
     );
     console.log(resp);
     return resp.data;
@@ -284,7 +284,7 @@ let updateProfile = async (profileData: PROFILEDATA) => {
       {
         withCredentials: true,
         headers: { "Content-Type": "application/json" },
-      },
+      }
     );
 
     return resp.data;

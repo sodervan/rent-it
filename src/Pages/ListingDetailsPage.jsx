@@ -133,6 +133,7 @@ const ListingDetailsPage = () => {
 
   // Add scrollbar hiding CSS and handle scroll for floating button
   useEffect(() => {
+    window.scrollTo(0, 0);
     const styleTag = document.createElement("style");
     styleTag.textContent = `
       .no-scrollbar::-webkit-scrollbar {
@@ -241,6 +242,9 @@ const ListingDetailsPage = () => {
       ];
     }
   };
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const toggleItem = (id) => {
     setOpenItem(openItem === id ? null : id);
@@ -366,6 +370,7 @@ const ListingDetailsPage = () => {
 
   // For proper API integration
   useEffect(() => {
+    window.scrollTo(0, 0);
     const fetchListing = async () => {
       try {
         setLoading(true);
@@ -468,220 +473,238 @@ const ListingDetailsPage = () => {
   };
 
   if (loading) {
-      return (
-        <div className="container mx-auto px-4 py-8 max-w-7xl">
-          {/* Skeleton Header */}
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-            className="mb-8"
-          >
-            <div className="h-8 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md w-3/4 max-w-xl mb-4 animate-shimmer"></div>
-            <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md w-1/2 max-w-md animate-shimmer"></div>
-          </motion.div>
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
+        {/* Skeleton Header */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className="mb-8"
+        >
+          <div className="h-8 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md w-3/4 max-w-xl mb-4 animate-shimmer"></div>
+          <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md w-1/2 max-w-md animate-shimmer"></div>
+        </motion.div>
 
-          {/* Skeleton Grid Layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left column - Main content */}
-            <div className="lg:col-span-2">
-              {/* Image Gallery Skeleton */}
-              <div className="rounded-xl overflow-hidden bg-gray-200 h-80 mb-6 relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-shimmer"></div>
-              
-                {/* Image Indicator Dots */}
-                <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
-                  {[1, 2, 3, 4, 5].map((_, i) => (
-                    <motion.div 
-                      key={i} 
-                      className="w-2 h-2 rounded-full bg-white bg-opacity-60"
-                      animate={{ opacity: [0.4, 1, 0.4] }}
-                      transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.3 }}
-                    ></motion.div>
-                  ))}
-                </div>
+        {/* Skeleton Grid Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left column - Main content */}
+          <div className="lg:col-span-2">
+            {/* Image Gallery Skeleton */}
+            <div className="rounded-xl overflow-hidden bg-gray-200 h-80 mb-6 relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-shimmer"></div>
+
+              {/* Image Indicator Dots */}
+              <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
+                {[1, 2, 3, 4, 5].map((_, i) => (
+                  <motion.div
+                    key={i}
+                    className="w-2 h-2 rounded-full bg-white bg-opacity-60"
+                    animate={{ opacity: [0.4, 1, 0.4] }}
+                    transition={{
+                      duration: 1.5,
+                      repeat: Infinity,
+                      delay: i * 0.3,
+                    }}
+                  ></motion.div>
+                ))}
               </div>
-            
-              {/* Info Bar Skeleton */}
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-                className="flex flex-wrap justify-between items-center mb-6"
-              >
-                <div className="w-1/2 h-6 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md animate-shimmer"></div>
-                <div className="flex space-x-2">
-                  <div className="w-24 h-8 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md animate-shimmer"></div>
-                  <div className="w-24 h-8 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md animate-shimmer"></div>
-                </div>
-              </motion.div>
-            
-              {/* Property Features Skeleton */}
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className="grid grid-cols-3 gap-4 mb-8"
-              >
-                <div className="h-20 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-lg flex items-center justify-center animate-shimmer">
-                  <div className="w-16 h-6 bg-gray-300 rounded"></div>
-                </div>
-                <div className="h-20 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-lg flex items-center justify-center animate-shimmer">
-                  <div className="w-16 h-6 bg-gray-300 rounded"></div>
-                </div>
-                <div className="h-20 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-lg flex items-center justify-center animate-shimmer">
-                  <div className="w-16 h-6 bg-gray-300 rounded"></div>
-                </div>
-              </motion.div>
-            
-              {/* Description Skeleton */}
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-                className="mb-8"
-              >
-                <div className="h-6 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md w-48 mb-4 animate-shimmer"></div>
-                <div className="space-y-3">
-                  <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md w-full animate-shimmer"></div>
-                  <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md w-full animate-shimmer"></div>
-                  <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md w-3/4 animate-shimmer"></div>
-                  <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md w-full animate-shimmer"></div>
-                  <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md w-5/6 animate-shimmer"></div>
-                </div>
-              </motion.div>
-            
-              {/* Amenities Skeleton */}
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.4 }}
-                className="mb-8"
-              >
-                <div className="h-6 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md w-40 mb-4 animate-shimmer"></div>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {[1, 2, 3, 4, 5, 6].map((_, i) => (
-                    <motion.div 
-                      key={i} 
-                      className="flex items-center"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.3, delay: 0.4 + (i * 0.1) }}
-                    >
-                      <div className="w-6 h-6 bg-gray-300 rounded-full mr-2"></div>
-                      <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md w-24 animate-shimmer"></div>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.div>
-            
-              {/* Map Skeleton */}
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.5 }}
-                className="mb-8"
-              >
-                <div className="h-6 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md w-48 mb-4 animate-shimmer"></div>
-                <div className="h-64 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-xl animate-shimmer">
-                  <div className="h-full w-full flex items-center justify-center">
-                    <svg className="w-16 h-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                    </svg>
-                  </div>
-                </div>
-              </motion.div>
             </div>
-          
-            {/* Right column - Booking Form */}
-            <motion.div 
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="lg:col-span-1"
+
+            {/* Info Bar Skeleton */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="flex flex-wrap justify-between items-center mb-6"
             >
-              <div className="sticky top-6 bg-gray-100 shadow-sm rounded-xl p-6 border border-gray-100">
-                {/* Price Skeleton */}
-                <div className="h-8 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md w-40 mb-4 animate-shimmer"></div>
-              
-                {/* Tags Skeleton */}
-                <div className="flex gap-2 mb-6 flex-wrap">
-                  <div className="h-7 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-24 animate-shimmer"></div>
-                  <div className="h-7 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-28 animate-shimmer"></div>
-                  <div className="h-7 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-32 animate-shimmer"></div>
+              <div className="w-1/2 h-6 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md animate-shimmer"></div>
+              <div className="flex space-x-2">
+                <div className="w-24 h-8 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md animate-shimmer"></div>
+                <div className="w-24 h-8 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md animate-shimmer"></div>
+              </div>
+            </motion.div>
+
+            {/* Property Features Skeleton */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="grid grid-cols-3 gap-4 mb-8"
+            >
+              <div className="h-20 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-lg flex items-center justify-center animate-shimmer">
+                <div className="w-16 h-6 bg-gray-300 rounded"></div>
+              </div>
+              <div className="h-20 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-lg flex items-center justify-center animate-shimmer">
+                <div className="w-16 h-6 bg-gray-300 rounded"></div>
+              </div>
+              <div className="h-20 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-lg flex items-center justify-center animate-shimmer">
+                <div className="w-16 h-6 bg-gray-300 rounded"></div>
+              </div>
+            </motion.div>
+
+            {/* Description Skeleton */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="mb-8"
+            >
+              <div className="h-6 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md w-48 mb-4 animate-shimmer"></div>
+              <div className="space-y-3">
+                <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md w-full animate-shimmer"></div>
+                <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md w-full animate-shimmer"></div>
+                <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md w-3/4 animate-shimmer"></div>
+                <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md w-full animate-shimmer"></div>
+                <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md w-5/6 animate-shimmer"></div>
+              </div>
+            </motion.div>
+
+            {/* Amenities Skeleton */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="mb-8"
+            >
+              <div className="h-6 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md w-40 mb-4 animate-shimmer"></div>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {[1, 2, 3, 4, 5, 6].map((_, i) => (
+                  <motion.div
+                    key={i}
+                    className="flex items-center"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3, delay: 0.4 + i * 0.1 }}
+                  >
+                    <div className="w-6 h-6 bg-gray-300 rounded-full mr-2"></div>
+                    <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md w-24 animate-shimmer"></div>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Map Skeleton */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+              className="mb-8"
+            >
+              <div className="h-6 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md w-48 mb-4 animate-shimmer"></div>
+              <div className="h-64 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-xl animate-shimmer">
+                <div className="h-full w-full flex items-center justify-center">
+                  <svg
+                    className="w-16 h-16 text-gray-300"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="1"
+                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                    ></path>
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="1"
+                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                    ></path>
+                  </svg>
                 </div>
-              
-                {/* Calendar Skeleton */}
-                <div className="grid grid-cols-2 gap-4 mb-6">
-                  <div className="border border-gray-200 rounded-md p-3">
-                    <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-16 mb-2 animate-shimmer"></div>
-                    <div className="h-5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-24 animate-shimmer"></div>
-                  </div>
-                  <div className="border border-gray-200 rounded-md p-3">
-                    <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-16 mb-2 animate-shimmer"></div>
-                    <div className="h-5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-24 animate-shimmer"></div>
-                  </div>
-                </div>
-              
-                {/* Guests Skeleton */}
-                <div className="border border-gray-200 rounded-md p-3 mb-6">
-                  <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-12 mb-2 animate-shimmer"></div>
-                  <div className="flex justify-between items-center">
-                    <div className="h-5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-20 animate-shimmer"></div>
-                    <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-full animate-shimmer"></div>
-                      <div className="w-4 h-5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded animate-shimmer"></div>
-                      <div className="w-8 h-8 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-full animate-shimmer"></div>
-                    </div>
-                  </div>
-                </div>
-              
-                {/* Price Details Skeleton */}
-                <div className="mb-6">
-                  <div className="flex justify-between mb-2">
-                    <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-24 animate-shimmer"></div>
-                    <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-16 animate-shimmer"></div>
-                  </div>
-                  <div className="flex justify-between mb-2">
-                    <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-20 animate-shimmer"></div>
-                    <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-16 animate-shimmer"></div>
-                  </div>
-                  <div className="flex justify-between pt-4 border-t border-gray-200">
-                    <div className="h-5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-28 animate-shimmer"></div>
-                    <div className="h-5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-20 animate-shimmer"></div>
-                  </div>
-                </div>
-              
-                {/* Button Skeleton */}
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.5, delay: 0.4 }}
-                  className="h-12 bg-gradient-to-r from-purple-500 via-purple-600 to-purple-500 rounded-lg w-full mb-4 animate-shimmer"
-                ></motion.div>
-              
-                {/* Agent Info Skeleton */}
-                <motion.div 
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.5 }}
-                  className="flex items-center mt-6 pt-4 border-t border-gray-200"
-                >
-                  <div className="w-10 h-10 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-full mr-3 animate-pulse"></div>
-                  <div>
-                    <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-32 mb-1 animate-shimmer"></div>
-                    <div className="h-3 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-24 animate-shimmer"></div>
-                  </div>
-                </motion.div>
               </div>
             </motion.div>
           </div>
-          
 
+          {/* Right column - Booking Form */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="lg:col-span-1"
+          >
+            <div className="sticky top-6 bg-gray-100 shadow-sm rounded-xl p-6 border border-gray-100">
+              {/* Price Skeleton */}
+              <div className="h-8 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-md w-40 mb-4 animate-shimmer"></div>
+
+              {/* Tags Skeleton */}
+              <div className="flex gap-2 mb-6 flex-wrap">
+                <div className="h-7 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-24 animate-shimmer"></div>
+                <div className="h-7 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-28 animate-shimmer"></div>
+                <div className="h-7 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-32 animate-shimmer"></div>
+              </div>
+
+              {/* Calendar Skeleton */}
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="border border-gray-200 rounded-md p-3">
+                  <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-16 mb-2 animate-shimmer"></div>
+                  <div className="h-5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-24 animate-shimmer"></div>
+                </div>
+                <div className="border border-gray-200 rounded-md p-3">
+                  <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-16 mb-2 animate-shimmer"></div>
+                  <div className="h-5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-24 animate-shimmer"></div>
+                </div>
+              </div>
+
+              {/* Guests Skeleton */}
+              <div className="border border-gray-200 rounded-md p-3 mb-6">
+                <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-12 mb-2 animate-shimmer"></div>
+                <div className="flex justify-between items-center">
+                  <div className="h-5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-20 animate-shimmer"></div>
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-full animate-shimmer"></div>
+                    <div className="w-4 h-5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded animate-shimmer"></div>
+                    <div className="w-8 h-8 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-full animate-shimmer"></div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Price Details Skeleton */}
+              <div className="mb-6">
+                <div className="flex justify-between mb-2">
+                  <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-24 animate-shimmer"></div>
+                  <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-16 animate-shimmer"></div>
+                </div>
+                <div className="flex justify-between mb-2">
+                  <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-20 animate-shimmer"></div>
+                  <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-16 animate-shimmer"></div>
+                </div>
+                <div className="flex justify-between pt-4 border-t border-gray-200">
+                  <div className="h-5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-28 animate-shimmer"></div>
+                  <div className="h-5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-20 animate-shimmer"></div>
+                </div>
+              </div>
+
+              {/* Button Skeleton */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                className="h-12 bg-gradient-to-r from-purple-500 via-purple-600 to-purple-500 rounded-lg w-full mb-4 animate-shimmer"
+              ></motion.div>
+
+              {/* Agent Info Skeleton */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+                className="flex items-center mt-6 pt-4 border-t border-gray-200"
+              >
+                <div className="w-10 h-10 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-full mr-3 animate-pulse"></div>
+                <div>
+                  <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-32 mb-1 animate-shimmer"></div>
+                  <div className="h-3 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-24 animate-shimmer"></div>
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
         </div>
-      );
-    }
+      </div>
+    );
+  }
 
   if (error) {
     return (

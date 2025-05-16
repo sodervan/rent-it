@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { nav_routes } from "../page_data/nav_data";
 import { Button } from "@mantine/core";
 import clsx from "clsx";
-import { IconSearch } from "@tabler/icons-react";
+import { SearchIcon } from "lucide-react";
 
 function Navbar() {
   const navigation = useNavigate();
@@ -82,7 +82,7 @@ function Navbar() {
             className="text-purple-600 hover:text-purple-800 mr-4"
             aria-label="Search"
           >
-            <IconSearch size={20} />
+            <SearchIcon size={20} />
           </button>
 
           {/* Menu Toggle Icon */}

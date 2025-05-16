@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
-import { IconMenu2, IconX, IconArrowLeft } from "@tabler/icons-react";
+import { Menu, X, ArrowLeft, User } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
 import { NavLink } from "react-router-dom";
-import { User } from "lucide-react";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -67,7 +66,7 @@ const Navbar = () => {
               className="mr-3 text-gray-700 hover:text-purple-600"
               aria-label="Go back"
             >
-              <IconArrowLeft size={20} />
+              <ArrowLeft size={20} />
             </button>
           )}
           <NavLink
@@ -96,7 +95,7 @@ const Navbar = () => {
             className="text-gray-700"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
-            {isMenuOpen ? <IconX size={24} /> : <IconMenu2 size={24} />}
+            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
 
@@ -138,7 +137,7 @@ const Navbar = () => {
                   className="text-gray-700 hover:text-purple-600"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  <IconX size={24} />
+                  <X size={24} />
                 </button>
               </div>
 
@@ -150,7 +149,7 @@ const Navbar = () => {
                       onClick={handleBack}
                       className="flex items-center space-x-3 w-full p-3 rounded-md text-gray-700 hover:bg-gray-50"
                     >
-                      <IconArrowLeft size={20} />
+                      <ArrowLeft size={20} />
                       <span>Back to Dashboard</span>
                     </button>
                   ) : (

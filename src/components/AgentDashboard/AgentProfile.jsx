@@ -1,13 +1,13 @@
 import { useState, useRef, useEffect } from "react";
 import ConfirmationModal from "@/components/AgentDashboard/ConfirmationModal.tsx";
 import { useNavigate } from "react-router-dom";
-import { IconEdit, IconWallet, IconPlus, IconTrash } from "@tabler/icons-react";
 import { toast } from "react-toastify";
 import { Spinner } from "@material-tailwind/react";
 import { motion } from "framer-motion";
 import useTokenData from "../../../TokenHook.js";
 import Sidebar from "./Sidebar.jsx";
 import axios from "axios";
+import { EditIcon } from "lucide-react";
 
 const AgentProfile = () => {
   const filePickerRef = useRef();
@@ -501,7 +501,7 @@ const AgentProfile = () => {
                 {loading ? (
                   <Spinner className="text-purple-600 w-5 h-5" />
                 ) : (
-                  <IconEdit className="text-purple-600" size={20} />
+                  <EditIcon className="text-purple-600" size={20} />
                 )}
               </motion.div>
             </motion.div>

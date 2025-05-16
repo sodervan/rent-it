@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { IconAlertCircle } from "@tabler/icons-react";
+import { AlertCircle } from "lucide-react";
 
 const UploadTenancyAgreement = () => {
   const [file, setFile] = useState(null);
@@ -301,7 +301,7 @@ const UploadTenancyAgreement = () => {
           />
           {/*GUIDELINES*/}
           <div className="my-4 p-4 bg-blue-50 rounded-lg flex items-start gap-3">
-            <IconAlertCircle
+            <AlertCircle
               className="text-blue-500 flex-shrink-0 mt-1"
               size={20}
             />

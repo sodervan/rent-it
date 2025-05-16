@@ -1,14 +1,10 @@
 import { Button, Spinner, Checkbox } from "@material-tailwind/react";
-import {
-  IconPlus,
-  IconX,
-  IconTrash,
-  IconAlertCircle,
-} from "@tabler/icons-react";
+
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { AlertCircleIcon, PlusIcon, TrashIcon, XIcon } from "lucide-react";
 
 const UploadListingVideos = () => {
   const navigate = useNavigate();
@@ -241,7 +237,7 @@ const UploadListingVideos = () => {
             onClick={deleteSelectedVideos}
             disabled={loading}
           >
-            <IconTrash size={16} />
+            <TrashIcon size={16} />
             Delete Selected ({selectedVideos.length})
           </Button>
         )}
@@ -249,7 +245,7 @@ const UploadListingVideos = () => {
 
       {/* Upload Guidelines */}
       <div className="mt-4 p-4 bg-blue-50 rounded-lg flex items-start gap-3">
-        <IconAlertCircle
+        <AlertCircleIcon
           className="text-blue-500 flex-shrink-0 mt-1"
           size={20}
         />
@@ -274,7 +270,7 @@ const UploadListingVideos = () => {
         }}
         onDragOver={(e) => e.preventDefault()}
       >
-        <IconPlus className="text-4xl text-primaryPurple" />
+        <PlusIcon className="text-4xl text-primaryPurple" />
         <p className="text-gray-500 text-center">
           <span className="text-primaryPurple cursor-pointer hover:underline">
             Click to upload{" "}
@@ -311,7 +307,7 @@ const UploadListingVideos = () => {
                     onClick={() => removePendingVideo(video.id)}
                     className="bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
                   >
-                    <IconX size={16} />
+                    <XIcon size={16} />
                   </button>
                 </div>
                 <div className="p-2 bg-gray-50">

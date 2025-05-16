@@ -1,16 +1,10 @@
 import { Button } from "@material-tailwind/react";
-import {
-  IconPlus,
-  IconX,
-  IconCheck,
-  IconTrash,
-  IconAlertCircle,
-} from "@tabler/icons-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import SelectComponent from "@/components/AddListings/SelectComponent.jsx";
+import { AlertCircleIcon, CheckIcon, PlusIcon, TrashIcon } from "lucide-react";
 
 const Spinner = () => (
   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
@@ -323,7 +317,7 @@ const UploadListingImages = () => {
               setSelectedImages(new Set());
             }}
           >
-            <IconTrash size={16} />
+            <TrashIcon size={16} />
             {isDeleteMode ? "Cancel Delete" : "Delete Images"}
           </Button>
         )}
@@ -333,7 +327,7 @@ const UploadListingImages = () => {
 
       {/*GUIDELINES*/}
       <div className="my-4 p-4 bg-blue-50 rounded-lg flex items-start gap-3">
-        <IconAlertCircle
+        <AlertCircleIcon
           className="text-blue-500 flex-shrink-0 mt-1"
           size={20}
         />
@@ -372,7 +366,7 @@ const UploadListingImages = () => {
             }}
             onDragOver={(e) => e.preventDefault()}
           >
-            <IconPlus className="text-4xl text-primaryPurple" />
+            <PlusIcon className="text-4xl text-primaryPurple" />
             <p className="text-gray-500 text-center">
               <span className="text-primaryPurple cursor-pointer hover:underline">
                 Click to upload{" "}
@@ -407,7 +401,7 @@ const UploadListingImages = () => {
                         <Spinner />
                       ) : (
                         <>
-                          <IconTrash size={16} />
+                          <TrashIcon size={16} />
                           Delete Selected
                         </>
                       )}
@@ -437,7 +431,7 @@ const UploadListingImages = () => {
                       {isDeleteMode ? (
                         <div className="absolute top-2 right-2">
                           {selectedImages.has(image.id) ? (
-                            <IconCheck className="text-red-500" size={20} />
+                            <CheckIcon className="text-red-500" size={20} />
                           ) : (
                             <div className="w-5 h-5 border-2 border-gray-400 rounded" />
                           )}

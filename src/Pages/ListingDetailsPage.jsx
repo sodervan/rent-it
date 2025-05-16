@@ -14,7 +14,7 @@ import {
   FaMoneyBillWave,
   FaRegClock,
 } from "react-icons/fa";
-import { User } from "lucide-react";
+import { ImageIcon, User, VideoIcon } from "lucide-react";
 import {
   Info,
   ChevronDown,
@@ -40,7 +40,6 @@ import {
 } from "react-icons/fa";
 import { MdExpandMore, MdExpandLess, MdDirectionsBus } from "react-icons/md";
 import { IoBookmarksOutline } from "react-icons/io5";
-import { IconVideo, IconPhoto } from "@tabler/icons-react";
 import axios from "axios";
 import VideoModal from "@/components/AddListings/VideoModal.jsx";
 import ImageModal from "@/components/AddListings/ImagesModal.jsx";
@@ -901,7 +900,7 @@ const ListingDetailsPage = () => {
                 className="bg-secondaryPurple border border-primaryPurple text-primaryPurple p-2 rounded-lg my-3 text-sm flex items-center"
                 onClick={() => setShowImageModal(true)}
               >
-                <IconPhoto size={16} className="mr-2" />
+                <ImageIcon size={16} className="mr-2" />
                 View all images
               </motion.button>
               <motion.button
@@ -909,7 +908,7 @@ const ListingDetailsPage = () => {
                 className="bg-secondaryPurple border border-primaryPurple text-primaryPurple p-2 rounded-lg my-3 text-sm flex items-center"
                 onClick={() => setShowVideoModal(true)} // Open video modal
               >
-                <IconVideo size={16} className="mr-2" />
+                <VideoIcon size={16} className="mr-2" />
                 View all videos
               </motion.button>
             </div>
@@ -951,9 +950,8 @@ const ListingDetailsPage = () => {
                 className="text-gray-600 flex items-center"
               >
                 <FaMapMarkerAlt className="mr-2 text-red-500" />
-                {
-                  listing.location?.streetAddress
-                }, {listing.location?.postalCode}
+                {listing.location?.streetAddress},{" "}
+                {listing.location?.postalCode}
               </motion.p>
             </div>
 
@@ -989,9 +987,7 @@ const ListingDetailsPage = () => {
                 <p className="text-gray-500 text-sm mb-1">Units</p>
                 <p className="font-semibold flex items-center justify-center">
                   <FaRegClock className="mr-2 text-primaryPurple" />
-                  {
-                    listing.unitsLeft
-                  }/{listing.units}
+                  {listing.unitsLeft}/{listing.units}
                 </p>
               </div>
               <div className="text-center">

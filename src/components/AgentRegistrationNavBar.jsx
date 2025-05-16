@@ -1,11 +1,11 @@
 import { useState } from "react";
 import {
-  IconSearch,
-  IconUser,
-  IconBell,
-  IconMenu2,
-  IconX,
-} from "@tabler/icons-react";
+  Search,
+  User,
+  Bell,
+  Menu,
+  X,
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
@@ -33,7 +33,7 @@ const Navbar = () => {
           className="inline-flex items-center justify-center text-gray-700 md:hidden"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
-          {isMenuOpen ? <IconX size={24} /> : <IconMenu2 size={24} />}
+          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
 
         {/* Main Navbar Content */}
@@ -72,7 +72,7 @@ const Navbar = () => {
               className="absolute top-4 right-4 text-gray-700 hover:text-purple-600"
               onClick={() => setIsMenuOpen(false)}
             >
-              <IconX size={28} />
+              <X size={28} />
             </button>
 
             {/* Logo in the Center */}

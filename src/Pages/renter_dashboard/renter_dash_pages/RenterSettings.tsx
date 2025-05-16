@@ -7,11 +7,11 @@ import {
   USERDETAILSPAYLOAD,
 } from "@/lib/api";
 import { Button, Modal, TextInput } from "@mantine/core";
-import { IconUser } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import ImageUpload from "../renter_dash_comps/ImageUpload";
 import Searchbar from "../renter_dash_comps/Searchbar";
 import { toast } from "react-toastify";
+import { UserIcon } from "lucide-react";
 
 const RenterSettings = () => {
   let {
@@ -76,7 +76,7 @@ const RenterSettings = () => {
                   alt=""
                 />
               ) : (
-                <IconUser size={128} className="opacity-50" />
+                <UserIcon size={128} className="opacity-50" />
               )}
 
               <div className="flex flex-col  ml-2 h-full justify-center gap-2">

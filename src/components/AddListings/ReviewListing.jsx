@@ -1,23 +1,25 @@
 import { useEffect, useState } from "react";
 import Loader from "../Loaders/Loader.jsx";
 import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
-import {
-  IconVideo,
-  IconPhoto,
-  IconBath,
-  IconHome,
-  IconPower,
-  IconPool,
-} from "@tabler/icons-react";
+
 import { Button, Spinner, Checkbox } from "@material-tailwind/react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import MapReview from "./MapReview";
-import { IconSchool, IconAmbulance, IconBus } from "@tabler/icons-react";
+import MapReview from "./MapReview.jsx";
 import axios from "axios";
 import { toast } from "react-toastify";
 import CompletedModal from "@/components/AddListings/CompletedModal.jsx";
-import VideoModal from "./VideoModal";
+import VideoModal from "./VideoModal.jsx";
 import ImageModal from "@/components/AddListings/ImagesModal.jsx"; // Import the VideoModal component
+import {
+  AmbulanceIcon,
+  BathIcon,
+  BusIcon,
+  HomeIcon,
+  ImageIcon,
+  PowerIcon,
+  SchoolIcon,
+  VideoIcon,
+} from "lucide-react";
 
 const ReviewListing = () => {
   const navigate = useNavigate();
@@ -42,6 +44,7 @@ const ReviewListing = () => {
 
   const getData = async () => {
     setIsLoading(true);
+    // @ts-ignore
     const storedDetails = JSON.parse(localStorage.getItem("basicDetails"));
     const listingId = encodedItemId ? itemId : storedDetails?.listingId;
 
@@ -68,6 +71,7 @@ const ReviewListing = () => {
 
   const publishListing = async () => {
     setIsUploading(true);
+    // @ts-ignore
     const storedDetails = JSON.parse(localStorage.getItem("basicDetails"));
     const listingId = encodedItemId ? itemId : storedDetails?.listingId;
 
@@ -197,14 +201,14 @@ const ReviewListing = () => {
               className="bg-secondaryPurple border border-primaryPurple text-primaryPurple p-2 rounded-lg my-3 text-sm flex items-center"
               onClick={() => setShowImageModal(true)}
             >
-              <IconPhoto size={16} className="mr-2" />
+              <ImageIcon size={16} className="mr-2" />
               View all images
             </button>
             <button
               className="bg-secondaryPurple border border-primaryPurple text-primaryPurple p-2 rounded-lg my-3 text-sm flex items-center"
               onClick={() => setShowVideoModal(true)} // Open video modal
             >
-              <IconVideo size={16} className="mr-2" />
+              <VideoIcon size={16} className="mr-2" />
               View all videos
             </button>
           </div>
@@ -344,7 +348,7 @@ const ReviewListing = () => {
                   <div className="flex flex-wrap gap-4">
                     {/* Electricity Payment Type */}
                     <div className="flex items-center gap-2 py-2 px-3 border border-gray-300 rounded-full bg-white">
-                      <IconPower size={16} className="text-primaryPurple" />
+                      <PowerIcon size={16} className="text-primaryPurple" />
                       <span className="text-sm text-gray-600 font-semibold">
                         Electricity Payment Type:{" "}
                         <span className="font-normal">
@@ -358,7 +362,7 @@ const ReviewListing = () => {
 
                     {/* Electricity Access Type */}
                     <div className="flex items-center gap-2 py-2 px-3 border border-gray-300 rounded-full bg-white">
-                      <IconPower size={16} className="text-primaryPurple" />
+                      <PowerIcon size={16} className="text-primaryPurple" />
                       <span className="text-sm text-gray-600 font-semibold">
                         Electricity Access Type:{" "}
                         <span className="font-normal">
@@ -369,7 +373,7 @@ const ReviewListing = () => {
 
                     {/* Furnishing State */}
                     <div className="flex items-center gap-2 py-2 px-3 border border-gray-300 rounded-full bg-white">
-                      <IconHome size={16} className="text-primaryPurple" />
+                      <HomeIcon size={16} className="text-primaryPurple" />
                       <span className="text-sm text-gray-600 font-semibold">
                         Furnishing State:{" "}
                         <span className="font-normal">
@@ -380,7 +384,7 @@ const ReviewListing = () => {
 
                     {reviewDetails.listingFeatures.inHouseRunningWater && (
                       <div className="flex items-center gap-2 py-2 px-3 border border-gray-300 rounded-full bg-white">
-                        <IconBath size={16} className="text-primaryPurple" />
+                        <BathIcon size={16} className="text-primaryPurple" />
                         <span className="text-sm text-gray-600 font-semibold">
                           In house running water
                         </span>
@@ -390,7 +394,7 @@ const ReviewListing = () => {
                     {/* Water from External Source */}
                     {reviewDetails.listingFeatures.waterFromExternalSource && (
                       <div className="flex items-center gap-2 py-2 px-3 border border-gray-300 rounded-full bg-white">
-                        <IconBath size={16} className="text-primaryPurple" />
+                        <BathIcon size={16} className="text-primaryPurple" />
                         <span className="text-sm text-gray-600 font-semibold">
                           Water from external source
                         </span>
@@ -425,7 +429,7 @@ const ReviewListing = () => {
                         key={index}
                         className="flex gap-2 items-center py-2 px-3 border border-gray-300 rounded-full bg-white"
                       >
-                        <IconSchool size={16} className="text-primaryPurple" />
+                        <SchoolIcon size={16} className="text-primaryPurple" />
                         <div>
                           <p className="text-sm text-gray-600">
                             {institution || "Institution Name"}
@@ -455,7 +459,7 @@ const ReviewListing = () => {
                         key={index}
                         className="flex gap-2 items-center py-2 px-3 border border-gray-300 rounded-full bg-white"
                       >
-                        <IconAmbulance
+                        <AmbulanceIcon
                           size={16}
                           className="text-primaryPurple"
                         />
@@ -486,7 +490,7 @@ const ReviewListing = () => {
                         key={index}
                         className="flex gap-2 items-center py-2 px-3 border border-gray-300 rounded-full bg-white"
                       >
-                        <IconBus size={16} className="text-primaryPurple" />
+                        <BusIcon size={16} className="text-primaryPurple" />
                         <div>
                           <p className="text-sm text-gray-600">
                             {transport || "Transport Option"}

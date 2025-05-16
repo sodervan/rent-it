@@ -6,12 +6,12 @@ import {
   Spinner,
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
-import { IconPlus, IconX } from "@tabler/icons-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import SelectComponent from "@/components/AddListings/SelectComponent.jsx";
+import { PlusIcon, XIcon } from "lucide-react";
 
 const BasicDetails = () => {
   const navigate = useNavigate();
@@ -325,7 +325,7 @@ const BasicDetails = () => {
                   onClick={handleUnitsAdd}
                   aria-label="Increase Units"
                 >
-                  <IconPlus size={15} />
+                  <PlusIcon size={15} />
                 </Button>
                 <Button
                   size="sm"
@@ -333,7 +333,7 @@ const BasicDetails = () => {
                   onClick={handleUnitsSubtract}
                   aria-label="Decrease Units"
                 >
-                  <IconX size={15} />
+                  <XIcon size={15} />
                 </Button>
               </div>
             </div>

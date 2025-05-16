@@ -1,5 +1,5 @@
+import { AlertTriangleIcon } from "lucide-react";
 import { useEffect } from "react";
-import { IconAlertTriangleFilled } from "@tabler/icons-react";
 
 const SessionExpiredModal = ({ isOpen, onConfirm, userRole }) => {
   const loginPath = userRole === "agent" ? "/agent/login" : "/renter/login";
@@ -43,7 +43,7 @@ const SessionExpiredModal = ({ isOpen, onConfirm, userRole }) => {
               animation: "bounceIn 0.5s ease-out",
             }}
           >
-            <IconAlertTriangleFilled className="h-6 w-6 text-yellow-500" />
+            <AlertTriangleIcon className="h-6 w-6 text-yellow-500" />
           </div>
 
           {/* Animated Content */}

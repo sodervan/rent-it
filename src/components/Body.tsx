@@ -1,6 +1,6 @@
 import { Carousel } from "@mantine/carousel";
-import { IconSearch } from "@tabler/icons-react";
 import "@mantine/carousel/styles.css";
+import { SearchIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const Body = ({ userId }: { userId: string | null }) => {
@@ -72,8 +72,8 @@ const Body = ({ userId }: { userId: string | null }) => {
             {features.map((feature, index) => (
               <div
                 key={index}
-                className={`${feature.color} rounded-lg px-4 py-2.5 md:px-6 md:py-3 
-                  transform hover:scale-105 transition-all duration-300 
+                className={`${feature.color} rounded-lg px-4 py-2.5 md:px-6 md:py-3
+                  transform hover:scale-105 transition-all duration-300
                   shadow-sm hover:shadow-md`}
               >
                 <p className="text-[13px] sm:text-[15px] font-semibold">
@@ -103,7 +103,7 @@ const Body = ({ userId }: { userId: string | null }) => {
                 hover:from-purple-700 hover:to-purple-800 transition duration-300
                 shadow-md hover:shadow-lg transform hover:scale-105"
               >
-                <IconSearch className="w-6 h-6" />
+                <SearchIcon className="w-6 h-6" />
               </button>
             </div>
           </div>

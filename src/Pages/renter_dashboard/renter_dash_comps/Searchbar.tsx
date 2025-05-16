@@ -15,19 +15,19 @@ import {
   Drawer,
 } from "@mantine/core";
 import {
-  IconFilter,
-  IconInbox,
-  IconLogout,
-  IconSearch,
-  IconSettings,
-  IconUser,
-  IconHome,
-  IconBuildingSkyscraper,
-  IconBuilding,
-  IconX,
-  IconCheck,
-  IconAdjustmentsHorizontal,
-} from "@tabler/icons-react";
+  Search,
+  Inbox,
+  LogOut,
+  Settings,
+  User,
+  Home,
+  Building2,
+  Building,
+  X,
+  Check,
+  SlidersHorizontal,
+  Filter
+} from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useAtom, useSetAtom } from "jotai";
 import { FormEvent, useState, useEffect } from "react";
@@ -68,18 +68,18 @@ function Searchbar() {
   let setDrawer = useSetAtom(drawerOpenedAtom);
 
   const propertyTypes = [
-    { id: "house", label: "House", count: 23, icon: <IconHome size={18} /> },
+    { id: "house", label: "House", count: 23, icon: <Home size={18} /> },
     {
       id: "commercial",
       label: "Commercial",
       count: 3,
-      icon: <IconBuildingSkyscraper size={18} />,
+      icon: <Building2 size={18} />,
     },
     {
       id: "apartment",
       label: "Apartment",
       count: 13,
-      icon: <IconBuilding size={18} />,
+      icon: <Building size={18} />,
     },
   ];
 
@@ -194,7 +194,7 @@ function Searchbar() {
             radius="xl"
             name="search"
             size="md"
-            leftSection={<IconSearch className="text-gray-500" />}
+            leftSection={<Search className="text-gray-500" />}
             placeholder="Search properties, locations..."
             className="w-full"
           />
@@ -214,13 +214,13 @@ function Searchbar() {
                 : "hover:bg-purple-100 text-purple-600"
             }`}
           >
-            <IconFilter size={20} />
+            <Filter size={20} />
             <span className="hidden sm:inline font-medium">Filter</span>
           </button>
 
           {/* Inbox Button */}
           <button className="p-2 hover:bg-purple-100 rounded-full transition-colors">
-            <IconInbox className="text-gray-600" />
+            <Inbox className="text-gray-600" />
           </button>
 
           {/* Vertical Divider */}
@@ -237,7 +237,7 @@ function Searchbar() {
                   alt="User Profile"
                   color="purple"
                 >
-                  {userInfo?.payload.firstname?.[0] || <IconUser />}
+                  {userInfo?.payload.firstname?.[0] || <User />}
                 </Avatar>
                 <div className="text-left hidden md:block">
                   <p className="font-semibold text-sm text-gray-800">
@@ -250,14 +250,14 @@ function Searchbar() {
 
             <Menu.Dropdown>
               <Menu.Item
-                leftSection={<IconSettings size={14} />}
+                leftSection={<Settings size={14} />}
                 component={Link}
                 to="/renter/dashboard/settings"
               >
                 Account Settings
               </Menu.Item>
               <Menu.Divider />
-              <Menu.Item leftSection={<IconLogout size={14} />} color="red">
+              <Menu.Item leftSection={<LogOut size={14} />} color="red">
                 Logout
               </Menu.Item>
             </Menu.Dropdown>
@@ -274,7 +274,7 @@ function Searchbar() {
         title={
           <div className="flex justify-between items-center py-2">
             <h3 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
-              <IconAdjustmentsHorizontal
+              <SlidersHorizontal
                 size={22}
                 className="text-purple-600"
               />
@@ -284,7 +284,7 @@ function Searchbar() {
               onClick={() => setFilterOpen(false)}
               className="p-1 hover:bg-gray-100 rounded-full"
             >
-              <IconX size={18} className="text-gray-500" />
+              <X size={18} className="text-gray-500" />
             </button>
           </div>
         }
@@ -302,7 +302,7 @@ function Searchbar() {
           {/* Property Type Section */}
           <div>
             <h4 className="text-base font-medium text-gray-700 mb-4 flex items-center gap-2">
-              <IconHome size={18} />
+              <Home size={18} />
               Property Type
             </h4>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -350,7 +350,7 @@ function Searchbar() {
           {/* Budget Section */}
           <div>
             <h4 className="text-base font-medium text-gray-700 mb-4 flex items-center gap-2">
-              <IconInbox size={18} />
+              <Inbox size={18} />
               Monthly Budget
             </h4>
             <div className="px-2 pt-6 pb-2">
@@ -386,7 +386,7 @@ function Searchbar() {
           {/* Room Count Section */}
           <div>
             <h4 className="text-base font-medium text-gray-700 mb-4 flex items-center gap-2">
-              <IconBuildingSkyscraper size={18} />
+              <Building2 size={18} />
               Bedrooms
             </h4>
             <div className="grid grid-cols-5 gap-2">
@@ -412,7 +412,7 @@ function Searchbar() {
           {/* Amenities Section */}
           <div>
             <h4 className="text-base font-medium text-gray-700 mb-4 flex items-center gap-2">
-              <IconCheck size={18} />
+              <Check size={18} />
               Amenities
             </h4>
             <div className="space-y-4">
@@ -503,7 +503,7 @@ function Searchbar() {
               onClick={applyFilters}
               className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg flex items-center justify-center gap-2 transition-colors w-2/3"
             >
-              <IconCheck size={16} />
+              <Check size={16} />
               Apply Filters
             </button>
           </div>

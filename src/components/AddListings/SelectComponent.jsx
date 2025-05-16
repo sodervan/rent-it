@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { IconChevronDown, IconCheck } from "@tabler/icons-react";
+import { ChevronDownIcon } from "lucide-react";
 
 const SelectComponent = ({
   options,
@@ -47,7 +47,7 @@ const SelectComponent = ({
           !disabled && setIsOpen(!isOpen);
         }}
         className={`
-          w-full flex items-center justify-between 
+          w-full flex items-center justify-between
           border rounded-lg px-4 py-2.5 text-left
           ${
             disabled
@@ -70,7 +70,7 @@ const SelectComponent = ({
         >
           {selectedOptionLabel}
         </span>
-        <IconChevronDown
+        <ChevronDownIcon
           size={20}
           className={`
             text-gray-500 transform transition-transform duration-200
@@ -103,8 +103,8 @@ const SelectComponent = ({
                   whileTap={{ scale: 0.98 }}
                   onClick={() => handleSelect(option.value)}
                   className={`
-                    flex items-center justify-between 
-                    px-4 py-2.5 cursor-pointer 
+                    flex items-center justify-between
+                    px-4 py-2.5 cursor-pointer
                     ${
                       String(value) === String(option.value)
                         ? "bg-primaryPurple/10 text-primaryPurple"

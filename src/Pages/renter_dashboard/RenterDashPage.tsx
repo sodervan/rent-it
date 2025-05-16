@@ -8,18 +8,18 @@ import {
   Tooltip,
 } from "@mantine/core";
 import {
-  IconHome,
-  IconHistory,
-  IconHeart,
-  IconSearch,
-  IconSettings,
-  IconLogout,
-  IconTrendingUp,
-  IconBuildingStore,
-  IconReceipt2,
-  IconChevronLeft,
-  IconChevronRight,
-} from "@tabler/icons-react";
+  Home,
+  History,
+  Heart,
+  Search,
+  Settings,
+  LogOut,
+  TrendingUp,
+  Building2,
+  Receipt,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { Route, Routes, useNavigate, useLocation } from "react-router-dom";
 import { useAtom } from "jotai";
 import { drawerOpenedAtom, sideBarAtom } from "@/store/store";
@@ -65,42 +65,42 @@ function RenterDashPage() {
   const navigationLinks = [
     {
       label: "Home",
-      icon: IconHome,
+      icon: Home,
       path: "/renter/dashboard/home",
     },
     {
       label: "Popular Listings",
-      icon: IconTrendingUp,
+      icon: TrendingUp,
       path: "/renter/dashboard/popular",
     },
     {
       label: "Search Properties",
-      icon: IconSearch,
+      icon: Search,
       path: "/renter/dashboard/search",
     },
     {
       label: "My Favorites",
-      icon: IconHeart,
+      icon: Heart,
       path: "/renter/dashboard/favourites",
     },
     {
       label: "Transactions",
-      icon: IconHistory,
+      icon: History,
       path: "/renter/dashboard/transactions",
     },
     {
       label: "Bookings",
-      icon: IconBuildingStore,
+      icon: Building2,
       path: "/renter/dashboard/bookings",
     },
     {
       label: "Invoices",
-      icon: IconReceipt2,
+      icon: Receipt,
       path: "/renter/dashboard/invoices",
     },
     {
       label: "Settings",
-      icon: IconSettings,
+      icon: Settings,
       path: "/renter/dashboard/settings",
     },
   ];
@@ -163,7 +163,7 @@ function RenterDashPage() {
             onClick={handleLogout}
             className={`text-left py-3 ${collapsed ? "px-2 w-auto" : "px-4 w-full"} rounded-lg transition-colors flex items-center text-red-600 hover:bg-red-50`}
           >
-            <IconLogout size={20} />
+            <LogOut size={20} />
             {!collapsed && (
               <span className="ml-3 font-medium text-sm">Logout</span>
             )}
@@ -208,7 +208,7 @@ function RenterDashPage() {
         }}
         className="w-full text-left py-3 px-4 rounded-lg transition-colors flex items-center text-red-600 hover:bg-red-50"
       >
-        <IconLogout size={20} />
+        <LogOut size={20} />
         <span className="ml-3 font-medium text-sm">Logout</span>
       </button>
     </div>
@@ -243,9 +243,9 @@ function RenterDashPage() {
                 className="transform translate-x-1/2 bg-white p-2 mr-3 rounded-full shadow-md border border-gray-200 text-gray-500 hover:text-purple-600 transition-colors"
               >
                 {collapsed ? (
-                  <IconChevronRight size={16} />
+                  <ChevronRight size={16} />
                 ) : (
-                  <IconChevronLeft size={16} />
+                  <ChevronLeft size={16} />
                 )}
               </button>
             </>
@@ -266,9 +266,9 @@ function RenterDashPage() {
             className="absolute top-20 right-0 transform translate-x-1/2 bg-white p-2 rounded-full shadow-md border border-gray-200 text-gray-500 hover:text-purple-600 transition-colors"
           >
             {collapsed ? (
-              <IconChevronRight size={16} />
+              <ChevronRight size={16} />
             ) : (
-              <IconChevronLeft size={16} />
+              <ChevronLeft size={16} />
             )}
           </button>
         )}
